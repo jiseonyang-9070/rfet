@@ -34,8 +34,7 @@ PROBE_OFFSETS_NM = (10.0, 25.0, 50.0)
 
 def film_mid_y(p: geo.Params, x):
     """WSe2 박막 중앙선 높이 y(x) = 아랫면(x) + t/2"""
-    bottom = np.where(x < 0, 0.0, np.where(x < p.l_ch, p.t_drain * x / p.l_ch, p.t_drain))
-    return bottom + 0.5 * p.t_wse2
+    return p.film_bottom(x) + 0.5 * p.t_wse2
 
 
 def draw_structure(ax, pts, polys, p):

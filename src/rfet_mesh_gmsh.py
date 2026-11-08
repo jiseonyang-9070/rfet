@@ -219,18 +219,23 @@ def add_size_fields(points, point_tag, line_of, loops, p: geo.Params):
     #     끝점에서 거리 d에서의 높이가 d*tan(각도)이므로 크기를 s_edge + tan(각도)/N * d 로 키운다.
     #   - AirBot 끝점 "apex" (0,0): 각도 = WSe2 경사각 theta
     #   - AirTop 끝점 "touch" (또는 l_step = L 이면 "slope_top_end"): 각도 = theta + h-BN 하강선 각도
-    theta = math.atan2(p.t_drain, p.l_ch)
+    theta = math.atan2(p.t_drain, p.l_ramp)                       # WSe2 경사각 (경사 가로 길이 l_ramp 기준)
     y_src_top = p.t_wse2 + p.t_source
-    desc = math.atan2(y_src_top - p.film_top(p.l_step), p.l_step)
+    desc = math.atan2(y_src_top - float(p.film_top(p.l_step)), p.l_step)
     top_apex = "touch" if "touch" in point_tag else "slope_top_end"
+    slope_at_touch = theta if p.l_step > p.x_lift + 1e-9 else 0.0   # touch 가 평평 구간이면 박막 기울기 0
     t_apex_bot = threshold(distance_to(pts=[point_tag["apex"]]), s_edge, 0.0, math.tan(theta) / N_ACROSS_WEDGE)
-    t_apex_top = threshold(distance_to(pts=[point_tag[top_apex]]), s_edge, 0.0, math.tan(theta + desc) / N_ACROSS_WEDGE)
+    t_apex_top = threshold(distance_to(pts=[point_tag[top_apex]]), s_edge, 0.0, math.tan(slope_at_touch + desc) / N_ACROSS_WEDGE)
 
     # --- 규칙 4: Top Gate 양 끝 + TG 선의 꺾임점 ------------------------------------------
     # 왜: TG 가장자리에서 전기장이 휘어져 나온다(fringing). TG 선이 꺾이는 점(h-BN이 단차를 따라
     #     내려오는 곳)도 도체 표면의 모서리라 전기장이 집중된다. WSe2에서 30 nm 이상 떨어져 있어
     #     접촉 모서리만큼 촘촘할 필요는 없다.
-    tg_pts = ["tg_l", "tg_r", "hbn_kink_src", "hbn_kink_drn"] + (["hbn_kink_touch"] if "hbn_kink_touch" in point_tag else [])
+    tg_pts = ["tg_l", "tg_r", "hbn_kink_src", "hbn_kink_drn"] + [n for n in ("hbn_kink_touch", "hbn_kink_lift") if n in point_tag]
+    # lift_top(박막이 꺾이는 점)도 전기장이 집중되는 모서리 → 접촉 모서리와 같은 크기로
+    if "lift_top" in point_tag:
+        t_edge = threshold(distance_to(pts=[point_tag["src_edge_bot"], point_tag["drn_corner"], point_tag["src_edge_top"],
+                                           point_tag["dr_bl"], point_tag["lift_top"]]), s_edge, 0.0, GROWTH)
     d_tg = distance_to(pts=[point_tag[n] for n in tg_pts])
     t_tg = threshold(d_tg, S_TG_EDGE, 0.0, GROWTH)
 

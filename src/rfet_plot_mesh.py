@@ -63,7 +63,8 @@ def label_regions(ax, p, pts):
     ax.text(0.5 * L, pts["hbn_kink_drn"][1] + 12, "Top gate", **kw)
     ax.text(0.5 * L, -0.5 * p.t_ox, "SiO₂ 300 nm", **kw)
     ax.text(0.5 * L, -p.t_ox - 14, "Back gate", **kw)
-    ax.text(0.5 * L, 0.5 * p.film_top(0.5 * L) * 0.5, "air", fontsize=8, ha="center", va="center", color=st.INK2, zorder=6)
+    xm = p.x_lift + 0.6 * p.l_ramp
+    ax.text(xm, 0.5 * float(p.film_bottom(xm)), "air", fontsize=8, ha="center", va="center", color=st.INK2, zorder=6)
     ax.text(L + 0.5 * p.l_drn_pad, p.t_drain + p.t_wse2 + 0.5 * p.t_hbn, "h-BN 30 nm", **kw)
     ax.annotate("WSe₂ 9.1 nm", xy=(-0.5 * p.l_src_pad, 0.5 * p.t_wse2), xytext=(-0.5 * p.l_src_pad, -60), fontsize=8.5, ha="center", va="top", color=st.INK, zorder=6,
                 arrowprops=dict(arrowstyle="-", color=st.INK2, lw=0.8), bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.85))
@@ -88,7 +89,7 @@ def main(paths):
                       f"(gold: Source/Drain, red: Top gate, dark: Back gate)")
         zooms = [
             ("b  Source junction (x = 0)", (-80, 120), (-25, pts["hbn_kink_src"][1] + 15)),
-            ("c  Channel mid / air wedges", (0.5 * L - 60, 0.5 * L + 60), (-15, p.film_top(0.5 * L) + 45)),
+            ("c  Ramp mid / air wedges", (p.x_lift + 0.5 * p.l_ramp - 60, p.x_lift + 0.5 * p.l_ramp + 60), (-15, float(p.film_top(p.x_lift + 0.5 * p.l_ramp)) + 45)),
             ("d  Drain junction (x = L)", (L - 120, L + 80), (-25, pts["hbn_kink_drn"][1] + 15)),
         ]
         for k, (ttl, xl, yl) in enumerate(zooms):

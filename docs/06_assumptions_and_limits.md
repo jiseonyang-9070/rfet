@@ -7,7 +7,7 @@
 | # | 가정 | 왜 | 영향 방향 | 확인 상태 |
 |---|---|---|---|---|
 | G1 | 2D 단면 (폭 방향 균일) | 3D 는 비용·정보 부족 | 폭 가장자리 fringe 누락. 폭 ≫ 두께이면 작음 | 미확인 (폭 수치 논문에 없음) |
-| G2 | WSe₂ 경사 = 직선, 0→L | Fig. S2 없음 | 실제는 Drain 벽 근처에서 급할 수 있음(탄성 ℓ≈140 nm). drain junction 기하 변화 | **미해결** → STEP 5 민감도 |
+| G2 | WSe₂ 경사 = 직선, 0→L | 논문 "source edge … at the base of the transition region" 의 문자적 해석. Fig. S2 없음 | 탄성 추정 ℓ≈140 nm 는 경사가 Drain 앞에만 있을 수 있음을 시사 (팀원 모델 45°/70 nm 와 같은 방향) | **민감도 준비됨**: `l_slope` 파라미터, config `elastic`(0→L) / `ramp140` / `ramp70`, `run_slope.py` (2026-11-09) |
 | G3 | L = Source 모서리 ↔ Drain 벽 수평거리 | "~500 nm" 정의 불명 | 다른 정의면 L 이 ±수십 nm | 미확인 |
 | G4 | h-BN 수직 두께 30 nm 일정 | "박편 하나" | 경사 위에서는 법선 두께가 cos8° 만큼 작음(1%) | 무시 가능 |
 | G5 | h-BN 단차 통과: bridge baseline | 탄성 추정 ℓ≈450 nm ≈ L | sag 쪽이면 TG→S 결합 증가 (sag45 에서 2배) | elastic/sag45 비교 완료 |

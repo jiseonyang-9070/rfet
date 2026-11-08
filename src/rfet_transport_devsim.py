@@ -278,8 +278,7 @@ def band_midline(device, p):
     psi = np.array(devsim.get_node_model_values(device=device, region="WSe2", name="Potential"))
     n = np.array(devsim.get_node_model_values(device=device, region="WSe2", name="Electrons"))
     pp = np.array(devsim.get_node_model_values(device=device, region="WSe2", name="Holes"))
-    bottom = np.where(x < 0, 0.0, np.where(x < p.l_ch, p.t_drain * x / p.l_ch, p.t_drain))
-    sel = np.abs(y - bottom - 0.5 * p.t_wse2) < 0.3 * p.t_wse2 / 4     # 중앙선 노드 층
+    sel = np.abs(y - p.film_bottom(x) - 0.5 * p.t_wse2) < 0.3 * p.t_wse2 / 4     # 중앙선 노드 층
     o = np.argsort(x[sel])
     return x[sel][o], psi[sel][o], n[sel][o], pp[sel][o]
 

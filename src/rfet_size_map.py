@@ -35,8 +35,9 @@ def threshold(dist, size_min, dist_min, slope):
 def size_map(points, polygons, p: geo.Params, X, Y):
     s_film = p.t_wse2 / M.N_LAYERS_FILM
     s_edge = s_film / M.EDGE_REFINE
-    theta = math.atan2(p.t_drain, p.l_ch)
-    desc = math.atan2(p.t_wse2 + p.t_source - p.film_top(p.l_step), p.l_step)
+    theta = math.atan2(p.t_drain, p.l_ramp)
+    desc = math.atan2(p.t_wse2 + p.t_source - float(p.film_top(p.l_step)), p.l_step)
+    slope_at_touch = theta if p.l_step > p.x_lift + 1e-9 else 0.0
 
     # 규칙 1: WSe2 경계선까지의 거리
     d_film = np.full(X.shape, np.inf)
@@ -46,7 +47,7 @@ def size_map(points, polygons, p: geo.Params, X, Y):
 
     # 규칙 2: 금속 모서리 네 점
     d_edge = np.full(X.shape, np.inf)
-    for name in ("src_edge_bot", "drn_corner", "src_edge_top", "dr_bl"):
+    for name in ("src_edge_bot", "drn_corner", "src_edge_top", "dr_bl") + (("lift_top",) if "lift_top" in points else ()):
         d_edge = np.minimum(d_edge, np.hypot(X - points[name][0], Y - points[name][1]))
     s2 = threshold(d_edge, s_edge, 0.0, M.GROWTH)
 
@@ -54,11 +55,11 @@ def size_map(points, polygons, p: geo.Params, X, Y):
     top_apex = "touch" if "touch" in points else "slope_top_end"
     s3a = threshold(np.hypot(X - points["apex"][0], Y - points["apex"][1]), s_edge, 0.0, math.tan(theta) / M.N_ACROSS_WEDGE)
     s3b = threshold(np.hypot(X - points[top_apex][0], Y - points[top_apex][1]), s_edge, 0.0,
-                    math.tan(theta + desc) / M.N_ACROSS_WEDGE)
+                    math.tan(slope_at_touch + desc) / M.N_ACROSS_WEDGE)
 
     # 규칙 4: TG 양 끝 + 꺾임점
     d_tg = np.full(X.shape, np.inf)
-    for name in ["tg_l", "tg_r", "hbn_kink_src", "hbn_kink_drn"] + (["hbn_kink_touch"] if "hbn_kink_touch" in points else []):
+    for name in ["tg_l", "tg_r", "hbn_kink_src", "hbn_kink_drn"] + [n for n in ("hbn_kink_touch", "hbn_kink_lift") if n in points]:
         d_tg = np.minimum(d_tg, np.hypot(X - points[name][0], Y - points[name][1]))
     s4 = threshold(d_tg, M.S_TG_EDGE, 0.0, M.GROWTH)
 

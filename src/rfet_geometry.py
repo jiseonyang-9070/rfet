@@ -110,6 +110,14 @@ class Params:
     #   영향: 작을수록 TG -> source junction 결합이 강해져 "TG 차폐"가 약해 보인다 (차폐에 불리한 쪽).
     l_hbn_step: float = None
 
+    # [모델 가정] WSe2 가 SiO2 에서 떠서 Drain 윗면(71 nm)까지 올라가는 경사의 가로 길이 [nm]. 경사는 x = L 에서 끝난다
+    #   (Drain 벽 = 경사 꼭대기). None 이면 L (= 경사가 Source 모서리에서 시작 — 논문 본문 "source edge was
+    #   positioned at the base of the transition region" 의 문자적 해석). 0 < l_slope <= L.
+    #   팀원 모델은 l_slope = 70 (45°) 을 썼고, 탄성 추정(9.1 nm 박막, 71 nm 단차, Γ 차용)은 ≈140 nm 를 준다.
+    #   Fig. S2(단면 사진) 가 없어 어느 쪽이 맞는지 확정할 수 없으므로 세 값을 모두 돌려 민감도로 본다 (CONFIGS).
+    #   영향: 짧을수록 drain junction 앞 경사가 급하고, Source 쪽 채널이 SiO2 에 붙어 BG 결합이 커진다.
+    l_slope: float = None
+
     # [모델 가정] Top Gate / Back Gate 금속 "본체"의 두께 [nm]. 시각화와 접점 판별 전용.
     # 정전기 계산에서는 금속 내부를 풀지 않고 h-BN 윗면 / SiO2 아랫면의 선에 전압을 걸 뿐이다.
     t_gate_dummy: float = 20.0
@@ -118,16 +126,41 @@ class Params:
     def l_step(self):
         return self.l_ch if self.l_hbn_step is None else float(self.l_hbn_step)
 
+    @property
+    def l_ramp(self):
+        """경사 가로 길이 (None 이면 L)"""
+        return self.l_ch if self.l_slope is None else float(self.l_slope)
+
+    @property
+    def x_lift(self):
+        """WSe2 가 SiO2 에서 떨어지기 시작하는 x (= 경사 시작점, AirBot 쐐기 끝)"""
+        return self.l_ch - self.l_ramp
+
+    @property
+    def slope_deg(self):
+        return math.degrees(math.atan2(self.t_drain, self.l_ramp))
+
+    def film_bottom(self, x):
+        """WSe2 아랫면 높이 y(x): x < x_lift 는 0 (SiO2 위), 경사 구간은 직선, x >= L 는 t_drain (Drain 위). 배열 가능."""
+        x = np.asarray(x, dtype=float)
+        return np.clip((x - self.x_lift) / self.l_ramp, 0.0, 1.0) * self.t_drain
+
     def film_top(self, x):
-        """경사 구간(0 <= x <= L)에서 WSe2 윗면 높이 y(x)"""
-        return self.t_wse2 + self.t_drain * x / self.l_ch
+        """WSe2 윗면 높이 y(x) = 아랫면 + t_wse2"""
+        return self.film_bottom(x) + self.t_wse2
 
 
 def sag_step_for_angle(p: Params, angle_deg):
     """h-BN 아랫면이 Source 모서리 (0, y_src_top)에서 각도 angle_deg 로 내려와 경사 WSe2 윗면에
     닿는 전이 길이 l 을 푼다.  (y_src_top - film_top(l)) / l = tan(angle)
     -> (t_src + t_wse2 - t_wse2 - t_drain*l/L) / l = tan  -> l = t_src / (tan + t_drain/L)"""
-    return p.t_source / (math.tan(math.radians(angle_deg)) + p.t_drain / p.l_ch)
+    tan = math.tan(math.radians(angle_deg))
+    # 평평 구간(x < x_lift)에 닿는 경우: l = t_source / tan.  경사 구간에 닿는 경우: 선형식.
+    l_flat = p.t_source / tan
+    if l_flat <= p.x_lift:
+        return l_flat
+    k = p.t_drain / p.l_ramp
+    return (p.t_source + k * p.x_lift) / (tan + k)
 
 
 def sag_step_elastic(p: Params, E_pa=0.86e12, nu=0.2, gamma_j_m2=0.45):
@@ -155,6 +188,16 @@ CONFIGS = {
     # sag45: 하강 각도 45도. 30 nm 두께 박편이 곡률반경 ~40 nm 로 꺾이려면 표면 변형률 t/2R ≈ 35% 가 필요해
     #        물리적으로 불가능하다. "TG 가 채널에 최대한 가까운 가상의 하한" 으로서 민감도 비교에만 쓴다.
     "sag45": replace(_base, l_hbn_step=sag_step_for_angle(_base, 45.0)),
+    # ---- WSe2 경사 길이 변형 (h-BN 은 bridge) ----
+    # ramp140: 탄성 추정. 판 굽힘 vs 접착 균형 ℓ = (3Dh²/Γ)^¼, t = 9.1 nm, h = 71 nm, E(WSe2) ≈ 0.17 TPa
+    #          ([문헌값 후보] R. Zhang, V. Koutsos, R. Cheung, Appl. Phys. Lett. 108, 042104 (2016): 단층~다층 WSe2 E ≈ 167 GPa —
+    #          원문 미확인), Γ = 0.45 J/m² 차용 → ℓ ≈ 140 nm. 값보다 "L 보다 훨씬 짧다" 가 요지.
+    #   h-BN 은 bridge 가 아니라 탄성 추정 전이 길이(≈449 nm)로 둔다: 박막이 평평하면 h-BN 은 그 위로 내려와 x≈449 에서 닿는다
+    #   (bridge 로 두면 채널 전체 위에 55 nm 공기층이 생겨 TG 결합까지 함께 바뀌어 경사 효과만 따로 볼 수 없다).
+    #   따라서 비교 상대는 "elastic" (경사 전체, h-BN 449) 이다.
+    "ramp140": replace(_base, l_slope=140.0, l_hbn_step=min(sag_step_elastic(_base), _base.l_ch)),
+    # ramp70: 팀원 모델과 같은 45° 경사 (가로 70 nm) — 비교용. h-BN 은 위와 같이 449.
+    "ramp70": replace(_base, l_slope=70.0, l_hbn_step=min(sag_step_elastic(_base), _base.l_ch)),
 }
 
 
@@ -194,7 +237,7 @@ def build_points(p: Params) -> dict:
         "src_tl": (x_min, y_src_top),
         "hbn_tl": (x_min, y_hbn_top_src),
         # --- 채널 구간 ---
-        "apex":          (0.0, 0.0),             # 아래 공기 쐐기(AirBot)의 뾰족한 끝
+        "apex":          (p.x_lift, 0.0),        # 아래 공기 쐐기(AirBot)의 뾰족한 끝 = WSe2 가 SiO2 에서 뜨는 점
         "src_edge_bot":  (0.0, y_src_bot),       # ***** source junction (금속-WSe2 모서리) *****
         "src_edge_top":  (0.0, y_src_top),       # Source 윗면 오른쪽 모서리 = h-BN 아랫면이 꺾이는 점
         "hbn_kink_src":  (0.0, y_hbn_top_src),   # h-BN 윗면(=TG 선)이 꺾이는 점
@@ -220,8 +263,14 @@ def build_points(p: Params) -> dict:
     # h-BN 아랫면이 경사 WSe2 윗면에 닿는 점(touch). l_step == L 이면 기존 점 slope_top_end 와 같으므로
     # 새 점을 만들지 않는다 (같은 위치에 점이 둘 있으면 T-junction/0길이 선이 생긴다).
     if p.l_step < p.l_ch:
-        pts["touch"] = (p.l_step, p.film_top(p.l_step))
-        pts["hbn_kink_touch"] = (p.l_step, p.film_top(p.l_step) + p.t_hbn)
+        pts["touch"] = (p.l_step, float(p.film_top(p.l_step)))
+        pts["hbn_kink_touch"] = (p.l_step, float(p.film_top(p.l_step)) + p.t_hbn)
+    # 경사 시작점이 Source 모서리보다 오른쪽이면 WSe2 윗면이 꺾이는 점 lift_top 이 생긴다.
+    # (touch 와 같은 x 이면 점을 하나만 둔다 — 같은 위치 점 2개 금지)
+    if p.x_lift > 1e-9 and not (p.l_step < p.l_ch and abs(p.l_step - p.x_lift) < 1e-9):
+        pts["lift_top"] = (p.x_lift, p.t_wse2)
+        if p.l_step < p.x_lift:        # h-BN 이 이미 박막에 닿아 있으면 h-BN 윗면(TG 선)도 여기서 꺾인다
+            pts["hbn_kink_lift"] = (p.x_lift, p.t_wse2 + p.t_hbn)
     return {k: (float(v[0]), float(v[1])) for k, v in pts.items()}
 
 
@@ -237,34 +286,46 @@ REGION_MATERIAL = {"SiO2": "SiO2", "WSe2": "WSe2", "AirBot": "Air", "AirTop": "A
 TILING = ["SiO2", "WSe2", "AirBot", "AirTop", "hBN", "Source", "Drain"]   # 도메인을 빈틈없이 채우는 7개
 
 
-def build_polygons(p: Params) -> dict:
-    """Params -> {영역 이름: [점 이름, ...]} (CCW). touch 점 유무에 따라 WSe2/AirTop/hBN 이 달라진다."""
-    has_touch = p.l_step < p.l_ch
-    touch = "touch" if has_touch else "slope_top_end"
-    # 경사 WSe2 윗면: src_edge_bot -> (touch) -> slope_top_end 순으로 올라간다
-    slope_top_up = ["src_edge_bot"] + (["touch"] if has_touch else []) + ["slope_top_end"]
+def film_top_chain(p: Params, points):
+    """WSe2 윗면을 왼쪽(src_edge_bot)에서 오른쪽(slope_top_end)으로 따라갈 때 지나는 점 이름들."""
+    mid = []
+    if "touch" in points:
+        mid.append((points["touch"][0], "touch"))
+    if "lift_top" in points:
+        mid.append((points["lift_top"][0], "lift_top"))
+    mid.sort()
+    return ["src_edge_bot"] + [n for _, n in mid] + ["slope_top_end"]
+
+
+KINK_OF = {"touch": "hbn_kink_touch", "lift_top": "hbn_kink_lift"}
+
+
+def build_polygons(p: Params, points=None) -> dict:
+    """Params -> {영역 이름: [점 이름, ...]} (CCW).
+    touch(h-BN 이 박막에 닿는 점)와 lift_top(박막이 SiO2 에서 뜨는 점)의 유무·순서에 따라 WSe2/AirTop/hBN/TG 가 달라진다."""
+    points = points or build_points(p)
+    chain = film_top_chain(p, points)                     # src_edge_bot ... slope_top_end
+    touch = "touch" if "touch" in points else "slope_top_end"
+    i_t = chain.index(touch)
+    before = chain[:i_t + 1]                              # 박막 윗면 중 h-BN 이 닿지 않는 구간 (AirTop 의 아랫변)
+    after = chain[i_t:]                                   # 박막 윗면 중 h-BN 이 닿는 구간 (hBN 의 아랫변 일부)
+    kinks_after = [KINK_OF[n] for n in after[:-1] if n in KINK_OF]   # slope_top_end 의 kink 는 hbn_kink_drn
     return {
-        # SiO2: 윗면이 x=0, x=L에서 꺾이는 이유는 구간마다 접하는 상대(WSe2 / 공기 / Drain)가 다르기 때문
+        # SiO2: 윗면이 x_lift, x=L 에서 꺾이는 이유는 구간마다 접하는 상대(WSe2 / 공기 / Drain)가 다르기 때문
         "SiO2": ["bg_l", "bg_r", "ox_r", "dr_bl", "apex", "ox_l"],
-        # WSe2: 수직 두께 일정한 Z자 띠. 윗면(오른쪽->왼쪽)은 slope_top_up 의 역순
-        "WSe2": ["ox_l", "apex", "drn_corner", "drn_tr", "film_r_top"] + slope_top_up[::-1] + ["src_bl"],
-        # AirBot: 경사진 WSe2 아래의 직각삼각형 (0,0), (L,0), (L,t_drain). 꼭지각 atan(t_drain/L)
+        # WSe2: 수직 두께 일정한 띠. 아랫면(왼->오): ox_l, apex, drn_corner, drn_tr. 윗면(오->왼): chain 역순
+        "WSe2": ["ox_l", "apex", "drn_corner", "drn_tr", "film_r_top"] + chain[::-1] + ["src_bl"],
+        # AirBot: 경사진 WSe2 아래의 직각삼각형 (x_lift,0), (L,0), (L,t_drain). 꼭지각 atan(t_drain/l_ramp)
         "AirBot": ["apex", "dr_bl", "drn_corner"],
-        # AirTop: Source 벽, 경사 WSe2 윗면, h-BN 아랫면(하강선)으로 둘러싸인 삼각형
-        #         (0,t_wse2) -> touch -> (0,y_src_top). 꼭지각은 touch 점에 있다.
-        "AirTop": ["src_edge_bot", touch, "src_edge_top"],
-        # hBN: 아랫면 = Source 윗면 -> 하강선 (src_edge_top -> touch) -> 경사 WSe2 윗면 (touch -> slope_top_end)
-        #      -> Drain 쪽 WSe2 윗면.  윗면 = 아랫면 + t_hbn, 그 위에 TG 선 (tg_l ~ tg_r).
-        "hBN": (["src_tl", "src_edge_top", touch]
-                + (["slope_top_end"] if has_touch else [])
-                + ["film_r_top", "hbn_tr", "tg_r", "hbn_kink_drn"]
-                + (["hbn_kink_touch"] if has_touch else [])
-                + ["hbn_kink_src", "tg_l", "hbn_tl"]),
+        # AirTop: Source 벽 + 박막 윗면(touch 까지) + h-BN 아랫면(하강선)
+        "AirTop": before + ["src_edge_top"],
+        # hBN: 아랫면 = Source 윗면 -> 하강선 -> 박막 윗면(touch 이후) -> Drain 쪽. 윗면 = 아랫면 + t_hbn (kink 점들)
+        "hBN": (["src_tl", "src_edge_top"] + after + ["film_r_top", "hbn_tr", "tg_r", "hbn_kink_drn"]
+                + kinks_after[::-1] + ["hbn_kink_src", "tg_l", "hbn_tl"]),
         # --- 금속 본체 (mesh 없음) ---
         "Source": ["src_bl", "src_edge_bot", "src_edge_top", "src_tl"],
         "Drain":  ["dr_bl", "ox_r", "drn_tr", "drn_corner"],
-        "TG":     ["tg_l", "hbn_kink_src"] + (["hbn_kink_touch"] if has_touch else [])
-                  + ["hbn_kink_drn", "tg_r", "tg_tr", "tg_tl"],
+        "TG":     ["tg_l", "hbn_kink_src"] + kinks_after + ["hbn_kink_drn", "tg_r", "tg_tr", "tg_tl"],
         "BG":     ["bgd_bl", "bgd_br", "bg_r", "bg_l"],
     }
 
@@ -361,22 +422,31 @@ def analytic_areas(p: Params):
     w = p.l_src_pad + p.l_ch + p.l_drn_pad
     l = p.l_step
     y_src_top = p.t_wse2 + p.t_source
-    # AirTop: 꼭짓점 (0, t_wse2), (l, film_top(l)), (0, y_src_top) -> 밑변이 x=0 위의 수직선(길이 t_source), 높이 l
+    # AirTop = ∫0^l [h-BN 아랫면(직선: y_src_top -> film_top(l)) - film_top(x)] dx
+    #        = l*(y_src_top + film_top(l))/2 - [t_wse2*l + ∫0^l film_bottom]
+    #   ∫0^l film_bottom = 0.5*(l - x_lift)*film_bottom(l)  (l > x_lift 일 때, 아니면 0)
+    int_bottom = 0.5 * max(l - p.x_lift, 0.0) * float(p.film_bottom(l))
+    air_top = l * (y_src_top + float(p.film_top(l))) / 2 - (p.t_wse2 * l + int_bottom)
     return {
         "SiO2": w * p.t_ox,
         "WSe2": w * p.t_wse2,
-        "AirBot": 0.5 * p.l_ch * p.t_drain,
-        "AirTop": 0.5 * p.t_source * l,
+        "AirBot": 0.5 * p.l_ramp * p.t_drain,
+        "AirTop": air_top,
         "hBN": w * p.t_hbn,
         "Source": p.l_src_pad * p.t_source,
         "Drain": p.l_drn_pad * p.t_drain,
     }
 
 
+def hbn_top_kinks(points):
+    """h-BN 윗면(TG 선)이 x=0 과 x=L 사이에서 꺾이는 점들 (x 오름차순)"""
+    ks = [(points[n][0], n) for n in ("hbn_kink_touch", "hbn_kink_lift") if n in points]
+    return [n for _, n in sorted(ks)]
+
+
 def domain_area(points, p: Params):
     """도메인 전체 면적: 아랫변 y = -t_ox, 윗변 = h-BN 윗면 꺾은선 (hbn_tl -> ... -> hbn_tr)"""
-    top = ["hbn_tl", "tg_l", "hbn_kink_src"] + (["hbn_kink_touch"] if "touch" in points else []) \
-          + ["hbn_kink_drn", "tg_r", "hbn_tr"]
+    top = ["hbn_tl", "tg_l", "hbn_kink_src"] + hbn_top_kinks(points) + ["hbn_kink_drn", "tg_r", "hbn_tr"]
     area = 0.0
     for a, b in zip(top[:-1], top[1:]):
         (xa, ya), (xb, yb) = points[a], points[b]
@@ -462,8 +532,7 @@ def run_checks(points, polygons, p: Params, verbose=True):
                          np.linspace(y_lo + 0.0777, y_hi - 0.0777, 330))
     pts = np.column_stack([gx.ravel(), gy.ravel()])
     # 도메인 윗변(h-BN 윗면 꺾은선) 아래의 점만 검사
-    top_names = ["hbn_tl", "hbn_kink_src"] + (["hbn_kink_touch"] if "touch" in points else []) \
-                + ["hbn_kink_drn", "hbn_tr"]
+    top_names = ["hbn_tl", "hbn_kink_src"] + hbn_top_kinks(points) + ["hbn_kink_drn", "hbn_tr"]
     tx = np.array([points[n][0] for n in top_names])
     ty = np.array([points[n][1] for n in top_names])
     pts = pts[pts[:, 1] < np.interp(pts[:, 0], tx, ty) - 1e-6]
@@ -480,8 +549,8 @@ def run_checks(points, polygons, p: Params, verbose=True):
            f"(차이: {set(interfaces) ^ set(EXPECTED_INTERFACES)})")
 
     # h-BN 수직 두께가 어디서나 t_hbn 인지: 윗면 꺾은선과 아랫면 꺾은선의 차이를 표본 x에서 확인
-    bot_names = ["src_tl", "src_edge_top"] + (["touch"] if "touch" in points else []) \
-                + ["slope_top_end", "film_r_top"]
+    _chain = film_top_chain(p, points)
+    bot_names = ["src_tl", "src_edge_top"] + _chain[_chain.index("touch" if "touch" in points else "slope_top_end"):] + ["film_r_top"]
     bx = np.array([points[n][0] for n in bot_names])
     by = np.array([points[n][1] for n in bot_names])
     xs = np.linspace(x_min, x_max, 5001)
@@ -574,19 +643,21 @@ def plot_geometry(points, polygons, p: Params, outfile, title=""):
 # 섹션 7. 실행
 # ==============================================================================
 def print_summary(points, polygons, p: Params):
-    theta = math.degrees(math.atan2(p.t_drain, p.l_ch))
+    theta = p.slope_deg
     l = p.l_step
     y_src_top = p.t_wse2 + p.t_source
     desc = math.degrees(math.atan2(y_src_top - p.film_top(l), l))     # h-BN 하강선 각도 (아래쪽 +)
     print("\n[기하 요약]")
     print(f"  l_hbn_step = {l:.2f} nm  ({'bridge: 처짐 없음' if l >= p.l_ch else 'sag: 경사 WSe2에 닿음'})")
-    print(f"  WSe2 경사각 = atan(t_drain/L) = {theta:.3f} deg,  경사 길이 {math.hypot(p.l_ch, p.t_drain):.2f} nm")
+    print(f"  WSe2 경사: x = {p.x_lift:.1f} → {p.l_ch:.1f} (가로 {p.l_ramp:.1f} nm), 경사각 atan(t_drain/l_ramp) = {theta:.3f} deg,  경사 길이 {math.hypot(p.l_ramp, p.t_drain):.2f} nm")
     print(f"  h-BN 하강선 각도 = {desc:.2f} deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = "
           f"{p.t_hbn * math.cos(math.radians(desc)):.1f} nm  (수직 두께 {p.t_hbn} nm; 차이는 '수직 두께 일정' 근사의 오차)")
-    print(f"  위 공기 쐐기(AirTop) 꼭지각 = {theta + desc:.2f} deg,  최대 높이(x=0) = {p.t_source} nm")
+    slope_at_touch = theta if l > p.x_lift + 1e-9 else 0.0
+    print(f"  위 공기 쐐기(AirTop) 꼭지각 = {slope_at_touch + desc:.2f} deg,  최대 높이(x=0) = {p.t_source} nm")
     # TG(h-BN 윗면)와 경사 WSe2 윗면 사이의 수직 거리: TG 꺾은선과 WSe2 윗면을 x에서 보간
-    tgx = [points["hbn_kink_src"][0]] + ([points["hbn_kink_touch"][0]] if "touch" in points else []) + [points["hbn_kink_drn"][0]]
-    tgy = [points["hbn_kink_src"][1]] + ([points["hbn_kink_touch"][1]] if "touch" in points else []) + [points["hbn_kink_drn"][1]]
+    _kn = ["hbn_kink_src"] + hbn_top_kinks(points) + ["hbn_kink_drn"]
+    tgx = [points[n][0] for n in _kn]
+    tgy = [points[n][1] for n in _kn]
     gaps = [(x, float(np.interp(x, tgx, tgy)) - p.film_top(x)) for x in (0.0, 25.0, l, 0.5 * p.l_ch, p.l_ch)]
     print("  TG - 경사 WSe2 윗면 수직 거리 [nm]: " + ", ".join(f"x={x:.0f}: {g:.1f}" for x, g in gaps))
     print("\n[영역별 좌표 범위 (nm)]")
