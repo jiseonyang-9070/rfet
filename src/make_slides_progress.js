@@ -110,40 +110,43 @@ const B = (t) => ({ text: t, options: { bold: true } });
 
 // ---------- 6. 구조 ----------
 {
-  const s = pres.addSlide(); header(s, "STEP 2 · 비대칭 구조 — 결과(STEP 3~5)에 쓴 config bridge");
-  fit(s, FIG("fig_geometry_bridge.png"), { x: 0.4, y: 1.2, w: 8.4, h: 5.7 }, 1.5);
+  const s = pres.addSlide(); header(s, "STEP 2 · 비대칭 구조 — 기준 config curve_el");
+  fit(s, FIG("rfet_geometry_curve_el.png"), { x: 0.4, y: 1.2, w: 8.4, h: 5.7 }, 1.5);
   const rows = [
     [hdr("요소"), hdr("치수 nm"), hdr("분류")],
     ["Source (Pd/Au)", "두께 55, 박막 위", "[A]"],
     ["Drain (Au/Ti)", "두께 71, 박막 아래", "[A]"],
     ["채널 L", "500 (S 모서리 ↔ D 벽)", "[A]/[C]"],
-    ["WSe₂", "9.1 · 0→500 직선 경사 8°", "[A]/[C]"],
-    ["h-BN", "30 · 곧은 판 (S 윗면→D 쪽 박막)", "[A]/[C]"],
+    ["WSe₂", "9.1 · 0→283 평평 · 283→500 S자", "[A]/역학"],
+    ["h-BN", "30 · 곧은 판, 1.8° 기움", "[A]/역학"],
     ["TG", "−300 → 800 (대칭 300)", "[C]"],
     ["SiO₂ / BG", "300 / 선", "[A]"],
     ["빈 공간", "공기 ε = 1 (하한)", "[C]"],
   ];
   s.addTable(rows, { x: 9.0, y: 1.35, w: 3.9, colW: [1.3, 2.0, 0.6], rowH: 0.5, ...TBL(11.5) });
-  s.addText("경사 시작점·모양은 다음 장 기준(curve_el)으로 갱신 → 재계산 중", { x: 9.0, y: 6.1, w: 3.9, h: 0.7, fontSize: 11.5, color: ORANGE, bold: true, margin: 0 });
+  s.addText("STEP 3·4 는 이 구조 + 비교군 4개로 계산 (다음 장) · STEP 5 전류는 구 구조 bridge", { x: 9.0, y: 6.1, w: 3.9, h: 0.7, fontSize: 11, color: GRAY, margin: 0 });
 }
 
 // ---------- 7. 경사 근거 ----------
 {
-  const s = pres.addSlide(); header(s, "STEP 2 · 경사 형상 갱신 : 어디서, 어떤 모양으로 — 에너지 최소화");
-  fit(s, FIG("fig_ramp_shapes.png"), { x: 0.4, y: 1.2, w: 12.5, h: 3.9 }, 3.45);
+  const s = pres.addSlide(); header(s, "STEP 2 · 경사 형상 : 에너지 최소화와 민감도 결과");
+  fit(s, FIG("fig_ramp_shapes.png"), { x: 0.4, y: 1.1, w: 12.5, h: 3.5 }, 3.45);
   const rows = [
-    [hdr(""), hdr("갱신 기준 curve_el"), hdr("이전 가정"), hdr("근거")],
-    ["시작점", "x = 283 (ℓ* = 217 nm)", "0 (bridge) / 430 (70 nm)", "굽힘 6Dh²/ℓ³ + 접착 Γℓ 최소 → ℓ* = (18Dh²/Γ)^¼ · 늘어남 금지면 ≤ L"],
-    ["모양", "3차식 71·(3u² − 2u³)", "직선 (꺾임)", "양 끝 높이·기울기 연속(조건 4개) → 2차식·직선 불가"],
-    ["검사", "변형률 4.1 % < 파단 7.3 %", "70 nm 곡선이면 40 %", "Γ 차용값 · ℓ ∝ Γ^−¼ 라 둔감 · 민감도 run_slope.py 계산 중"],
+    [hdr("config"), hdr("경사"), hdr("TG→D 쪽"), hdr("TG→S 쪽"), hdr("BG→S 쪽"), hdr("BG→D 쪽"), hdr("비고")],
+    [B("curve_el"), "S자 217 (에너지 최소)", B("0.35"), "0.07", "0.09", "0.009", "기준 · 변형률 4.1 % < 7.3 %"],
+    ["line_el", "직선 217", "0.28", "0.07", "0.09", "0.012", "모양만 바꿈 → D 쪽 −20 %"],
+    ["curve70", "S자 70", "0.24", "0.07", "0.09", "0.014", "Γ≈41 J/m² 필요, 변형률 40 %"],
+    ["line70", "직선 70 (이전 가정)", "0.18", "0.07", "0.09", "0.020", "D 쪽 TG 효율 절반"],
+    ["curve_el_eq", "S자 217, Source 71", "0.34", B("0.06"), "0.09", "0.010", "Source 두꺼우면 TG→S 번짐 −15 %"],
   ];
-  s.addTable(rows, { x: 0.5, y: 5.2, w: 12.33, colW: [1.1, 3.2, 2.6, 5.43], rowH: 0.42, ...TBL(12.5) });
+  s.addTable(rows, { x: 0.5, y: 4.65, w: 12.33, colW: [1.4, 2.4, 1.2, 1.2, 1.2, 1.2, 3.73], rowH: 0.3, ...TBL(11.5), align: "center" });
+  s.addText("단위 V/V, 접합 10 nm · Source 쪽은 모양과 무관 · Drain 쪽 TG 효율은 경사 모양에 2배까지 의존 · DEVSIM = FEM", { x: 0.5, y: 6.75, w: 12.3, h: 0.3, fontSize: 10.5, color: GRAY, margin: 0 });
 }
 
 // ---------- 8. 격자 ----------
 {
   const s = pres.addSlide(); header(s, "STEP 2 · 실제 계산 격자 (gmsh)");
-  fit(s, FIG("fig_mesh_bridge.png"), { x: 0.4, y: 1.15, w: 9.3, h: 5.9 }, 1.93);
+  fit(s, FIG("fig_mesh_curve_el.png"), { x: 0.4, y: 1.15, w: 9.3, h: 5.9 }, 1.93);
   card(s, 9.9, 1.4, 3.0, 4.9);
   s.addText([B("크기 규칙 4개"), { text: "\n\n박막 두께 ≥ 4층\n접합 근처 0.57 nm\n공기 쐐기 ≥ 3요소\n성장 30 %, 최대 50 nm\n\n", options: {} }, B("수렴 검사"), { text: "\n4 → 6 → 8층\n변화 < 0.1 %", options: {} }],
     { x: 10.1, y: 1.5, w: 2.7, h: 4.7, fontSize: 14, color: INK, margin: 0, valign: "top" });
@@ -152,37 +155,37 @@ const B = (t) => ({ text: t, options: { bold: true } });
 // ---------- 9. STEP 3 결과 ----------
 {
   const s = pres.addSlide(); header(s, "STEP 3 · 정전기 : 게이트 1 V 가 채널 어디를 움직이나");
-  fit(s, FIG("fig_step3_profiles.png"), { x: 0.4, y: 1.2, w: 8.3, h: 5.8 }, 1.45);
+  fit(s, FIG("fig_step3_profiles_slope.png"), { x: 0.4, y: 1.1, w: 12.5, h: 4.1 }, 2.62);
   const rows = [
     [hdr("1 V 당"), hdr("Source 쪽"), hdr("Drain 쪽")],
-    ["TG", "0.08", B("0.34")],
-    ["BG", B("0.08"), "0.008"],
+    ["TG", "0.07", B("0.35")],
+    ["BG", B("0.09"), "0.009"],
   ];
-  s.addTable(rows, { x: 9.0, y: 1.6, w: 3.9, colW: [1.1, 1.4, 1.4], rowH: 0.6, ...TBL(18), align: "center" });
-  card(s, 9.0, 3.7, 3.9, 2.6);
-  s.addText([B("TG → Drain 쪽 4배"), { text: "\n", options: {} }, B("BG → Source 쪽 10배"), { text: "\n\n단위 V/V, 접합에서 10 nm\nDEVSIM(점) = FEM(선)", options: { color: GRAY, fontSize: 12 } }],
-    { x: 9.15, y: 3.8, w: 3.6, h: 2.4, fontSize: 16, color: NAVY, margin: 0, valign: "top" });
+  s.addTable(rows, { x: 0.8, y: 5.5, w: 5.2, colW: [1.4, 1.9, 1.9], rowH: 0.45, ...TBL(15), align: "center" });
+  card(s, 6.5, 5.5, 6.4, 1.4);
+  s.addText([B("TG → Drain 쪽 5배"), { text: "\n", options: {} }, B("BG → Source 쪽 10배"), { text: "\n\n기준 curve_el · 단위 V/V, 접합에서 10 nm\nDEVSIM(점) = FEM(선) · 5개 구조 모두 같은 패턴", options: { color: GRAY, fontSize: 12 } }],
+    { x: 6.7, y: 5.55, w: 6.1, h: 1.3, fontSize: 14, color: NAVY, margin: 0, valign: "top" });
 }
 
 // ---------- 10. STEP 3 지도 ----------
 {
   const s = pres.addSlide(); header(s, "STEP 3 · 전위 응답 지도 — 금속이 전기장을 가린다");
-  fit(s, FIG("fig_step3_maps_bridge.png"), { x: 0.4, y: 1.15, w: 12.5, h: 5.9 }, 1.5);
+  fit(s, FIG("fig_step3_maps_curve_el.png"), { x: 0.4, y: 1.15, w: 12.5, h: 5.9 }, 1.5);
 }
 
 // ---------- 11. STEP 4 밴드 ----------
 {
   const s = pres.addSlide(); header(s, "STEP 4 · 밴드 : 어느 게이트가 어느 쪽을 n/p 로 만드나");
-  fit(s, FIG("fig_step4_bands_bridge_lit.png"), { x: 0.4, y: 1.15, w: 8.6, h: 5.9 }, 1.3);
+  fit(s, FIG("fig_step4_bands_slope.png"), { x: 0.4, y: 1.15, w: 8.6, h: 5.9 }, 1.415);
   const rows = [
     [hdr("E_c − E_F (eV)"), hdr("S 쪽"), hdr("D 쪽")],
     ["0 V", "0.29", "0.55"],
-    ["TG −5 V", "0.46", B("1.04")],
-    ["BG −60 → +60", B("1.03 → 0.16"), "0.72 → 0.40"],
+    ["TG −5 V", "0.48", B("1.05")],
+    ["BG −60 → +60", B("1.02 → 0.16"), "0.68 → 0.44"],
   ];
   s.addTable(rows, { x: 9.2, y: 1.5, w: 3.7, colW: [1.5, 1.1, 1.1], rowH: 0.55, ...TBL(13), align: "center" });
   card(s, 9.2, 4.0, 3.7, 2.4);
-  s.addText([B("TG → Drain 쪽만 p 형"), { text: "\n", options: {} }, B("BG → Source 쪽만 재구성"), { text: "\n\n장벽 0.22/0.53 (다른 시료)\n→ 대조군 0.6/0.6 도 같은 패턴", options: { color: GRAY, fontSize: 12 } }],
+  s.addText([B("TG → Drain 쪽만 p 형"), { text: "\n", options: {} }, B("BG → Source 쪽만 재구성"), { text: "\n\n기준 curve_el (5개 구조 모두 같은 패턴)\n장벽 0.22/0.53 (다른 시료) → 대조군 0.6/0.6 도 같은 패턴", options: { color: GRAY, fontSize: 12 } }],
     { x: 9.35, y: 4.1, w: 3.4, h: 2.2, fontSize: 15, color: NAVY, margin: 0, valign: "top" });
 }
 
@@ -200,7 +203,7 @@ const B = (t) => ({ text: t, options: { bold: true } });
     ["p형 · TG −5", "정공 10⁻¹⁶ ≈ 0", "정공 10⁻⁹, BG 가 끔", "정공 장벽 0.98 eV → 열전자로 못 넘음 → 터널링 필요"],
   ];
   s.addTable(rows, { x: 0.5, y: 4.5, w: 12.33, colW: [1.7, 3.6, 2.4, 4.63], rowH: 0.5, ...TBL(13) });
-  s.addText("μ = 100 cm²/Vs 가정 → on/off 비와 모양만 읽음 · 전류 보존 6×10⁻⁵ · V_BG 5 V 간격", { x: 0.5, y: 6.6, w: 12.3, h: 0.4, fontSize: 12, color: GRAY, margin: 0 });
+  s.addText("구 구조 bridge 로 계산 (curve_el 재계산 예정; 정전기 차이 D 쪽 5 %) · μ = 100 cm²/Vs 가정 → on/off 와 모양만 · 전류 보존 6×10⁻⁵", { x: 0.5, y: 6.6, w: 12.3, h: 0.4, fontSize: 12, color: GRAY, margin: 0 });
 }
 
 // ---------- 13. 검증 ----------
@@ -232,7 +235,7 @@ const B = (t) => ({ text: t, options: { bold: true } });
     ["열전자 DD 만 (터널링 없음)", "STEP 5 단계", "p형 과소 → WKB 다음"],
     ["μ = 100 cm²/Vs", "가정", "전류 절대값 ∝ μ → on/off·모양만"],
     ["쐐기 ε = 1, 패드 1000, TG 300/300", "하한·경계·대칭", "민감도 예정 (ε 3, 패드 2000)"],
-    ["경사 = 에너지 최소화 (Γ 차용)", "Fig. S2 없음", "217 하한 / 500 상한 · 계산 중"],
+    ["경사 = 에너지 최소화 (Γ 차용)", "Fig. S2 없음", "5개 형상 비교: S 쪽 불변, D 쪽 TG 효율 0.18–0.35"],
   ];
   s.addTable(rows, { x: 0.5, y: 1.3, w: 12.33, colW: [3.6, 3.2, 5.53], rowH: 0.52, ...TBL(13.5) });
 }
@@ -243,10 +246,10 @@ const B = (t) => ({ text: t, options: { bold: true } });
   const rows = [
     [hdr("단계"), hdr("결과"), hdr("상태")],
     ["STEP 1 값", "20개 값 전부 출처·원문 대조", "완료"],
-    ["STEP 2 구조", "비대칭 + 판 h-BN + 경사 217 nm (에너지 최소화)", "완료 · 민감도 계산 중"],
-    ["STEP 3 정전기", "TG→D 0.34 / S 0.08 · BG→S 0.08 / D 0.008", "완료 · 검증됨"],
+    ["STEP 2 구조", "비대칭 + 판 h-BN + 경사 217 nm (에너지 최소화) · 형상 민감도 5종", "완료"],
+    ["STEP 3 정전기", "TG→D 0.35 / S 0.07 · BG→S 0.09 / D 0.009 (curve_el)", "완료 · 검증됨"],
     ["STEP 4 밴드", "TG 는 Drain 쪽만, BG 는 Source 쪽만 재구성", "완료"],
-    ["STEP 5 전류", "n형 선택적 제어 확인 · p형은 터널링 필요", "DD 완료 · WKB 다음"],
+    ["STEP 5 전류", "n형 선택적 제어 확인 · p형은 터널링 필요 (bridge)", "DD 완료 · curve_el 재계산 · WKB"],
     ["STEP 6 scaling", "L 500 → 300 → 200 → 100 nm, fringe 추적", "예정"],
   ];
   s.addTable(rows, { x: 0.5, y: 1.4, w: 12.33, colW: [2.2, 7.3, 2.83], rowH: 0.6, ...TBL(15) });

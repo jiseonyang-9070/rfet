@@ -1,0 +1,3096 @@
+
+======================================================================
+[geometry 검사 (전체 config)]
+$ rfet_geometry.py
+
+######## CONFIG 'bridge' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 2.91e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 1005250.000, 도메인 1005250.000 nm^2)
+  [OK  ] 표본점 549827개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 0.00e+00 nm)
+
+[기하 요약]
+  l_hbn_step = 500.00 nm  (bridge: 처짐 없음)
+  WSe2 경사: x = 0.0 → 500.0 (가로 500.0 nm), 모양 linear, 평균 경사각 atan(t_drain/l_ramp) = 8.082 deg,  경사 길이 505.02 nm
+  경사 역학 검사: 꺾인 직선은 꺾임점 곡률이 무한대 → 기하 근사(역학적 근거 없음, 대조군)
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 702.7 nm > L → 판
+  h-BN 하강선 각도 = -1.83 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 30.0 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 6.25 deg,  최대 높이(x=0) = 55.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 85.0, x=25: 82.2, x=500: 30.0, x=250: 57.5, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 8
+  AirBot   x: [     0.0,    500.0]   y: [    0.0,    71.0]   꼭짓점 3
+  AirTop   x: [     0.0,    500.0]   y: [    9.1,    80.1]   꼭짓점 3
+  hBN      x: [ -1000.0,   1500.0]   y: [   64.1,   110.1]   꼭짓점 10
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    64.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [   94.1,   130.1]   꼭짓점 6
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     55.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         3개  길이   1100.3 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이    500.3 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이    500.0 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1000.0 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    1개  길이    505.0 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    1개  길이    505.0 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       1개  길이   1000.0 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+findfont: Failed to find font weight medium for DejaVu Sans, now using 400.
+그림 저장: rfet_geometry_bridge.png
+판정: 모두 통과
+
+######## CONFIG 'elastic' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 2.91e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 1003847.916, 도메인 1003847.916 nm^2)
+  [OK  ] 표본점 549061개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 0.00e+00 nm)
+
+[기하 요약]
+  l_hbn_step = 449.02 nm  (sag: 경사 WSe2에 닿음)
+  WSe2 경사: x = 0.0 → 500.0 (가로 500.0 nm), 모양 linear, 평균 경사각 atan(t_drain/l_ramp) = 8.082 deg,  경사 길이 505.02 nm
+  경사 역학 검사: 꺾인 직선은 꺾임점 곡률이 무한대 → 기하 근사(역학적 근거 없음, 대조군)
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 702.7 nm > L → 판
+  h-BN 하강선 각도 = -1.12 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 30.0 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 6.96 deg,  최대 높이(x=0) = 55.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 85.0, x=25: 81.9, x=449: 30.0, x=250: 54.4, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 9
+  AirBot   x: [     0.0,    500.0]   y: [    0.0,    71.0]   꼭짓점 3
+  AirTop   x: [     0.0,    449.0]   y: [    9.1,    72.9]   꼭짓점 3
+  hBN      x: [ -1000.0,   1500.0]   y: [   64.1,   110.1]   꼭짓점 12
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    64.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [   94.1,   130.1]   꼭짓점 7
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     55.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         4개  길이   1100.6 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이    449.1 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이    500.0 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1000.0 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    1개  길이    505.0 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    1개  길이    453.5 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       2개  길이   1051.5 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+그림 저장: rfet_geometry_elastic.png
+판정: 모두 통과
+
+######## CONFIG 'sag45' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 2.91e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 992824.431, 도메인 992824.431 nm^2)
+  [OK  ] 표본점 543050개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 7.11e-15 nm)
+
+[기하 요약]
+  l_hbn_step = 48.16 nm  (sag: 경사 WSe2에 닿음)
+  WSe2 경사: x = 0.0 → 500.0 (가로 500.0 nm), 모양 linear, 평균 경사각 atan(t_drain/l_ramp) = 8.082 deg,  경사 길이 505.02 nm
+  경사 역학 검사: 꺾인 직선은 꺾임점 곡률이 무한대 → 기하 근사(역학적 근거 없음, 대조군)
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 702.7 nm > L → 판
+  h-BN 하강선 각도 = 45.00 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 21.2 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 53.08 deg,  최대 높이(x=0) = 55.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 85.0, x=25: 56.4, x=48: 30.0, x=250: 30.0, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 9
+  AirBot   x: [     0.0,    500.0]   y: [    0.0,    71.0]   꼭짓점 3
+  AirTop   x: [     0.0,     48.2]   y: [    9.1,    64.1]   꼭짓점 3
+  hBN      x: [ -1000.0,   1500.0]   y: [   15.9,   110.1]   꼭짓점 12
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    64.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [   45.9,   130.1]   꼭짓점 7
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     55.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         4개  길이   1124.5 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이     68.1 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이    500.0 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1000.0 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    1개  길이    505.0 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    1개  길이     48.6 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       2개  길이   1456.4 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+그림 저장: rfet_geometry_sag45.png
+판정: 모두 통과
+
+######## CONFIG 'curve_el' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 2.91e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 1005250.000, 도메인 1005250.000 nm^2)
+  [OK  ] 표본점 549827개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 0.00e+00 nm)
+
+[기하 요약]
+  l_hbn_step = 500.00 nm  (bridge: 처짐 없음)
+  WSe2 경사: x = 283.3 → 500.0 (가로 216.7 nm), 모양 smooth, 평균 경사각 atan(t_drain/l_ramp) = 18.138 deg,  경사 길이 228.07 nm
+  경사 역학 검사(클램프 큐빅): 최대 기울기 26.2 deg (가운데), 최소 곡률반경 110 nm (양 끝), 표면 변형률 t/2R = 4.1 %  < 파단 7.3 % OK
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 702.7 nm > L → 판
+  h-BN 하강선 각도 = -1.83 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 30.0 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 16.31 deg,  최대 높이(x=0) = 55.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 85.0, x=25: 85.8, x=500: 30.0, x=250: 93.0, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 39
+  AirBot   x: [   283.3,    500.0]   y: [    0.0,    71.0]   꼭짓점 18
+  AirTop   x: [     0.0,    500.0]   y: [    9.1,    80.1]   꼭짓점 19
+  hBN      x: [ -1000.0,   1500.0]   y: [   64.1,   110.1]   꼭짓점 10
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    64.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [   94.1,   130.1]   꼭짓점 6
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     55.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         3개  길이   1100.3 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이    500.3 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이    216.7 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1283.3 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    16개  길이    230.1 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    17개  길이    513.3 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       1개  길이   1000.0 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+그림 저장: rfet_geometry_curve_el.png
+판정: 모두 통과
+
+######## CONFIG 'line_el' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 2.91e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 1005250.000, 도메인 1005250.000 nm^2)
+  [OK  ] 표본점 549827개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 0.00e+00 nm)
+
+[기하 요약]
+  l_hbn_step = 500.00 nm  (bridge: 처짐 없음)
+  WSe2 경사: x = 283.3 → 500.0 (가로 216.7 nm), 모양 linear, 평균 경사각 atan(t_drain/l_ramp) = 18.138 deg,  경사 길이 228.07 nm
+  경사 역학 검사: 꺾인 직선은 꺾임점 곡률이 무한대 → 기하 근사(역학적 근거 없음, 대조군)
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 702.7 nm > L → 판
+  h-BN 하강선 각도 = -1.83 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 30.0 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 16.31 deg,  최대 높이(x=0) = 55.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 85.0, x=25: 85.8, x=500: 30.0, x=250: 93.0, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 9
+  AirBot   x: [   283.3,    500.0]   y: [    0.0,    71.0]   꼭짓점 3
+  AirTop   x: [     0.0,    500.0]   y: [    9.1,    80.1]   꼭짓점 4
+  hBN      x: [ -1000.0,   1500.0]   y: [   64.1,   110.1]   꼭짓점 10
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    64.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [   94.1,   130.1]   꼭짓점 6
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     55.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         3개  길이   1100.3 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이    500.3 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이    216.7 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1283.3 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    1개  길이    228.1 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    2개  길이    511.3 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       1개  길이   1000.0 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+그림 저장: rfet_geometry_line_el.png
+판정: 모두 통과
+
+######## CONFIG 'curve70' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 2.91e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 1005250.000, 도메인 1005250.000 nm^2)
+  [OK  ] 표본점 549827개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 0.00e+00 nm)
+
+[기하 요약]
+  l_hbn_step = 500.00 nm  (bridge: 처짐 없음)
+  WSe2 경사: x = 430.0 → 500.0 (가로 70.0 nm), 모양 smooth, 평균 경사각 atan(t_drain/l_ramp) = 45.406 deg,  경사 길이 99.70 nm
+  경사 역학 검사(클램프 큐빅): 최대 기울기 56.7 deg (가운데), 최소 곡률반경 12 nm (양 끝), 표면 변형률 t/2R = 39.6 %  >= 파단 7.3 % — 비현실적
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 702.7 nm > L → 판
+  h-BN 하강선 각도 = -1.83 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 30.0 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 43.57 deg,  최대 높이(x=0) = 55.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 85.0, x=25: 85.8, x=500: 30.0, x=250: 93.0, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 39
+  AirBot   x: [   430.0,    500.0]   y: [    0.0,    71.0]   꼭짓점 18
+  AirTop   x: [     0.0,    500.0]   y: [    9.1,    80.1]   꼭짓점 19
+  hBN      x: [ -1000.0,   1500.0]   y: [   64.1,   110.1]   꼭짓점 10
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    64.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [   94.1,   130.1]   꼭짓점 6
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     55.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         3개  길이   1100.3 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이    500.3 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이     70.0 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1430.0 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    16개  길이    102.7 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    17개  길이    532.7 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       1개  길이   1000.0 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+그림 저장: rfet_geometry_curve70.png
+판정: 모두 통과
+
+######## CONFIG 'line70' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 2.91e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 1005250.000, 도메인 1005250.000 nm^2)
+  [OK  ] 표본점 549827개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 0.00e+00 nm)
+
+[기하 요약]
+  l_hbn_step = 500.00 nm  (bridge: 처짐 없음)
+  WSe2 경사: x = 430.0 → 500.0 (가로 70.0 nm), 모양 linear, 평균 경사각 atan(t_drain/l_ramp) = 45.406 deg,  경사 길이 99.70 nm
+  경사 역학 검사: 꺾인 직선은 꺾임점 곡률이 무한대 → 기하 근사(역학적 근거 없음, 대조군)
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 702.7 nm > L → 판
+  h-BN 하강선 각도 = -1.83 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 30.0 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 43.57 deg,  최대 높이(x=0) = 55.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 85.0, x=25: 85.8, x=500: 30.0, x=250: 93.0, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 9
+  AirBot   x: [   430.0,    500.0]   y: [    0.0,    71.0]   꼭짓점 3
+  AirTop   x: [     0.0,    500.0]   y: [    9.1,    80.1]   꼭짓점 4
+  hBN      x: [ -1000.0,   1500.0]   y: [   64.1,   110.1]   꼭짓점 10
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    64.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [   94.1,   130.1]   꼭짓점 6
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     55.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         3개  길이   1100.3 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이    500.3 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이     70.0 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1430.0 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    1개  길이     99.7 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    2개  길이    529.7 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       1개  길이   1000.0 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+그림 저장: rfet_geometry_line70.png
+판정: 모두 통과
+
+######## CONFIG 'curve_el_eq' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 1.82e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 1025250.000, 도메인 1025250.000 nm^2)
+  [OK  ] 표본점 561000개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 0.00e+00 nm)
+
+[기하 요약]
+  l_hbn_step = 500.00 nm  (bridge: 처짐 없음)
+  WSe2 경사: x = 283.3 → 500.0 (가로 216.7 nm), 모양 smooth, 평균 경사각 atan(t_drain/l_ramp) = 18.138 deg,  경사 길이 228.07 nm
+  경사 역학 검사(클램프 큐빅): 최대 기울기 26.2 deg (가운데), 최소 곡률반경 110 nm (양 끝), 표면 변형률 t/2R = 4.1 %  < 파단 7.3 % OK
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 798.4 nm > L → 판
+  h-BN 하강선 각도 = 0.00 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 30.0 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 18.14 deg,  최대 높이(x=0) = 71.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 101.0, x=25: 101.0, x=500: 30.0, x=250: 101.0, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 39
+  AirBot   x: [   283.3,    500.0]   y: [    0.0,    71.0]   꼭짓점 18
+  AirTop   x: [     0.0,    500.0]   y: [    9.1,    80.1]   꼭짓점 19
+  hBN      x: [ -1000.0,   1500.0]   y: [   80.1,   110.1]   꼭짓점 10
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    80.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [  110.1,   130.1]   꼭짓점 6
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     71.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         3개  길이   1100.0 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이    500.0 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이    216.7 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1283.3 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    16개  길이    230.1 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    17개  길이    513.3 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       1개  길이   1000.0 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+그림 저장: rfet_geometry_curve_el_eq.png
+판정: 모두 통과
+-> 종료 코드 0, 소요 11 s
+
+======================================================================
+[mesh curve_el]
+$ rfet_mesh_gmsh.py curve_el
+mesh 크기 규칙 [nm]: {'s_film': 2.275, 's_edge': 0.5687, 'wedge_angle_bot_deg': 18.138, 'wedge_angle_top_deg': 16.3051, 'n_sampling': 1129}
+Info    : Meshing 1D...
+Info    : [  0%] Meshing curve 1 (Line)
+Info    : [ 10%] Meshing curve 2 (Line)
+Info    : [ 10%] Meshing curve 3 (Line)
+Info    : [ 10%] Meshing curve 4 (Line)
+Info    : [ 10%] Meshing curve 5 (Line)
+Info    : [ 10%] Meshing curve 6 (Line)
+Info    : [ 20%] Meshing curve 7 (Line)
+Info    : [ 20%] Meshing curve 8 (Line)
+Info    : [ 20%] Meshing curve 9 (Line)
+Info    : [ 20%] Meshing curve 10 (Line)
+Info    : [ 20%] Meshing curve 11 (Line)
+Info    : [ 30%] Meshing curve 12 (Line)
+Info    : [ 30%] Meshing curve 13 (Line)
+Info    : [ 30%] Meshing curve 14 (Line)
+Info    : [ 30%] Meshing curve 15 (Line)
+Info    : [ 30%] Meshing curve 16 (Line)
+Info    : [ 30%] Meshing curve 17 (Line)
+Info    : [ 40%] Meshing curve 18 (Line)
+Info    : [ 40%] Meshing curve 19 (Line)
+Info    : [ 40%] Meshing curve 20 (Line)
+Info    : [ 40%] Meshing curve 21 (Line)
+Info    : [ 40%] Meshing curve 22 (Line)
+Info    : [ 50%] Meshing curve 23 (Line)
+Info    : [ 50%] Meshing curve 24 (Line)
+Info    : [ 50%] Meshing curve 25 (Line)
+Info    : [ 50%] Meshing curve 26 (Line)
+Info    : [ 50%] Meshing curve 27 (Line)
+Info    : [ 50%] Meshing curve 28 (Line)
+Info    : [ 60%] Meshing curve 29 (Line)
+Info    : [ 60%] Meshing curve 30 (Line)
+Info    : [ 60%] Meshing curve 31 (Line)
+Info    : [ 60%] Meshing curve 32 (Line)
+Info    : [ 60%] Meshing curve 33 (Line)
+Info    : [ 70%] Meshing curve 34 (Line)
+Info    : [ 70%] Meshing curve 35 (Line)
+Info    : [ 70%] Meshing curve 36 (Line)
+Info    : [ 70%] Meshing curve 37 (Line)
+Info    : [ 70%] Meshing curve 38 (Line)
+Info    : [ 70%] Meshing curve 39 (Line)
+Info    : [ 80%] Meshing curve 40 (Line)
+Info    : [ 80%] Meshing curve 41 (Line)
+Info    : [ 80%] Meshing curve 42 (Line)
+Info    : [ 80%] Meshing curve 43 (Line)
+Info    : [ 80%] Meshing curve 44 (Line)
+Info    : [ 90%] Meshing curve 45 (Line)
+Info    : [ 90%] Meshing curve 46 (Line)
+Info    : [ 90%] Meshing curve 47 (Line)
+Info    : [ 90%] Meshing curve 48 (Line)
+Info    : [ 90%] Meshing curve 49 (Line)
+Info    : [ 90%] Meshing curve 50 (Line)
+Info    : [100%] Meshing curve 51 (Line)
+Info    : [100%] Meshing curve 52 (Line)
+Info    : [100%] Meshing curve 53 (Line)
+Info    : [100%] Meshing curve 54 (Line)
+Info    : [100%] Meshing curve 55 (Line)
+Info    : Done meshing 1D (Wall 0.430951s, CPU 0.375s)
+Info    : Meshing 2D...
+Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
+Info    : [ 30%] Meshing surface 2 (Plane, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 3 (Plane, Frontal-Delaunay)
+Info    : [ 70%] Meshing surface 4 (Plane, Frontal-Delaunay)
+Info    : [ 90%] Meshing surface 5 (Plane, Frontal-Delaunay)
+Info    : Done meshing 2D (Wall 0.95252s, CPU 0.65625s)
+Info    : 17175 nodes 35917 elements
+Info    : Writing 'rfet_curve_el_nm.msh'...
+Info    : Done writing 'rfet_curve_el_nm.msh'
+저장: rfet_curve_el_nm.msh (nm),  rfet_curve_el_cm.msh (cm)
+
+=== mesh 리포트: rfet_curve_el_nm.msh ===
+노드 17175개, 삼각형 32993개, 선 요소 2731개
+
+[영역별]  삼각형수  면적[nm^2]   해석면적     상대오차  | 최소각  최대각  둔각수  Delaunay위반edge  경계둔각edge
+  SiO2       10306    750000.00    750000.00   0.00e+00 |  30.04  112.49     206               1             1
+  WSe2       11734     22750.00     22750.00   3.20e-16 |  38.63   99.82     117               0             0
+  AirBot      1326      7694.22      7694.22   1.18e-16 |   3.08  107.09      28               0             7
+  AirTop      2983     23805.78     23805.78   0.00e+00 |   1.53  148.54      91               2            36
+  hBN         6644     75000.00     75000.00   0.00e+00 |  29.75  109.33     124               1             2
+
+[contact / interface 선]  요소수   총길이[nm]   기대길이[nm]
+  C_BG_SiO2                 56     2500.000     2500.000
+  C_Drain_AirBot            25       71.000       71.000
+  C_Drain_SiO2              58     1000.000     1000.000
+  C_Drain_WSe2             443     1000.000     1000.000
+  C_Source_AirTop           19       55.000       55.000
+  C_Source_WSe2            442     1000.000     1000.000
+  C_Source_hBN              67     1000.000     1000.000
+  C_TG_hBN                 103     1100.256     1100.256
+  I_AirTop_hBN              78      500.256      500.256
+  I_SiO2_AirBot             53      216.739      216.739
+  I_SiO2_WSe2              570     1283.261     1283.261
+  I_WSe2_AirBot            120      230.067      230.067
+  I_WSe2_AirTop            250      513.329      513.329
+  I_WSe2_hBN               447     1000.000     1000.000
+
+[참고] edge 길이: 최소 0.030 nm, 최대 64.18 nm;  전체 최소각 1.53 deg, 전체 최대각 148.54 deg
+[참고] 'Delaunay위반edge'와 '경계둔각edge'는 FAIL이 아니라 진단 값입니다 (허용 범위는 STEP 3에서 Poisson 결과의 mesh 의존성을 보며 정합니다).
+
+판정: (1)(2) 모두 통과
+-> 종료 코드 0, 소요 4 s
+
+======================================================================
+[DEVSIM load curve_el]
+$ rfet_devsim_load.py curve_el
+Physical group name C_BG_SiO2 has 0 Tetrahedra.
+Physical group name C_BG_SiO2 has 0 Triangles.
+Physical group name C_BG_SiO2 has 56 Lines.
+Physical group name C_BG_SiO2 has 57 Points.
+Physical group name C_Drain_AirBot has 0 Tetrahedra.
+Physical group name C_Drain_AirBot has 0 Triangles.
+Physical group name C_Drain_AirBot has 25 Lines.
+Physical group name C_Drain_AirBot has 26 Points.
+Physical group name C_Drain_SiO2 has 0 Tetrahedra.
+Physical group name C_Drain_SiO2 has 0 Triangles.
+Physical group name C_Drain_SiO2 has 58 Lines.
+Physical group name C_Drain_SiO2 has 59 Points.
+Physical group name C_Drain_WSe2 has 0 Tetrahedra.
+Physical group name C_Drain_WSe2 has 0 Triangles.
+Physical group name C_Drain_WSe2 has 443 Lines.
+Physical group name C_Drain_WSe2 has 444 Points.
+Physical group name C_Source_AirTop has 0 Tetrahedra.
+Physical group name C_Source_AirTop has 0 Triangles.
+Physical group name C_Source_AirTop has 19 Lines.
+Physical group name C_Source_AirTop has 20 Points.
+Physical group name C_Source_WSe2 has 0 Tetrahedra.
+Physical group name C_Source_WSe2 has 0 Triangles.
+Physical group name C_Source_WSe2 has 442 Lines.
+Physical group name C_Source_WSe2 has 443 Points.
+Physical group name C_Source_hBN has 0 Tetrahedra.
+Physical group name C_Source_hBN has 0 Triangles.
+Physical group name C_Source_hBN has 67 Lines.
+Physical group name C_Source_hBN has 68 Points.
+Physical group name C_TG_hBN has 0 Tetrahedra.
+Physical group name C_TG_hBN has 0 Triangles.
+Physical group name C_TG_hBN has 103 Lines.
+Physical group name C_TG_hBN has 104 Points.
+Physical group name I_AirTop_hBN has 0 Tetrahedra.
+Physical group name I_AirTop_hBN has 0 Triangles.
+Physical group name I_AirTop_hBN has 78 Lines.
+Physical group name I_AirTop_hBN has 79 Points.
+Physical group name I_SiO2_AirBot has 0 Tetrahedra.
+Physical group name I_SiO2_AirBot has 0 Triangles.
+Physical group name I_SiO2_AirBot has 53 Lines.
+Physical group name I_SiO2_AirBot has 54 Points.
+Physical group name I_SiO2_WSe2 has 0 Tetrahedra.
+Physical group name I_SiO2_WSe2 has 0 Triangles.
+Physical group name I_SiO2_WSe2 has 570 Lines.
+Physical group name I_SiO2_WSe2 has 571 Points.
+Physical group name I_WSe2_AirBot has 0 Tetrahedra.
+Physical group name I_WSe2_AirBot has 0 Triangles.
+Physical group name I_WSe2_AirBot has 120 Lines.
+Physical group name I_WSe2_AirBot has 121 Points.
+Physical group name I_WSe2_AirTop has 0 Tetrahedra.
+Physical group name I_WSe2_AirTop has 0 Triangles.
+Physical group name I_WSe2_AirTop has 250 Lines.
+Physical group name I_WSe2_AirTop has 251 Points.
+Physical group name I_WSe2_hBN has 0 Tetrahedra.
+Physical group name I_WSe2_hBN has 0 Triangles.
+Physical group name I_WSe2_hBN has 447 Lines.
+Physical group name I_WSe2_hBN has 448 Points.
+Physical group name R_AirBot has 0 Tetrahedra.
+Physical group name R_AirBot has 1326 Triangles.
+Physical group name R_AirBot has 2088 Lines.
+Physical group name R_AirBot has 763 Points.
+Physical group name R_AirTop has 0 Tetrahedra.
+Physical group name R_AirTop has 2983 Triangles.
+Physical group name R_AirTop has 4648 Lines.
+Physical group name R_AirTop has 1666 Points.
+Physical group name R_SiO2 has 0 Tetrahedra.
+Physical group name R_SiO2 has 10306 Triangles.
+Physical group name R_SiO2 has 15839 Lines.
+Physical group name R_SiO2 has 5534 Points.
+Physical group name R_WSe2 has 0 Tetrahedra.
+Physical group name R_WSe2 has 11734 Triangles.
+Physical group name R_WSe2 has 18741 Lines.
+Physical group name R_WSe2 has 7008 Points.
+Physical group name R_hBN has 0 Tetrahedra.
+Physical group name R_hBN has 6644 Triangles.
+Physical group name R_hBN has 10369 Lines.
+Physical group name R_hBN has 3726 Points.
+Device rfet_curve_el has 17175 coordinates with max index 17175
+Region AirBot has 763 nodes.
+Region AirTop has 1666 nodes.
+Region SiO2 has 5534 nodes.
+Region WSe2 has 7008 nodes.
+Region hBN has 3726 nodes.
+Contact BG_SiO2 in region SiO2 with 57 nodes
+Contact Drain_AirBot in region AirBot with 26 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_SiO2"
+Contact Drain_SiO2 in region SiO2 with 59 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_WSe2"
+Contact Drain_WSe2 in region WSe2 with 444 nodes
+Contact Source_AirTop in region AirTop with 20 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_WSe2"
+Contact Source_WSe2 in region WSe2 with 443 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_hBN"
+Contact Source_hBN in region hBN with 68 nodes
+Contact TG_hBN in region hBN with 104 nodes
+Warning, contact "Source_AirTop" shares a node with interface "AirTop_hBN"
+Adding interface AirTop_hBN with 79, 79 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "SiO2_AirBot"
+Adding interface SiO2_AirBot with 54, 54 nodes
+Warning, interface "SiO2_AirBot" shares a node with interface "SiO2_WSe2"
+Adding interface SiO2_WSe2 with 571, 571 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "WSe2_AirBot"
+Warning, interface "SiO2_AirBot" shares a node with interface "WSe2_AirBot"
+Adding interface WSe2_AirBot with 121, 121 nodes
+Warning, contact "Source_AirTop" shares a node with interface "WSe2_AirTop"
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_AirTop"
+Adding interface WSe2_AirTop with 251, 251 nodes
+Warning, interface "WSe2_AirTop" shares a node with interface "WSe2_hBN"
+Adding interface WSe2_hBN with 448, 448 nodes
+=== DEVSIM에 불러온 구조 확인 ===
+  [OK  ] region 목록 일치  차이: set()
+  [OK  ] contact 목록 일치  차이: set()
+  [OK  ] interface 목록 일치  차이: set()
+  [OK  ] contact BG_SiO2 는 region SiO2 에 속함  (실제 ['SiO2'])
+  [OK  ] contact Drain_AirBot 는 region AirBot 에 속함  (실제 ['AirBot'])
+  [OK  ] contact Drain_SiO2 는 region SiO2 에 속함  (실제 ['SiO2'])
+  [OK  ] contact Drain_WSe2 는 region WSe2 에 속함  (실제 ['WSe2'])
+  [OK  ] contact Source_AirTop 는 region AirTop 에 속함  (실제 ['AirTop'])
+  [OK  ] contact Source_WSe2 는 region WSe2 에 속함  (실제 ['WSe2'])
+  [OK  ] contact Source_hBN 는 region hBN 에 속함  (실제 ['hBN'])
+  [OK  ] contact TG_hBN 는 region hBN 에 속함  (실제 ['hBN'])
+
+  region   노드수   x범위[nm]              y범위[nm]
+  SiO2      5534   [-1000.000,  1500.000]   [-300.000,    0.000]
+  [OK  ] SiO2 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[-300.0,0.0])
+  WSe2      7008   [-1000.000,  1500.000]   [   0.000,   80.100]
+  [OK  ] WSe2 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[0.0,80.1])
+  AirBot     763   [  283.261,   500.000]   [   0.000,   71.000]
+  [OK  ] AirBot 좌표 범위 = geometry  (기대 x[283.3,500.0] y[0.0,71.0])
+  AirTop    1666   [    0.000,   500.000]   [   9.100,   80.100]
+  [OK  ] AirTop 좌표 범위 = geometry  (기대 x[0.0,500.0] y[9.1,80.1])
+  hBN       3726   [-1000.000,  1500.000]   [  64.100,  110.100]
+  [OK  ] hBN 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[64.1,110.1])
+mesh 저장 (vtk): rfet_curve_el_mesh_check*
+
+전체 판정: 모두 통과
+-> 종료 코드 0, 소요 2 s
+
+======================================================================
+[STEP 3 FEM curve_el]
+$ rfet_fem_reference.py curve_el perp
+  [curve_el/perp] unit case Source: psi 범위 [+0.0000, +1.0000] V
+  [curve_el/perp] unit case Drain : psi 범위 [+0.0000, +1.0000] V
+  [curve_el/perp] unit case TG    : psi 범위 [+0.0000, +1.0000] V
+  [curve_el/perp] unit case BG    : psi 범위 [+0.0000, +1.0000] V
+  저장: rfet_fem_curve_el_perp.npz
+-> 종료 코드 0, 소요 2 s
+
+======================================================================
+[STEP 3 DEVSIM curve_el]
+$ rfet_poisson_devsim.py curve_el perp
+=== DEVSIM Poisson: config=curve_el, ε variant=perp (스칼라) ===
+Physical group name C_BG_SiO2 has 0 Tetrahedra.
+Physical group name C_BG_SiO2 has 0 Triangles.
+Physical group name C_BG_SiO2 has 56 Lines.
+Physical group name C_BG_SiO2 has 57 Points.
+Physical group name C_Drain_AirBot has 0 Tetrahedra.
+Physical group name C_Drain_AirBot has 0 Triangles.
+Physical group name C_Drain_AirBot has 25 Lines.
+Physical group name C_Drain_AirBot has 26 Points.
+Physical group name C_Drain_SiO2 has 0 Tetrahedra.
+Physical group name C_Drain_SiO2 has 0 Triangles.
+Physical group name C_Drain_SiO2 has 58 Lines.
+Physical group name C_Drain_SiO2 has 59 Points.
+Physical group name C_Drain_WSe2 has 0 Tetrahedra.
+Physical group name C_Drain_WSe2 has 0 Triangles.
+Physical group name C_Drain_WSe2 has 443 Lines.
+Physical group name C_Drain_WSe2 has 444 Points.
+Physical group name C_Source_AirTop has 0 Tetrahedra.
+Physical group name C_Source_AirTop has 0 Triangles.
+Physical group name C_Source_AirTop has 19 Lines.
+Physical group name C_Source_AirTop has 20 Points.
+Physical group name C_Source_WSe2 has 0 Tetrahedra.
+Physical group name C_Source_WSe2 has 0 Triangles.
+Physical group name C_Source_WSe2 has 442 Lines.
+Physical group name C_Source_WSe2 has 443 Points.
+Physical group name C_Source_hBN has 0 Tetrahedra.
+Physical group name C_Source_hBN has 0 Triangles.
+Physical group name C_Source_hBN has 67 Lines.
+Physical group name C_Source_hBN has 68 Points.
+Physical group name C_TG_hBN has 0 Tetrahedra.
+Physical group name C_TG_hBN has 0 Triangles.
+Physical group name C_TG_hBN has 103 Lines.
+Physical group name C_TG_hBN has 104 Points.
+Physical group name I_AirTop_hBN has 0 Tetrahedra.
+Physical group name I_AirTop_hBN has 0 Triangles.
+Physical group name I_AirTop_hBN has 78 Lines.
+Physical group name I_AirTop_hBN has 79 Points.
+Physical group name I_SiO2_AirBot has 0 Tetrahedra.
+Physical group name I_SiO2_AirBot has 0 Triangles.
+Physical group name I_SiO2_AirBot has 53 Lines.
+Physical group name I_SiO2_AirBot has 54 Points.
+Physical group name I_SiO2_WSe2 has 0 Tetrahedra.
+Physical group name I_SiO2_WSe2 has 0 Triangles.
+Physical group name I_SiO2_WSe2 has 570 Lines.
+Physical group name I_SiO2_WSe2 has 571 Points.
+Physical group name I_WSe2_AirBot has 0 Tetrahedra.
+Physical group name I_WSe2_AirBot has 0 Triangles.
+Physical group name I_WSe2_AirBot has 120 Lines.
+Physical group name I_WSe2_AirBot has 121 Points.
+Physical group name I_WSe2_AirTop has 0 Tetrahedra.
+Physical group name I_WSe2_AirTop has 0 Triangles.
+Physical group name I_WSe2_AirTop has 250 Lines.
+Physical group name I_WSe2_AirTop has 251 Points.
+Physical group name I_WSe2_hBN has 0 Tetrahedra.
+Physical group name I_WSe2_hBN has 0 Triangles.
+Physical group name I_WSe2_hBN has 447 Lines.
+Physical group name I_WSe2_hBN has 448 Points.
+Physical group name R_AirBot has 0 Tetrahedra.
+Physical group name R_AirBot has 1326 Triangles.
+Physical group name R_AirBot has 2088 Lines.
+Physical group name R_AirBot has 763 Points.
+Physical group name R_AirTop has 0 Tetrahedra.
+Physical group name R_AirTop has 2983 Triangles.
+Physical group name R_AirTop has 4648 Lines.
+Physical group name R_AirTop has 1666 Points.
+Physical group name R_SiO2 has 0 Tetrahedra.
+Physical group name R_SiO2 has 10306 Triangles.
+Physical group name R_SiO2 has 15839 Lines.
+Physical group name R_SiO2 has 5534 Points.
+Physical group name R_WSe2 has 0 Tetrahedra.
+Physical group name R_WSe2 has 11734 Triangles.
+Physical group name R_WSe2 has 18741 Lines.
+Physical group name R_WSe2 has 7008 Points.
+Physical group name R_hBN has 0 Tetrahedra.
+Physical group name R_hBN has 6644 Triangles.
+Physical group name R_hBN has 10369 Lines.
+Physical group name R_hBN has 3726 Points.
+Device rfet_curve_el has 17175 coordinates with max index 17175
+Region AirBot has 763 nodes.
+Region AirTop has 1666 nodes.
+Region SiO2 has 5534 nodes.
+Region WSe2 has 7008 nodes.
+Region hBN has 3726 nodes.
+Contact BG_SiO2 in region SiO2 with 57 nodes
+Contact Drain_AirBot in region AirBot with 26 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_SiO2"
+Contact Drain_SiO2 in region SiO2 with 59 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_WSe2"
+Contact Drain_WSe2 in region WSe2 with 444 nodes
+Contact Source_AirTop in region AirTop with 20 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_WSe2"
+Contact Source_WSe2 in region WSe2 with 443 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_hBN"
+Contact Source_hBN in region hBN with 68 nodes
+Contact TG_hBN in region hBN with 104 nodes
+Warning, contact "Source_AirTop" shares a node with interface "AirTop_hBN"
+Adding interface AirTop_hBN with 79, 79 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "SiO2_AirBot"
+Adding interface SiO2_AirBot with 54, 54 nodes
+Warning, interface "SiO2_AirBot" shares a node with interface "SiO2_WSe2"
+Adding interface SiO2_WSe2 with 571, 571 nodes
+Warning, contact "Drain_WSe2" shares a node with interface "WSe2_AirBot"
+Warning, interface "SiO2_WSe2" shares a node with interface "WSe2_AirBot"
+Adding interface WSe2_AirBot with 121, 121 nodes
+Warning, contact "Source_AirTop" shares a node with interface "WSe2_AirTop"
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_AirTop"
+Adding interface WSe2_AirTop with 251, 251 nodes
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_hBN"
+Adding interface WSe2_hBN with 448, 448 nodes
+number of equations 18697
+Iteration: 0
+  Device: "rfet_curve_el"	RelError: 5.00000e+00	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+00	AbsError: 9.14150e-02
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 9.14150e-02
+    Region: "AirTop"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "SiO2"	RelError: 1.00000e+00	AbsError: 9.85303e-01
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 9.85303e-01
+    Region: "WSe2"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_curve_el"	RelError: 5.13980e-14	AbsError: 3.49971e-15
+    Region: "AirBot"	RelError: 7.64785e-15	AbsError: 5.99831e-16
+      Equation: "PotentialEquation"	RelError: 7.64785e-15	AbsError: 5.99831e-16
+    Region: "AirTop"	RelError: 1.19362e-14	AbsError: 2.83327e-15
+      Equation: "PotentialEquation"	RelError: 1.19362e-14	AbsError: 2.83327e-15
+    Region: "SiO2"	RelError: 1.19379e-14	AbsError: 3.49971e-15
+      Equation: "PotentialEquation"	RelError: 1.19379e-14	AbsError: 3.49971e-15
+    Region: "WSe2"	RelError: 1.19379e-14	AbsError: 2.83327e-15
+      Equation: "PotentialEquation"	RelError: 1.19379e-14	AbsError: 2.83327e-15
+    Region: "hBN"	RelError: 7.93808e-15	AbsError: 2.22282e-15
+      Equation: "PotentialEquation"	RelError: 7.93808e-15	AbsError: 2.22282e-15
+  unit case Source: psi 범위 [+0.0000, +1.0000] V
+number of equations 18697
+Iteration: 0
+  Device: "rfet_curve_el"	RelError: 3.00205e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "AirTop"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "SiO2"	RelError: 2.04914e+07	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 2.04914e+07	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_curve_el"	RelError: 5.72983e-06	AbsError: 3.70755e-15
+    Region: "AirBot"	RelError: 9.16030e-15	AbsError: 2.36818e-15
+      Equation: "PotentialEquation"	RelError: 9.16030e-15	AbsError: 2.36818e-15
+    Region: "AirTop"	RelError: 8.21896e-12	AbsError: 2.68982e-15
+      Equation: "PotentialEquation"	RelError: 8.21896e-12	AbsError: 2.68982e-15
+    Region: "SiO2"	RelError: 3.47948e-08	AbsError: 3.41486e-15
+      Equation: "PotentialEquation"	RelError: 3.47948e-08	AbsError: 3.41486e-15
+    Region: "WSe2"	RelError: 1.10493e-07	AbsError: 3.38735e-15
+      Equation: "PotentialEquation"	RelError: 1.10493e-07	AbsError: 3.38735e-15
+    Region: "hBN"	RelError: 5.58453e-06	AbsError: 3.70755e-15
+      Equation: "PotentialEquation"	RelError: 5.58453e-06	AbsError: 3.70755e-15
+Iteration: 2
+  Device: "rfet_curve_el"	RelError: 1.59798e-15	AbsError: 8.80022e-17
+    Region: "AirBot"	RelError: 1.29936e-16	AbsError: 7.43801e-17
+      Equation: "PotentialEquation"	RelError: 1.29936e-16	AbsError: 7.43801e-17
+    Region: "AirTop"	RelError: 2.00463e-16	AbsError: 6.38722e-17
+      Equation: "PotentialEquation"	RelError: 2.00463e-16	AbsError: 6.38722e-17
+    Region: "SiO2"	RelError: 2.72456e-16	AbsError: 6.46537e-17
+      Equation: "PotentialEquation"	RelError: 2.72456e-16	AbsError: 6.46537e-17
+    Region: "WSe2"	RelError: 4.45318e-16	AbsError: 6.47648e-17
+      Equation: "PotentialEquation"	RelError: 4.45318e-16	AbsError: 6.47648e-17
+    Region: "hBN"	RelError: 5.49807e-16	AbsError: 8.80022e-17
+      Equation: "PotentialEquation"	RelError: 5.49807e-16	AbsError: 8.80022e-17
+  unit case Drain : psi 범위 [+0.0000, +1.0000] V
+number of equations 18697
+Iteration: 0
+  Device: "rfet_curve_el"	RelError: 4.00000e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "AirTop"	RelError: 1.90999e+00	AbsError: 9.20827e-01
+      Equation: "PotentialEquation"	RelError: 1.90999e+00	AbsError: 9.20827e-01
+    Region: "SiO2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 9.99996e+09	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 9.99996e+09	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_curve_el"	RelError: 6.90036e-05	AbsError: 3.81857e-15
+    Region: "AirBot"	RelError: 6.19133e-14	AbsError: 3.32692e-15
+      Equation: "PotentialEquation"	RelError: 6.19133e-14	AbsError: 3.32692e-15
+    Region: "AirTop"	RelError: 8.72439e-15	AbsError: 3.12254e-15
+      Equation: "PotentialEquation"	RelError: 8.72439e-15	AbsError: 3.12254e-15
+    Region: "SiO2"	RelError: 2.69424e-10	AbsError: 3.32692e-15
+      Equation: "PotentialEquation"	RelError: 2.69424e-10	AbsError: 3.32692e-15
+    Region: "WSe2"	RelError: 3.08199e-05	AbsError: 3.28480e-15
+      Equation: "PotentialEquation"	RelError: 3.08199e-05	AbsError: 3.28480e-15
+    Region: "hBN"	RelError: 3.81834e-05	AbsError: 3.81857e-15
+      Equation: "PotentialEquation"	RelError: 3.81834e-05	AbsError: 3.81857e-15
+Iteration: 2
+  Device: "rfet_curve_el"	RelError: 1.67323e-15	AbsError: 8.75891e-17
+    Region: "AirBot"	RelError: 1.88217e-16	AbsError: 7.66341e-17
+      Equation: "PotentialEquation"	RelError: 1.88217e-16	AbsError: 7.66341e-17
+    Region: "AirTop"	RelError: 2.13613e-16	AbsError: 8.75891e-17
+      Equation: "PotentialEquation"	RelError: 2.13613e-16	AbsError: 8.75891e-17
+    Region: "SiO2"	RelError: 3.58224e-16	AbsError: 6.12819e-17
+      Equation: "PotentialEquation"	RelError: 3.58224e-16	AbsError: 6.12819e-17
+    Region: "WSe2"	RelError: 4.85744e-16	AbsError: 7.76985e-17
+      Equation: "PotentialEquation"	RelError: 4.85744e-16	AbsError: 7.76985e-17
+    Region: "hBN"	RelError: 4.27427e-16	AbsError: 7.75231e-17
+      Equation: "PotentialEquation"	RelError: 4.27427e-16	AbsError: 7.75231e-17
+  unit case TG    : psi 범위 [+0.0000, +1.0000] V
+number of equations 18697
+Iteration: 0
+  Device: "rfet_curve_el"	RelError: 1.12515e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 4.58887e+01	AbsError: 5.60016e-01
+      Equation: "PotentialEquation"	RelError: 4.58887e+01	AbsError: 5.60016e-01
+    Region: "AirTop"	RelError: 1.14668e+02	AbsError: 8.95983e-01
+      Equation: "PotentialEquation"	RelError: 1.14668e+02	AbsError: 8.95983e-01
+    Region: "SiO2"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.25151e+09	AbsError: 5.79306e-01
+      Equation: "PotentialEquation"	RelError: 1.25151e+09	AbsError: 5.79306e-01
+    Region: "hBN"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_curve_el"	RelError: 1.36879e-05	AbsError: 2.73168e-15
+    Region: "AirBot"	RelError: 1.66014e-13	AbsError: 2.20126e-15
+      Equation: "PotentialEquation"	RelError: 1.66014e-13	AbsError: 2.20126e-15
+    Region: "AirTop"	RelError: 3.55719e-13	AbsError: 2.54218e-15
+      Equation: "PotentialEquation"	RelError: 3.55719e-13	AbsError: 2.54218e-15
+    Region: "SiO2"	RelError: 4.92184e-15	AbsError: 1.36099e-15
+      Equation: "PotentialEquation"	RelError: 4.92184e-15	AbsError: 1.36099e-15
+    Region: "WSe2"	RelError: 2.40904e-06	AbsError: 2.73168e-15
+      Equation: "PotentialEquation"	RelError: 2.40904e-06	AbsError: 2.73168e-15
+    Region: "hBN"	RelError: 1.12789e-05	AbsError: 1.55837e-15
+      Equation: "PotentialEquation"	RelError: 1.12789e-05	AbsError: 1.55837e-15
+Iteration: 2
+  Device: "rfet_curve_el"	RelError: 1.48540e-15	AbsError: 7.45466e-17
+    Region: "AirBot"	RelError: 1.58183e-16	AbsError: 3.20463e-17
+      Equation: "PotentialEquation"	RelError: 1.58183e-16	AbsError: 3.20463e-17
+    Region: "AirTop"	RelError: 1.84647e-16	AbsError: 3.27784e-17
+      Equation: "PotentialEquation"	RelError: 1.84647e-16	AbsError: 3.27784e-17
+    Region: "SiO2"	RelError: 3.02132e-16	AbsError: 7.45466e-17
+      Equation: "PotentialEquation"	RelError: 3.02132e-16	AbsError: 7.45466e-17
+    Region: "WSe2"	RelError: 4.59180e-16	AbsError: 3.37418e-17
+      Equation: "PotentialEquation"	RelError: 4.59180e-16	AbsError: 3.37418e-17
+    Region: "hBN"	RelError: 3.81262e-16	AbsError: 5.78738e-18
+      Equation: "PotentialEquation"	RelError: 3.81262e-16	AbsError: 5.78738e-18
+  unit case BG    : psi 범위 [+0.0000, +1.0000] V
+  저장: rfet_devsim_curve_el_perp.npz
+-> 종료 코드 0, 소요 4 s
+
+======================================================================
+[STEP 4 FEM curve_el lit]
+$ rfet_fem_semi.py curve_el perp lit
+  V_TG =  -5.0, V_BG =  +0.0: 10 단계, Newton 총 49회
+  V_TG =  -2.5, V_BG =  +0.0: 5 단계, Newton 총 26회
+  V_TG =  +2.5, V_BG =  +0.0: 5 단계, Newton 총 31회
+  V_TG =  +5.0, V_BG =  +0.0: 10 단계, Newton 총 54회
+  V_TG =  +0.0, V_BG = -60.0: 12 단계, Newton 총 69회
+  V_TG =  +0.0, V_BG = -30.0: 6 단계, Newton 총 42회
+  V_TG =  +0.0, V_BG = +30.0: 6 단계, Newton 총 34회
+  V_TG =  +0.0, V_BG = +60.0: 12 단계, Newton 총 58회
+  V_TG =  +0.0, V_BG =  +0.0: 1 단계, Newton 총 0회
+  저장: rfet_semi_curve_el_perp_lit.npz
+-> 종료 코드 0, 소요 28 s
+
+======================================================================
+[mesh line_el]
+$ rfet_mesh_gmsh.py line_el
+mesh 크기 규칙 [nm]: {'s_film': 2.275, 's_edge': 0.5687, 'wedge_angle_bot_deg': 18.138, 'wedge_angle_top_deg': 16.3051, 'n_sampling': 1129}
+Info    : Meshing 1D...
+Info    : [  0%] Meshing curve 1 (Line)
+Info    : [ 10%] Meshing curve 2 (Line)
+Info    : [ 10%] Meshing curve 3 (Line)
+Info    : [ 20%] Meshing curve 4 (Line)
+Info    : [ 20%] Meshing curve 5 (Line)
+Info    : [ 30%] Meshing curve 6 (Line)
+Info    : [ 30%] Meshing curve 7 (Line)
+Info    : [ 30%] Meshing curve 8 (Line)
+Info    : [ 40%] Meshing curve 9 (Line)
+Info    : [ 40%] Meshing curve 10 (Line)
+Info    : [ 50%] Meshing curve 11 (Line)
+Info    : [ 50%] Meshing curve 12 (Line)
+Info    : [ 50%] Meshing curve 13 (Line)
+Info    : [ 60%] Meshing curve 14 (Line)
+Info    : [ 60%] Meshing curve 15 (Line)
+Info    : [ 70%] Meshing curve 16 (Line)
+Info    : [ 70%] Meshing curve 17 (Line)
+Info    : [ 70%] Meshing curve 18 (Line)
+Info    : [ 80%] Meshing curve 19 (Line)
+Info    : [ 80%] Meshing curve 20 (Line)
+Info    : [ 90%] Meshing curve 21 (Line)
+Info    : [ 90%] Meshing curve 22 (Line)
+Info    : [ 90%] Meshing curve 23 (Line)
+Info    : [100%] Meshing curve 24 (Line)
+Info    : [100%] Meshing curve 25 (Line)
+Info    : Done meshing 1D (Wall 0.322823s, CPU 0.296875s)
+Info    : Meshing 2D...
+Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
+Info    : [ 30%] Meshing surface 2 (Plane, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 3 (Plane, Frontal-Delaunay)
+Info    : [ 70%] Meshing surface 4 (Plane, Frontal-Delaunay)
+Info    : [ 90%] Meshing surface 5 (Plane, Frontal-Delaunay)
+Info    : Done meshing 2D (Wall 0.809912s, CPU 0.78125s)
+Info    : 17103 nodes 35708 elements
+Info    : Writing 'rfet_line_el_nm.msh'...
+Info    : Done writing 'rfet_line_el_nm.msh'
+저장: rfet_line_el_nm.msh (nm),  rfet_line_el_cm.msh (cm)
+
+=== mesh 리포트: rfet_line_el_nm.msh ===
+노드 17103개, 삼각형 32849개, 선 요소 2696개
+
+[영역별]  삼각형수  면적[nm^2]   해석면적     상대오차  | 최소각  최대각  둔각수  Delaunay위반edge  경계둔각edge
+  SiO2       10295    750000.00    750000.00   0.00e+00 |  29.79  111.13     206               0             0
+  WSe2       11667     22750.00     22750.00   3.20e-16 |  38.14   94.14     111               0             0
+  AirBot      1290      7694.22      7694.22   0.00e+00 |  15.01  110.30      19               0             4
+  AirTop      2996     23805.78     23805.78   0.00e+00 |  13.82  114.88      78               0             5
+  hBN         6601     75000.00     75000.00   0.00e+00 |  29.75  109.33     119               1             1
+
+[contact / interface 선]  요소수   총길이[nm]   기대길이[nm]
+  C_BG_SiO2                 56     2500.000     2500.000
+  C_Drain_AirBot            25       71.000       71.000
+  C_Drain_SiO2              58     1000.000     1000.000
+  C_Drain_WSe2             443     1000.000     1000.000
+  C_Source_AirTop           19       55.000       55.000
+  C_Source_WSe2            442     1000.000     1000.000
+  C_Source_hBN              67     1000.000     1000.000
+  C_TG_hBN                 103     1100.256     1100.256
+  I_AirTop_hBN              71      500.256      500.256
+  I_SiO2_AirBot             46      216.739      216.739
+  I_SiO2_WSe2              570     1283.261     1283.261
+  I_WSe2_AirBot            109      228.071      228.071
+  I_WSe2_AirTop            240      511.333      511.333
+  I_WSe2_hBN               447     1000.000     1000.000
+
+[참고] edge 길이: 최소 0.168 nm, 최대 62.86 nm;  전체 최소각 13.82 deg, 전체 최대각 114.88 deg
+[참고] 'Delaunay위반edge'와 '경계둔각edge'는 FAIL이 아니라 진단 값입니다 (허용 범위는 STEP 3에서 Poisson 결과의 mesh 의존성을 보며 정합니다).
+
+판정: (1)(2) 모두 통과
+-> 종료 코드 0, 소요 2 s
+
+======================================================================
+[DEVSIM load line_el]
+$ rfet_devsim_load.py line_el
+Physical group name C_BG_SiO2 has 0 Tetrahedra.
+Physical group name C_BG_SiO2 has 0 Triangles.
+Physical group name C_BG_SiO2 has 56 Lines.
+Physical group name C_BG_SiO2 has 57 Points.
+Physical group name C_Drain_AirBot has 0 Tetrahedra.
+Physical group name C_Drain_AirBot has 0 Triangles.
+Physical group name C_Drain_AirBot has 25 Lines.
+Physical group name C_Drain_AirBot has 26 Points.
+Physical group name C_Drain_SiO2 has 0 Tetrahedra.
+Physical group name C_Drain_SiO2 has 0 Triangles.
+Physical group name C_Drain_SiO2 has 58 Lines.
+Physical group name C_Drain_SiO2 has 59 Points.
+Physical group name C_Drain_WSe2 has 0 Tetrahedra.
+Physical group name C_Drain_WSe2 has 0 Triangles.
+Physical group name C_Drain_WSe2 has 443 Lines.
+Physical group name C_Drain_WSe2 has 444 Points.
+Physical group name C_Source_AirTop has 0 Tetrahedra.
+Physical group name C_Source_AirTop has 0 Triangles.
+Physical group name C_Source_AirTop has 19 Lines.
+Physical group name C_Source_AirTop has 20 Points.
+Physical group name C_Source_WSe2 has 0 Tetrahedra.
+Physical group name C_Source_WSe2 has 0 Triangles.
+Physical group name C_Source_WSe2 has 442 Lines.
+Physical group name C_Source_WSe2 has 443 Points.
+Physical group name C_Source_hBN has 0 Tetrahedra.
+Physical group name C_Source_hBN has 0 Triangles.
+Physical group name C_Source_hBN has 67 Lines.
+Physical group name C_Source_hBN has 68 Points.
+Physical group name C_TG_hBN has 0 Tetrahedra.
+Physical group name C_TG_hBN has 0 Triangles.
+Physical group name C_TG_hBN has 103 Lines.
+Physical group name C_TG_hBN has 104 Points.
+Physical group name I_AirTop_hBN has 0 Tetrahedra.
+Physical group name I_AirTop_hBN has 0 Triangles.
+Physical group name I_AirTop_hBN has 71 Lines.
+Physical group name I_AirTop_hBN has 72 Points.
+Physical group name I_SiO2_AirBot has 0 Tetrahedra.
+Physical group name I_SiO2_AirBot has 0 Triangles.
+Physical group name I_SiO2_AirBot has 46 Lines.
+Physical group name I_SiO2_AirBot has 47 Points.
+Physical group name I_SiO2_WSe2 has 0 Tetrahedra.
+Physical group name I_SiO2_WSe2 has 0 Triangles.
+Physical group name I_SiO2_WSe2 has 570 Lines.
+Physical group name I_SiO2_WSe2 has 571 Points.
+Physical group name I_WSe2_AirBot has 0 Tetrahedra.
+Physical group name I_WSe2_AirBot has 0 Triangles.
+Physical group name I_WSe2_AirBot has 109 Lines.
+Physical group name I_WSe2_AirBot has 110 Points.
+Physical group name I_WSe2_AirTop has 0 Tetrahedra.
+Physical group name I_WSe2_AirTop has 0 Triangles.
+Physical group name I_WSe2_AirTop has 240 Lines.
+Physical group name I_WSe2_AirTop has 241 Points.
+Physical group name I_WSe2_hBN has 0 Tetrahedra.
+Physical group name I_WSe2_hBN has 0 Triangles.
+Physical group name I_WSe2_hBN has 447 Lines.
+Physical group name I_WSe2_hBN has 448 Points.
+Physical group name R_AirBot has 0 Tetrahedra.
+Physical group name R_AirBot has 1290 Triangles.
+Physical group name R_AirBot has 2025 Lines.
+Physical group name R_AirBot has 736 Points.
+Physical group name R_AirTop has 0 Tetrahedra.
+Physical group name R_AirTop has 2996 Triangles.
+Physical group name R_AirTop has 4659 Lines.
+Physical group name R_AirTop has 1664 Points.
+Physical group name R_SiO2 has 0 Tetrahedra.
+Physical group name R_SiO2 has 10295 Triangles.
+Physical group name R_SiO2 has 15819 Lines.
+Physical group name R_SiO2 has 5525 Points.
+Physical group name R_WSe2 has 0 Tetrahedra.
+Physical group name R_WSe2 has 11667 Triangles.
+Physical group name R_WSe2 has 18630 Lines.
+Physical group name R_WSe2 has 6964 Points.
+Physical group name R_hBN has 0 Tetrahedra.
+Physical group name R_hBN has 6601 Triangles.
+Physical group name R_hBN has 10301 Lines.
+Physical group name R_hBN has 3701 Points.
+Device rfet_line_el has 17103 coordinates with max index 17103
+Region AirBot has 736 nodes.
+Region AirTop has 1664 nodes.
+Region SiO2 has 5525 nodes.
+Region WSe2 has 6964 nodes.
+Region hBN has 3701 nodes.
+Contact BG_SiO2 in region SiO2 with 57 nodes
+Contact Drain_AirBot in region AirBot with 26 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_SiO2"
+Contact Drain_SiO2 in region SiO2 with 59 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_WSe2"
+Contact Drain_WSe2 in region WSe2 with 444 nodes
+Contact Source_AirTop in region AirTop with 20 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_WSe2"
+Contact Source_WSe2 in region WSe2 with 443 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_hBN"
+Contact Source_hBN in region hBN with 68 nodes
+Contact TG_hBN in region hBN with 104 nodes
+Warning, contact "Source_AirTop" shares a node with interface "AirTop_hBN"
+Adding interface AirTop_hBN with 72, 72 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "SiO2_AirBot"
+Adding interface SiO2_AirBot with 47, 47 nodes
+Warning, interface "SiO2_AirBot" shares a node with interface "SiO2_WSe2"
+Adding interface SiO2_WSe2 with 571, 571 nodes
+Warning, contact "Drain_WSe2" shares a node with interface "WSe2_AirBot"
+Warning, interface "SiO2_AirBot" shares a node with interface "WSe2_AirBot"
+Adding interface WSe2_AirBot with 110, 110 nodes
+Warning, contact "Source_WSe2" shares a node with interface "WSe2_AirTop"
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_AirTop"
+Adding interface WSe2_AirTop with 241, 241 nodes
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_hBN"
+Adding interface WSe2_hBN with 448, 448 nodes
+=== DEVSIM에 불러온 구조 확인 ===
+  [OK  ] region 목록 일치  차이: set()
+  [OK  ] contact 목록 일치  차이: set()
+  [OK  ] interface 목록 일치  차이: set()
+  [OK  ] contact BG_SiO2 는 region SiO2 에 속함  (실제 ['SiO2'])
+  [OK  ] contact Drain_AirBot 는 region AirBot 에 속함  (실제 ['AirBot'])
+  [OK  ] contact Drain_SiO2 는 region SiO2 에 속함  (실제 ['SiO2'])
+  [OK  ] contact Drain_WSe2 는 region WSe2 에 속함  (실제 ['WSe2'])
+  [OK  ] contact Source_AirTop 는 region AirTop 에 속함  (실제 ['AirTop'])
+  [OK  ] contact Source_WSe2 는 region WSe2 에 속함  (실제 ['WSe2'])
+  [OK  ] contact Source_hBN 는 region hBN 에 속함  (실제 ['hBN'])
+  [OK  ] contact TG_hBN 는 region hBN 에 속함  (실제 ['hBN'])
+
+  region   노드수   x범위[nm]              y범위[nm]
+  SiO2      5525   [-1000.000,  1500.000]   [-300.000,    0.000]
+  [OK  ] SiO2 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[-300.0,0.0])
+  WSe2      6964   [-1000.000,  1500.000]   [   0.000,   80.100]
+  [OK  ] WSe2 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[0.0,80.1])
+  AirBot     736   [  283.261,   500.000]   [   0.000,   71.000]
+  [OK  ] AirBot 좌표 범위 = geometry  (기대 x[283.3,500.0] y[0.0,71.0])
+  AirTop    1664   [    0.000,   500.000]   [   9.100,   80.100]
+  [OK  ] AirTop 좌표 범위 = geometry  (기대 x[0.0,500.0] y[9.1,80.1])
+  hBN       3701   [-1000.000,  1500.000]   [  64.100,  110.100]
+  [OK  ] hBN 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[64.1,110.1])
+mesh 저장 (vtk): rfet_line_el_mesh_check*
+
+전체 판정: 모두 통과
+-> 종료 코드 0, 소요 1 s
+
+======================================================================
+[STEP 3 FEM line_el]
+$ rfet_fem_reference.py line_el perp
+  [line_el/perp] unit case Source: psi 범위 [+0.0000, +1.0000] V
+  [line_el/perp] unit case Drain : psi 범위 [+0.0000, +1.0000] V
+  [line_el/perp] unit case TG    : psi 범위 [+0.0000, +1.0000] V
+  [line_el/perp] unit case BG    : psi 범위 [+0.0000, +1.0000] V
+  저장: rfet_fem_line_el_perp.npz
+-> 종료 코드 0, 소요 1 s
+
+======================================================================
+[STEP 3 DEVSIM line_el]
+$ rfet_poisson_devsim.py line_el perp
+=== DEVSIM Poisson: config=line_el, ε variant=perp (스칼라) ===
+Physical group name C_BG_SiO2 has 0 Tetrahedra.
+Physical group name C_BG_SiO2 has 0 Triangles.
+Physical group name C_BG_SiO2 has 56 Lines.
+Physical group name C_BG_SiO2 has 57 Points.
+Physical group name C_Drain_AirBot has 0 Tetrahedra.
+Physical group name C_Drain_AirBot has 0 Triangles.
+Physical group name C_Drain_AirBot has 25 Lines.
+Physical group name C_Drain_AirBot has 26 Points.
+Physical group name C_Drain_SiO2 has 0 Tetrahedra.
+Physical group name C_Drain_SiO2 has 0 Triangles.
+Physical group name C_Drain_SiO2 has 58 Lines.
+Physical group name C_Drain_SiO2 has 59 Points.
+Physical group name C_Drain_WSe2 has 0 Tetrahedra.
+Physical group name C_Drain_WSe2 has 0 Triangles.
+Physical group name C_Drain_WSe2 has 443 Lines.
+Physical group name C_Drain_WSe2 has 444 Points.
+Physical group name C_Source_AirTop has 0 Tetrahedra.
+Physical group name C_Source_AirTop has 0 Triangles.
+Physical group name C_Source_AirTop has 19 Lines.
+Physical group name C_Source_AirTop has 20 Points.
+Physical group name C_Source_WSe2 has 0 Tetrahedra.
+Physical group name C_Source_WSe2 has 0 Triangles.
+Physical group name C_Source_WSe2 has 442 Lines.
+Physical group name C_Source_WSe2 has 443 Points.
+Physical group name C_Source_hBN has 0 Tetrahedra.
+Physical group name C_Source_hBN has 0 Triangles.
+Physical group name C_Source_hBN has 67 Lines.
+Physical group name C_Source_hBN has 68 Points.
+Physical group name C_TG_hBN has 0 Tetrahedra.
+Physical group name C_TG_hBN has 0 Triangles.
+Physical group name C_TG_hBN has 103 Lines.
+Physical group name C_TG_hBN has 104 Points.
+Physical group name I_AirTop_hBN has 0 Tetrahedra.
+Physical group name I_AirTop_hBN has 0 Triangles.
+Physical group name I_AirTop_hBN has 71 Lines.
+Physical group name I_AirTop_hBN has 72 Points.
+Physical group name I_SiO2_AirBot has 0 Tetrahedra.
+Physical group name I_SiO2_AirBot has 0 Triangles.
+Physical group name I_SiO2_AirBot has 46 Lines.
+Physical group name I_SiO2_AirBot has 47 Points.
+Physical group name I_SiO2_WSe2 has 0 Tetrahedra.
+Physical group name I_SiO2_WSe2 has 0 Triangles.
+Physical group name I_SiO2_WSe2 has 570 Lines.
+Physical group name I_SiO2_WSe2 has 571 Points.
+Physical group name I_WSe2_AirBot has 0 Tetrahedra.
+Physical group name I_WSe2_AirBot has 0 Triangles.
+Physical group name I_WSe2_AirBot has 109 Lines.
+Physical group name I_WSe2_AirBot has 110 Points.
+Physical group name I_WSe2_AirTop has 0 Tetrahedra.
+Physical group name I_WSe2_AirTop has 0 Triangles.
+Physical group name I_WSe2_AirTop has 240 Lines.
+Physical group name I_WSe2_AirTop has 241 Points.
+Physical group name I_WSe2_hBN has 0 Tetrahedra.
+Physical group name I_WSe2_hBN has 0 Triangles.
+Physical group name I_WSe2_hBN has 447 Lines.
+Physical group name I_WSe2_hBN has 448 Points.
+Physical group name R_AirBot has 0 Tetrahedra.
+Physical group name R_AirBot has 1290 Triangles.
+Physical group name R_AirBot has 2025 Lines.
+Physical group name R_AirBot has 736 Points.
+Physical group name R_AirTop has 0 Tetrahedra.
+Physical group name R_AirTop has 2996 Triangles.
+Physical group name R_AirTop has 4659 Lines.
+Physical group name R_AirTop has 1664 Points.
+Physical group name R_SiO2 has 0 Tetrahedra.
+Physical group name R_SiO2 has 10295 Triangles.
+Physical group name R_SiO2 has 15819 Lines.
+Physical group name R_SiO2 has 5525 Points.
+Physical group name R_WSe2 has 0 Tetrahedra.
+Physical group name R_WSe2 has 11667 Triangles.
+Physical group name R_WSe2 has 18630 Lines.
+Physical group name R_WSe2 has 6964 Points.
+Physical group name R_hBN has 0 Tetrahedra.
+Physical group name R_hBN has 6601 Triangles.
+Physical group name R_hBN has 10301 Lines.
+Physical group name R_hBN has 3701 Points.
+Device rfet_line_el has 17103 coordinates with max index 17103
+Region AirBot has 736 nodes.
+Region AirTop has 1664 nodes.
+Region SiO2 has 5525 nodes.
+Region WSe2 has 6964 nodes.
+Region hBN has 3701 nodes.
+Contact BG_SiO2 in region SiO2 with 57 nodes
+Contact Drain_AirBot in region AirBot with 26 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_SiO2"
+Contact Drain_SiO2 in region SiO2 with 59 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_WSe2"
+Contact Drain_WSe2 in region WSe2 with 444 nodes
+Contact Source_AirTop in region AirTop with 20 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_WSe2"
+Contact Source_WSe2 in region WSe2 with 443 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_hBN"
+Contact Source_hBN in region hBN with 68 nodes
+Contact TG_hBN in region hBN with 104 nodes
+Warning, contact "Source_hBN" shares a node with interface "AirTop_hBN"
+Adding interface AirTop_hBN with 72, 72 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "SiO2_AirBot"
+Adding interface SiO2_AirBot with 47, 47 nodes
+Warning, interface "SiO2_AirBot" shares a node with interface "SiO2_WSe2"
+Adding interface SiO2_WSe2 with 571, 571 nodes
+Warning, contact "Drain_WSe2" shares a node with interface "WSe2_AirBot"
+Warning, interface "SiO2_AirBot" shares a node with interface "WSe2_AirBot"
+Adding interface WSe2_AirBot with 110, 110 nodes
+Warning, contact "Source_AirTop" shares a node with interface "WSe2_AirTop"
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_AirTop"
+Adding interface WSe2_AirTop with 241, 241 nodes
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_hBN"
+Adding interface WSe2_hBN with 448, 448 nodes
+number of equations 18590
+Iteration: 0
+  Device: "rfet_line_el"	RelError: 5.00000e+00	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+00	AbsError: 9.11179e-02
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 9.11179e-02
+    Region: "AirTop"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "SiO2"	RelError: 1.00000e+00	AbsError: 9.85302e-01
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 9.85302e-01
+    Region: "WSe2"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_line_el"	RelError: 2.04808e-13	AbsError: 5.12876e-15
+    Region: "AirBot"	RelError: 4.30238e-14	AbsError: 2.99473e-15
+      Equation: "PotentialEquation"	RelError: 4.30238e-14	AbsError: 2.99473e-15
+    Region: "AirTop"	RelError: 4.33143e-14	AbsError: 4.67814e-15
+      Equation: "PotentialEquation"	RelError: 4.33143e-14	AbsError: 4.67814e-15
+    Region: "SiO2"	RelError: 3.38086e-14	AbsError: 4.60344e-15
+      Equation: "PotentialEquation"	RelError: 3.38086e-14	AbsError: 4.60344e-15
+    Region: "WSe2"	RelError: 4.30238e-14	AbsError: 5.12876e-15
+      Equation: "PotentialEquation"	RelError: 4.30238e-14	AbsError: 5.12876e-15
+    Region: "hBN"	RelError: 4.16372e-14	AbsError: 1.44156e-15
+      Equation: "PotentialEquation"	RelError: 4.16372e-14	AbsError: 1.44156e-15
+  unit case Source: psi 범위 [+0.0000, +1.0000] V
+number of equations 18590
+Iteration: 0
+  Device: "rfet_line_el"	RelError: 3.00204e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "AirTop"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "SiO2"	RelError: 2.04018e+07	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 2.04018e+07	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_line_el"	RelError: 6.79151e-06	AbsError: 5.27715e-15
+    Region: "AirBot"	RelError: 1.44783e-14	AbsError: 4.84997e-15
+      Equation: "PotentialEquation"	RelError: 1.44783e-14	AbsError: 4.84997e-15
+    Region: "AirTop"	RelError: 1.63858e-11	AbsError: 4.97502e-15
+      Equation: "PotentialEquation"	RelError: 1.63858e-11	AbsError: 4.97502e-15
+    Region: "SiO2"	RelError: 2.22188e-08	AbsError: 4.95757e-15
+      Equation: "PotentialEquation"	RelError: 2.22188e-08	AbsError: 4.95757e-15
+    Region: "WSe2"	RelError: 7.38888e-08	AbsError: 5.27715e-15
+      Equation: "PotentialEquation"	RelError: 7.38888e-08	AbsError: 5.27715e-15
+    Region: "hBN"	RelError: 6.69538e-06	AbsError: 4.06188e-15
+      Equation: "PotentialEquation"	RelError: 6.69538e-06	AbsError: 4.06188e-15
+Iteration: 2
+  Device: "rfet_line_el"	RelError: 1.84177e-15	AbsError: 7.71324e-17
+    Region: "AirBot"	RelError: 1.86605e-16	AbsError: 6.10978e-17
+      Equation: "PotentialEquation"	RelError: 1.86605e-16	AbsError: 6.10978e-17
+    Region: "AirTop"	RelError: 3.92261e-16	AbsError: 5.14597e-17
+      Equation: "PotentialEquation"	RelError: 3.92261e-16	AbsError: 5.14597e-17
+    Region: "SiO2"	RelError: 3.90528e-16	AbsError: 7.70672e-17
+      Equation: "PotentialEquation"	RelError: 3.90528e-16	AbsError: 7.70672e-17
+    Region: "WSe2"	RelError: 4.80120e-16	AbsError: 6.53937e-17
+      Equation: "PotentialEquation"	RelError: 4.80120e-16	AbsError: 6.53937e-17
+    Region: "hBN"	RelError: 3.92261e-16	AbsError: 7.71324e-17
+      Equation: "PotentialEquation"	RelError: 3.92261e-16	AbsError: 7.71324e-17
+  unit case Drain : psi 범위 [+0.0000, +1.0000] V
+number of equations 18590
+Iteration: 0
+  Device: "rfet_line_el"	RelError: 3.99999e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "AirTop"	RelError: 2.38576e+00	AbsError: 9.20735e-01
+      Equation: "PotentialEquation"	RelError: 2.38576e+00	AbsError: 9.20735e-01
+    Region: "SiO2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 9.99991e+09	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 9.99991e+09	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_line_el"	RelError: 5.71168e-05	AbsError: 9.28766e-15
+    Region: "AirBot"	RelError: 8.51431e-14	AbsError: 8.26683e-15
+      Equation: "PotentialEquation"	RelError: 8.51431e-14	AbsError: 8.26683e-15
+    Region: "AirTop"	RelError: 2.28564e-14	AbsError: 9.24300e-15
+      Equation: "PotentialEquation"	RelError: 2.28564e-14	AbsError: 9.24300e-15
+    Region: "SiO2"	RelError: 3.87064e-10	AbsError: 9.13639e-15
+      Equation: "PotentialEquation"	RelError: 3.87064e-10	AbsError: 9.13639e-15
+    Region: "WSe2"	RelError: 2.65804e-05	AbsError: 9.28766e-15
+      Equation: "PotentialEquation"	RelError: 2.65804e-05	AbsError: 9.28766e-15
+    Region: "hBN"	RelError: 3.05360e-05	AbsError: 3.95086e-15
+      Equation: "PotentialEquation"	RelError: 3.05360e-05	AbsError: 3.95086e-15
+Iteration: 2
+  Device: "rfet_line_el"	RelError: 1.51442e-15	AbsError: 7.25122e-17
+    Region: "AirBot"	RelError: 2.28623e-16	AbsError: 6.32986e-17
+      Equation: "PotentialEquation"	RelError: 2.28623e-16	AbsError: 6.32986e-17
+    Region: "AirTop"	RelError: 1.29500e-16	AbsError: 7.04303e-17
+      Equation: "PotentialEquation"	RelError: 1.29500e-16	AbsError: 7.04303e-17
+    Region: "SiO2"	RelError: 3.35670e-16	AbsError: 3.69359e-17
+      Equation: "PotentialEquation"	RelError: 3.35670e-16	AbsError: 3.69359e-17
+    Region: "WSe2"	RelError: 4.33562e-16	AbsError: 6.32636e-17
+      Equation: "PotentialEquation"	RelError: 4.33562e-16	AbsError: 6.32636e-17
+    Region: "hBN"	RelError: 3.87066e-16	AbsError: 7.25122e-17
+      Equation: "PotentialEquation"	RelError: 3.87066e-16	AbsError: 7.25122e-17
+  unit case TG    : psi 범위 [+0.0000, +1.0000] V
+number of equations 18590
+Iteration: 0
+  Device: "rfet_line_el"	RelError: 1.12517e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 3.09179e+01	AbsError: 4.69965e-01
+      Equation: "PotentialEquation"	RelError: 3.09179e+01	AbsError: 4.69965e-01
+    Region: "AirTop"	RelError: 1.13970e+02	AbsError: 8.94280e-01
+      Equation: "PotentialEquation"	RelError: 1.13970e+02	AbsError: 8.94280e-01
+    Region: "SiO2"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.25170e+09	AbsError: 4.86400e-01
+      Equation: "PotentialEquation"	RelError: 1.25170e+09	AbsError: 4.86400e-01
+    Region: "hBN"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_line_el"	RelError: 1.18146e-05	AbsError: 6.74887e-15
+    Region: "AirBot"	RelError: 1.70330e-13	AbsError: 6.50555e-15
+      Equation: "PotentialEquation"	RelError: 1.70330e-13	AbsError: 6.50555e-15
+    Region: "AirTop"	RelError: 3.02785e-13	AbsError: 6.60164e-15
+      Equation: "PotentialEquation"	RelError: 3.02785e-13	AbsError: 6.60164e-15
+    Region: "SiO2"	RelError: 6.37223e-15	AbsError: 2.23028e-15
+      Equation: "PotentialEquation"	RelError: 6.37223e-15	AbsError: 2.23028e-15
+    Region: "WSe2"	RelError: 1.73790e-06	AbsError: 6.74887e-15
+      Equation: "PotentialEquation"	RelError: 1.73790e-06	AbsError: 6.74887e-15
+    Region: "hBN"	RelError: 1.00767e-05	AbsError: 2.05389e-15
+      Equation: "PotentialEquation"	RelError: 1.00767e-05	AbsError: 2.05389e-15
+Iteration: 2
+  Device: "rfet_line_el"	RelError: 1.92137e-15	AbsError: 7.97158e-17
+    Region: "AirBot"	RelError: 3.28372e-16	AbsError: 4.36294e-17
+      Equation: "PotentialEquation"	RelError: 3.28372e-16	AbsError: 4.36294e-17
+    Region: "AirTop"	RelError: 2.56956e-16	AbsError: 4.09254e-17
+      Equation: "PotentialEquation"	RelError: 2.56956e-16	AbsError: 4.09254e-17
+    Region: "SiO2"	RelError: 3.69124e-16	AbsError: 7.97158e-17
+      Equation: "PotentialEquation"	RelError: 3.69124e-16	AbsError: 7.97158e-17
+    Region: "WSe2"	RelError: 3.63806e-16	AbsError: 4.09956e-17
+      Equation: "PotentialEquation"	RelError: 3.63806e-16	AbsError: 4.09956e-17
+    Region: "hBN"	RelError: 6.03117e-16	AbsError: 7.21803e-18
+      Equation: "PotentialEquation"	RelError: 6.03117e-16	AbsError: 7.21803e-18
+  unit case BG    : psi 범위 [+0.0000, +1.0000] V
+  저장: rfet_devsim_line_el_perp.npz
+-> 종료 코드 0, 소요 3 s
+
+======================================================================
+[STEP 4 FEM line_el lit]
+$ rfet_fem_semi.py line_el perp lit
+  V_TG =  -5.0, V_BG =  +0.0: 10 단계, Newton 총 55회
+  V_TG =  -2.5, V_BG =  +0.0: 5 단계, Newton 총 30회
+  V_TG =  +2.5, V_BG =  +0.0: 5 단계, Newton 총 30회
+  V_TG =  +5.0, V_BG =  +0.0: 10 단계, Newton 총 53회
+  V_TG =  +0.0, V_BG = -60.0: 12 단계, Newton 총 69회
+  V_TG =  +0.0, V_BG = -30.0: 6 단계, Newton 총 42회
+  V_TG =  +0.0, V_BG = +30.0: 6 단계, Newton 총 35회
+  V_TG =  +0.0, V_BG = +60.0: 12 단계, Newton 총 59회
+  V_TG =  +0.0, V_BG =  +0.0: 1 단계, Newton 총 0회
+  저장: rfet_semi_line_el_perp_lit.npz
+-> 종료 코드 0, 소요 28 s
+
+======================================================================
+[mesh curve70]
+$ rfet_mesh_gmsh.py curve70
+mesh 크기 규칙 [nm]: {'s_film': 2.275, 's_edge': 0.5687, 'wedge_angle_bot_deg': 45.4063, 'wedge_angle_top_deg': 43.5735, 'n_sampling': 1258}
+Info    : Meshing 1D...
+Info    : [  0%] Meshing curve 1 (Line)
+Info    : [ 10%] Meshing curve 2 (Line)
+Info    : [ 10%] Meshing curve 3 (Line)
+Info    : [ 10%] Meshing curve 4 (Line)
+Info    : [ 10%] Meshing curve 5 (Line)
+Info    : [ 10%] Meshing curve 6 (Line)
+Info    : [ 20%] Meshing curve 7 (Line)
+Info    : [ 20%] Meshing curve 8 (Line)
+Info    : [ 20%] Meshing curve 9 (Line)
+Info    : [ 20%] Meshing curve 10 (Line)
+Info    : [ 20%] Meshing curve 11 (Line)
+Info    : [ 30%] Meshing curve 12 (Line)
+Info    : [ 30%] Meshing curve 13 (Line)
+Info    : [ 30%] Meshing curve 14 (Line)
+Info    : [ 30%] Meshing curve 15 (Line)
+Info    : [ 30%] Meshing curve 16 (Line)
+Info    : [ 30%] Meshing curve 17 (Line)
+Info    : [ 40%] Meshing curve 18 (Line)
+Info    : [ 40%] Meshing curve 19 (Line)
+Info    : [ 40%] Meshing curve 20 (Line)
+Info    : [ 40%] Meshing curve 21 (Line)
+Info    : [ 40%] Meshing curve 22 (Line)
+Info    : [ 50%] Meshing curve 23 (Line)
+Info    : [ 50%] Meshing curve 24 (Line)
+Info    : [ 50%] Meshing curve 25 (Line)
+Info    : [ 50%] Meshing curve 26 (Line)
+Info    : [ 50%] Meshing curve 27 (Line)
+Info    : [ 50%] Meshing curve 28 (Line)
+Info    : [ 60%] Meshing curve 29 (Line)
+Info    : [ 60%] Meshing curve 30 (Line)
+Info    : [ 60%] Meshing curve 31 (Line)
+Info    : [ 60%] Meshing curve 32 (Line)
+Info    : [ 60%] Meshing curve 33 (Line)
+Info    : [ 70%] Meshing curve 34 (Line)
+Info    : [ 70%] Meshing curve 35 (Line)
+Info    : [ 70%] Meshing curve 36 (Line)
+Info    : [ 70%] Meshing curve 37 (Line)
+Info    : [ 70%] Meshing curve 38 (Line)
+Info    : [ 70%] Meshing curve 39 (Line)
+Info    : [ 80%] Meshing curve 40 (Line)
+Info    : [ 80%] Meshing curve 41 (Line)
+Info    : [ 80%] Meshing curve 42 (Line)
+Info    : [ 80%] Meshing curve 43 (Line)
+Info    : [ 80%] Meshing curve 44 (Line)
+Info    : [ 90%] Meshing curve 45 (Line)
+Info    : [ 90%] Meshing curve 46 (Line)
+Info    : [ 90%] Meshing curve 47 (Line)
+Info    : [ 90%] Meshing curve 48 (Line)
+Info    : [ 90%] Meshing curve 49 (Line)
+Info    : [ 90%] Meshing curve 50 (Line)
+Info    : [100%] Meshing curve 51 (Line)
+Info    : [100%] Meshing curve 52 (Line)
+Info    : [100%] Meshing curve 53 (Line)
+Info    : [100%] Meshing curve 54 (Line)
+Info    : [100%] Meshing curve 55 (Line)
+Info    : Done meshing 1D (Wall 0.463308s, CPU 0.390625s)
+Info    : Meshing 2D...
+Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
+Info    : [ 30%] Meshing surface 2 (Plane, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 3 (Plane, Frontal-Delaunay)
+Info    : [ 70%] Meshing surface 4 (Plane, Frontal-Delaunay)
+Info    : [ 90%] Meshing surface 5 (Plane, Frontal-Delaunay)
+Info    : Done meshing 2D (Wall 0.769189s, CPU 0.71875s)
+Info    : 15961 nodes 33427 elements
+Info    : Writing 'rfet_curve70_nm.msh'...
+Info    : Done writing 'rfet_curve70_nm.msh'
+저장: rfet_curve70_nm.msh (nm),  rfet_curve70_cm.msh (cm)
+
+=== mesh 리포트: rfet_curve70_nm.msh ===
+노드 15961개, 삼각형 30608개, 선 요소 2626개
+
+[영역별]  삼각형수  면적[nm^2]   해석면적     상대오차  | 최소각  최대각  둔각수  Delaunay위반edge  경계둔각edge
+  SiO2        9579    750000.00    750000.00   0.00e+00 |  29.80  113.39     265               5             0
+  WSe2       11579     22750.00     22750.00   3.20e-16 |  35.34   99.22     522               0             0
+  AirBot       587      2485.00      2485.00   0.00e+00 |   7.90  107.54      13               0             3
+  AirTop      3076     29015.00     29015.00   1.25e-16 |   6.15  112.60      80               0             0
+  hBN         5787     75000.00     75000.00   0.00e+00 |  31.86  108.97     149               0             1
+
+[contact / interface 선]  요소수   총길이[nm]   기대길이[nm]
+  C_BG_SiO2                 50     2500.000     2500.000
+  C_Drain_AirBot            21       71.000       71.000
+  C_Drain_SiO2              54     1000.000     1000.000
+  C_Drain_WSe2             442     1000.000     1000.000
+  C_Source_AirTop           19       55.000       55.000
+  C_Source_WSe2            442     1000.000     1000.000
+  C_Source_hBN              67     1000.000     1000.000
+  C_TG_hBN                  75     1100.256     1100.256
+  I_AirTop_hBN              48      500.256      500.256
+  I_SiO2_AirBot             23       70.000       70.000
+  I_SiO2_WSe2              631     1430.000     1430.000
+  I_WSe2_AirBot             59      102.662      102.662
+  I_WSe2_AirTop            253      532.662      532.662
+  I_WSe2_hBN               442     1000.000     1000.000
+
+[참고] edge 길이: 최소 0.097 nm, 최대 63.03 nm;  전체 최소각 6.15 deg, 전체 최대각 113.39 deg
+[참고] 'Delaunay위반edge'와 '경계둔각edge'는 FAIL이 아니라 진단 값입니다 (허용 범위는 STEP 3에서 Poisson 결과의 mesh 의존성을 보며 정합니다).
+
+판정: (1)(2) 모두 통과
+-> 종료 코드 0, 소요 3 s
+
+======================================================================
+[DEVSIM load curve70]
+$ rfet_devsim_load.py curve70
+Physical group name C_BG_SiO2 has 0 Tetrahedra.
+Physical group name C_BG_SiO2 has 0 Triangles.
+Physical group name C_BG_SiO2 has 50 Lines.
+Physical group name C_BG_SiO2 has 51 Points.
+Physical group name C_Drain_AirBot has 0 Tetrahedra.
+Physical group name C_Drain_AirBot has 0 Triangles.
+Physical group name C_Drain_AirBot has 21 Lines.
+Physical group name C_Drain_AirBot has 22 Points.
+Physical group name C_Drain_SiO2 has 0 Tetrahedra.
+Physical group name C_Drain_SiO2 has 0 Triangles.
+Physical group name C_Drain_SiO2 has 54 Lines.
+Physical group name C_Drain_SiO2 has 55 Points.
+Physical group name C_Drain_WSe2 has 0 Tetrahedra.
+Physical group name C_Drain_WSe2 has 0 Triangles.
+Physical group name C_Drain_WSe2 has 442 Lines.
+Physical group name C_Drain_WSe2 has 443 Points.
+Physical group name C_Source_AirTop has 0 Tetrahedra.
+Physical group name C_Source_AirTop has 0 Triangles.
+Physical group name C_Source_AirTop has 19 Lines.
+Physical group name C_Source_AirTop has 20 Points.
+Physical group name C_Source_WSe2 has 0 Tetrahedra.
+Physical group name C_Source_WSe2 has 0 Triangles.
+Physical group name C_Source_WSe2 has 442 Lines.
+Physical group name C_Source_WSe2 has 443 Points.
+Physical group name C_Source_hBN has 0 Tetrahedra.
+Physical group name C_Source_hBN has 0 Triangles.
+Physical group name C_Source_hBN has 67 Lines.
+Physical group name C_Source_hBN has 68 Points.
+Physical group name C_TG_hBN has 0 Tetrahedra.
+Physical group name C_TG_hBN has 0 Triangles.
+Physical group name C_TG_hBN has 75 Lines.
+Physical group name C_TG_hBN has 76 Points.
+Physical group name I_AirTop_hBN has 0 Tetrahedra.
+Physical group name I_AirTop_hBN has 0 Triangles.
+Physical group name I_AirTop_hBN has 48 Lines.
+Physical group name I_AirTop_hBN has 49 Points.
+Physical group name I_SiO2_AirBot has 0 Tetrahedra.
+Physical group name I_SiO2_AirBot has 0 Triangles.
+Physical group name I_SiO2_AirBot has 23 Lines.
+Physical group name I_SiO2_AirBot has 24 Points.
+Physical group name I_SiO2_WSe2 has 0 Tetrahedra.
+Physical group name I_SiO2_WSe2 has 0 Triangles.
+Physical group name I_SiO2_WSe2 has 631 Lines.
+Physical group name I_SiO2_WSe2 has 632 Points.
+Physical group name I_WSe2_AirBot has 0 Tetrahedra.
+Physical group name I_WSe2_AirBot has 0 Triangles.
+Physical group name I_WSe2_AirBot has 59 Lines.
+Physical group name I_WSe2_AirBot has 60 Points.
+Physical group name I_WSe2_AirTop has 0 Tetrahedra.
+Physical group name I_WSe2_AirTop has 0 Triangles.
+Physical group name I_WSe2_AirTop has 253 Lines.
+Physical group name I_WSe2_AirTop has 254 Points.
+Physical group name I_WSe2_hBN has 0 Tetrahedra.
+Physical group name I_WSe2_hBN has 0 Triangles.
+Physical group name I_WSe2_hBN has 442 Lines.
+Physical group name I_WSe2_hBN has 443 Points.
+Physical group name R_AirBot has 0 Tetrahedra.
+Physical group name R_AirBot has 587 Triangles.
+Physical group name R_AirBot has 932 Lines.
+Physical group name R_AirBot has 346 Points.
+Physical group name R_AirTop has 0 Tetrahedra.
+Physical group name R_AirTop has 3076 Triangles.
+Physical group name R_AirTop has 4774 Lines.
+Physical group name R_AirTop has 1699 Points.
+Physical group name R_SiO2 has 0 Tetrahedra.
+Physical group name R_SiO2 has 9579 Triangles.
+Physical group name R_SiO2 has 14759 Lines.
+Physical group name R_SiO2 has 5181 Points.
+Physical group name R_WSe2 has 0 Tetrahedra.
+Physical group name R_WSe2 has 11579 Triangles.
+Physical group name R_WSe2 has 18507 Lines.
+Physical group name R_WSe2 has 6929 Points.
+Physical group name R_hBN has 0 Tetrahedra.
+Physical group name R_hBN has 5787 Triangles.
+Physical group name R_hBN has 9052 Lines.
+Physical group name R_hBN has 3266 Points.
+Device rfet_curve70 has 15961 coordinates with max index 15961
+Region AirBot has 346 nodes.
+Region AirTop has 1699 nodes.
+Region SiO2 has 5181 nodes.
+Region WSe2 has 6929 nodes.
+Region hBN has 3266 nodes.
+Contact BG_SiO2 in region SiO2 with 51 nodes
+Contact Drain_AirBot in region AirBot with 22 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_SiO2"
+Contact Drain_SiO2 in region SiO2 with 55 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_WSe2"
+Contact Drain_WSe2 in region WSe2 with 443 nodes
+Contact Source_AirTop in region AirTop with 20 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_WSe2"
+Contact Source_WSe2 in region WSe2 with 443 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_hBN"
+Contact Source_hBN in region hBN with 68 nodes
+Contact TG_hBN in region hBN with 76 nodes
+Warning, contact "Source_AirTop" shares a node with interface "AirTop_hBN"
+Adding interface AirTop_hBN with 49, 49 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "SiO2_AirBot"
+Adding interface SiO2_AirBot with 24, 24 nodes
+Warning, interface "SiO2_AirBot" shares a node with interface "SiO2_WSe2"
+Adding interface SiO2_WSe2 with 632, 632 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "WSe2_AirBot"
+Warning, interface "SiO2_AirBot" shares a node with interface "WSe2_AirBot"
+Adding interface WSe2_AirBot with 60, 60 nodes
+Warning, contact "Source_AirTop" shares a node with interface "WSe2_AirTop"
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_AirTop"
+Adding interface WSe2_AirTop with 254, 254 nodes
+Warning, interface "WSe2_AirTop" shares a node with interface "WSe2_hBN"
+Adding interface WSe2_hBN with 443, 443 nodes
+=== DEVSIM에 불러온 구조 확인 ===
+  [OK  ] region 목록 일치  차이: set()
+  [OK  ] contact 목록 일치  차이: set()
+  [OK  ] interface 목록 일치  차이: set()
+  [OK  ] contact BG_SiO2 는 region SiO2 에 속함  (실제 ['SiO2'])
+  [OK  ] contact Drain_AirBot 는 region AirBot 에 속함  (실제 ['AirBot'])
+  [OK  ] contact Drain_SiO2 는 region SiO2 에 속함  (실제 ['SiO2'])
+  [OK  ] contact Drain_WSe2 는 region WSe2 에 속함  (실제 ['WSe2'])
+  [OK  ] contact Source_AirTop 는 region AirTop 에 속함  (실제 ['AirTop'])
+  [OK  ] contact Source_WSe2 는 region WSe2 에 속함  (실제 ['WSe2'])
+  [OK  ] contact Source_hBN 는 region hBN 에 속함  (실제 ['hBN'])
+  [OK  ] contact TG_hBN 는 region hBN 에 속함  (실제 ['hBN'])
+
+  region   노드수   x범위[nm]              y범위[nm]
+  SiO2      5181   [-1000.000,  1500.000]   [-300.000,    0.000]
+  [OK  ] SiO2 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[-300.0,0.0])
+  WSe2      6929   [-1000.000,  1500.000]   [   0.000,   80.100]
+  [OK  ] WSe2 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[0.0,80.1])
+  AirBot     346   [  430.000,   500.000]   [   0.000,   71.000]
+  [OK  ] AirBot 좌표 범위 = geometry  (기대 x[430.0,500.0] y[0.0,71.0])
+  AirTop    1699   [    0.000,   500.000]   [   9.100,   80.100]
+  [OK  ] AirTop 좌표 범위 = geometry  (기대 x[0.0,500.0] y[9.1,80.1])
+  hBN       3266   [-1000.000,  1500.000]   [  64.100,  110.100]
+  [OK  ] hBN 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[64.1,110.1])
+mesh 저장 (vtk): rfet_curve70_mesh_check*
+
+전체 판정: 모두 통과
+-> 종료 코드 0, 소요 1 s
+
+======================================================================
+[STEP 3 FEM curve70]
+$ rfet_fem_reference.py curve70 perp
+  [curve70/perp] unit case Source: psi 범위 [+0.0000, +1.0000] V
+  [curve70/perp] unit case Drain : psi 범위 [+0.0000, +1.0000] V
+  [curve70/perp] unit case TG    : psi 범위 [+0.0000, +1.0000] V
+  [curve70/perp] unit case BG    : psi 범위 [+0.0000, +1.0000] V
+  저장: rfet_fem_curve70_perp.npz
+-> 종료 코드 0, 소요 1 s
+
+======================================================================
+[STEP 3 DEVSIM curve70]
+$ rfet_poisson_devsim.py curve70 perp
+=== DEVSIM Poisson: config=curve70, ε variant=perp (스칼라) ===
+Physical group name C_BG_SiO2 has 0 Tetrahedra.
+Physical group name C_BG_SiO2 has 0 Triangles.
+Physical group name C_BG_SiO2 has 50 Lines.
+Physical group name C_BG_SiO2 has 51 Points.
+Physical group name C_Drain_AirBot has 0 Tetrahedra.
+Physical group name C_Drain_AirBot has 0 Triangles.
+Physical group name C_Drain_AirBot has 21 Lines.
+Physical group name C_Drain_AirBot has 22 Points.
+Physical group name C_Drain_SiO2 has 0 Tetrahedra.
+Physical group name C_Drain_SiO2 has 0 Triangles.
+Physical group name C_Drain_SiO2 has 54 Lines.
+Physical group name C_Drain_SiO2 has 55 Points.
+Physical group name C_Drain_WSe2 has 0 Tetrahedra.
+Physical group name C_Drain_WSe2 has 0 Triangles.
+Physical group name C_Drain_WSe2 has 442 Lines.
+Physical group name C_Drain_WSe2 has 443 Points.
+Physical group name C_Source_AirTop has 0 Tetrahedra.
+Physical group name C_Source_AirTop has 0 Triangles.
+Physical group name C_Source_AirTop has 19 Lines.
+Physical group name C_Source_AirTop has 20 Points.
+Physical group name C_Source_WSe2 has 0 Tetrahedra.
+Physical group name C_Source_WSe2 has 0 Triangles.
+Physical group name C_Source_WSe2 has 442 Lines.
+Physical group name C_Source_WSe2 has 443 Points.
+Physical group name C_Source_hBN has 0 Tetrahedra.
+Physical group name C_Source_hBN has 0 Triangles.
+Physical group name C_Source_hBN has 67 Lines.
+Physical group name C_Source_hBN has 68 Points.
+Physical group name C_TG_hBN has 0 Tetrahedra.
+Physical group name C_TG_hBN has 0 Triangles.
+Physical group name C_TG_hBN has 75 Lines.
+Physical group name C_TG_hBN has 76 Points.
+Physical group name I_AirTop_hBN has 0 Tetrahedra.
+Physical group name I_AirTop_hBN has 0 Triangles.
+Physical group name I_AirTop_hBN has 48 Lines.
+Physical group name I_AirTop_hBN has 49 Points.
+Physical group name I_SiO2_AirBot has 0 Tetrahedra.
+Physical group name I_SiO2_AirBot has 0 Triangles.
+Physical group name I_SiO2_AirBot has 23 Lines.
+Physical group name I_SiO2_AirBot has 24 Points.
+Physical group name I_SiO2_WSe2 has 0 Tetrahedra.
+Physical group name I_SiO2_WSe2 has 0 Triangles.
+Physical group name I_SiO2_WSe2 has 631 Lines.
+Physical group name I_SiO2_WSe2 has 632 Points.
+Physical group name I_WSe2_AirBot has 0 Tetrahedra.
+Physical group name I_WSe2_AirBot has 0 Triangles.
+Physical group name I_WSe2_AirBot has 59 Lines.
+Physical group name I_WSe2_AirBot has 60 Points.
+Physical group name I_WSe2_AirTop has 0 Tetrahedra.
+Physical group name I_WSe2_AirTop has 0 Triangles.
+Physical group name I_WSe2_AirTop has 253 Lines.
+Physical group name I_WSe2_AirTop has 254 Points.
+Physical group name I_WSe2_hBN has 0 Tetrahedra.
+Physical group name I_WSe2_hBN has 0 Triangles.
+Physical group name I_WSe2_hBN has 442 Lines.
+Physical group name I_WSe2_hBN has 443 Points.
+Physical group name R_AirBot has 0 Tetrahedra.
+Physical group name R_AirBot has 587 Triangles.
+Physical group name R_AirBot has 932 Lines.
+Physical group name R_AirBot has 346 Points.
+Physical group name R_AirTop has 0 Tetrahedra.
+Physical group name R_AirTop has 3076 Triangles.
+Physical group name R_AirTop has 4774 Lines.
+Physical group name R_AirTop has 1699 Points.
+Physical group name R_SiO2 has 0 Tetrahedra.
+Physical group name R_SiO2 has 9579 Triangles.
+Physical group name R_SiO2 has 14759 Lines.
+Physical group name R_SiO2 has 5181 Points.
+Physical group name R_WSe2 has 0 Tetrahedra.
+Physical group name R_WSe2 has 11579 Triangles.
+Physical group name R_WSe2 has 18507 Lines.
+Physical group name R_WSe2 has 6929 Points.
+Physical group name R_hBN has 0 Tetrahedra.
+Physical group name R_hBN has 5787 Triangles.
+Physical group name R_hBN has 9052 Lines.
+Physical group name R_hBN has 3266 Points.
+Device rfet_curve70 has 15961 coordinates with max index 15961
+Region AirBot has 346 nodes.
+Region AirTop has 1699 nodes.
+Region SiO2 has 5181 nodes.
+Region WSe2 has 6929 nodes.
+Region hBN has 3266 nodes.
+Contact BG_SiO2 in region SiO2 with 51 nodes
+Contact Drain_AirBot in region AirBot with 22 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_SiO2"
+Contact Drain_SiO2 in region SiO2 with 55 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_WSe2"
+Contact Drain_WSe2 in region WSe2 with 443 nodes
+Contact Source_AirTop in region AirTop with 20 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_WSe2"
+Contact Source_WSe2 in region WSe2 with 443 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_hBN"
+Contact Source_hBN in region hBN with 68 nodes
+Contact TG_hBN in region hBN with 76 nodes
+Warning, contact "Source_hBN" shares a node with interface "AirTop_hBN"
+Adding interface AirTop_hBN with 49, 49 nodes
+Warning, contact "Drain_SiO2" shares a node with interface "SiO2_AirBot"
+Adding interface SiO2_AirBot with 24, 24 nodes
+Warning, interface "SiO2_AirBot" shares a node with interface "SiO2_WSe2"
+Adding interface SiO2_WSe2 with 632, 632 nodes
+Warning, contact "Drain_WSe2" shares a node with interface "WSe2_AirBot"
+Warning, interface "SiO2_WSe2" shares a node with interface "WSe2_AirBot"
+Adding interface WSe2_AirBot with 60, 60 nodes
+Warning, contact "Source_AirTop" shares a node with interface "WSe2_AirTop"
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_AirTop"
+Adding interface WSe2_AirTop with 254, 254 nodes
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_hBN"
+Adding interface WSe2_hBN with 443, 443 nodes
+number of equations 17421
+Iteration: 0
+  Device: "rfet_curve70"	RelError: 5.00000e+00	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+00	AbsError: 2.90517e-02
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 2.90517e-02
+    Region: "AirTop"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "SiO2"	RelError: 1.00000e+00	AbsError: 9.85329e-01
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 9.85329e-01
+    Region: "WSe2"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_curve70"	RelError: 1.18998e-13	AbsError: 5.53366e-15
+    Region: "AirBot"	RelError: 2.12707e-14	AbsError: 4.81306e-16
+      Equation: "PotentialEquation"	RelError: 2.12707e-14	AbsError: 4.81306e-16
+    Region: "AirTop"	RelError: 2.49500e-14	AbsError: 5.39963e-15
+      Equation: "PotentialEquation"	RelError: 2.49500e-14	AbsError: 5.39963e-15
+    Region: "SiO2"	RelError: 2.47556e-14	AbsError: 5.29638e-15
+      Equation: "PotentialEquation"	RelError: 2.47556e-14	AbsError: 5.29638e-15
+    Region: "WSe2"	RelError: 2.51826e-14	AbsError: 5.53366e-15
+      Equation: "PotentialEquation"	RelError: 2.51826e-14	AbsError: 5.53366e-15
+    Region: "hBN"	RelError: 2.28391e-14	AbsError: 1.72949e-15
+      Equation: "PotentialEquation"	RelError: 2.28391e-14	AbsError: 1.72949e-15
+  unit case Source: psi 범위 [+0.0000, +1.0000] V
+number of equations 17421
+Iteration: 0
+  Device: "rfet_curve70"	RelError: 3.00196e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "AirTop"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "SiO2"	RelError: 1.96170e+07	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.96170e+07	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_curve70"	RelError: 6.74695e-06	AbsError: 4.49117e-15
+    Region: "AirBot"	RelError: 5.27522e-15	AbsError: 3.31110e-15
+      Equation: "PotentialEquation"	RelError: 5.27522e-15	AbsError: 3.31110e-15
+    Region: "AirTop"	RelError: 7.64791e-12	AbsError: 4.49065e-15
+      Equation: "PotentialEquation"	RelError: 7.64791e-12	AbsError: 4.49065e-15
+    Region: "SiO2"	RelError: 3.52424e-08	AbsError: 4.37227e-15
+      Equation: "PotentialEquation"	RelError: 3.52424e-08	AbsError: 4.37227e-15
+    Region: "WSe2"	RelError: 5.03637e-08	AbsError: 4.49117e-15
+      Equation: "PotentialEquation"	RelError: 5.03637e-08	AbsError: 4.49117e-15
+    Region: "hBN"	RelError: 6.66134e-06	AbsError: 3.54306e-15
+      Equation: "PotentialEquation"	RelError: 6.66134e-06	AbsError: 3.54306e-15
+Iteration: 2
+  Device: "rfet_curve70"	RelError: 1.50790e-15	AbsError: 7.62549e-17
+    Region: "AirBot"	RelError: 1.30007e-16	AbsError: 7.22483e-17
+      Equation: "PotentialEquation"	RelError: 1.30007e-16	AbsError: 7.22483e-17
+    Region: "AirTop"	RelError: 2.22506e-16	AbsError: 7.62549e-17
+      Equation: "PotentialEquation"	RelError: 2.22506e-16	AbsError: 7.62549e-17
+    Region: "SiO2"	RelError: 3.85529e-16	AbsError: 7.09596e-17
+      Equation: "PotentialEquation"	RelError: 3.85529e-16	AbsError: 7.09596e-17
+    Region: "WSe2"	RelError: 4.47635e-16	AbsError: 7.23705e-17
+      Equation: "PotentialEquation"	RelError: 4.47635e-16	AbsError: 7.23705e-17
+    Region: "hBN"	RelError: 3.22226e-16	AbsError: 7.30687e-17
+      Equation: "PotentialEquation"	RelError: 3.22226e-16	AbsError: 7.30687e-17
+  unit case Drain : psi 범위 [+0.0000, +1.0000] V
+number of equations 17421
+Iteration: 0
+  Device: "rfet_curve70"	RelError: 3.99996e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "AirTop"	RelError: 2.40837e+00	AbsError: 9.19087e-01
+      Equation: "PotentialEquation"	RelError: 2.40837e+00	AbsError: 9.19087e-01
+    Region: "SiO2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 9.99961e+09	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 9.99961e+09	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_curve70"	RelError: 4.88528e-05	AbsError: 7.25385e-15
+    Region: "AirBot"	RelError: 5.13794e-14	AbsError: 1.26833e-15
+      Equation: "PotentialEquation"	RelError: 5.13794e-14	AbsError: 1.26833e-15
+    Region: "AirTop"	RelError: 1.90493e-14	AbsError: 7.18477e-15
+      Equation: "PotentialEquation"	RelError: 1.90493e-14	AbsError: 7.18477e-15
+    Region: "SiO2"	RelError: 3.67990e-10	AbsError: 6.92321e-15
+      Equation: "PotentialEquation"	RelError: 3.67990e-10	AbsError: 6.92321e-15
+    Region: "WSe2"	RelError: 2.09926e-05	AbsError: 7.25385e-15
+      Equation: "PotentialEquation"	RelError: 2.09926e-05	AbsError: 7.25385e-15
+    Region: "hBN"	RelError: 2.78599e-05	AbsError: 3.46309e-15
+      Equation: "PotentialEquation"	RelError: 2.78599e-05	AbsError: 3.46309e-15
+Iteration: 2
+  Device: "rfet_curve70"	RelError: 1.66783e-15	AbsError: 8.97514e-17
+    Region: "AirBot"	RelError: 2.17351e-16	AbsError: 4.50759e-17
+      Equation: "PotentialEquation"	RelError: 2.17351e-16	AbsError: 4.50759e-17
+    Region: "AirTop"	RelError: 2.80975e-16	AbsError: 8.97514e-17
+      Equation: "PotentialEquation"	RelError: 2.80975e-16	AbsError: 8.97514e-17
+    Region: "SiO2"	RelError: 3.68266e-16	AbsError: 4.95335e-17
+      Equation: "PotentialEquation"	RelError: 3.68266e-16	AbsError: 4.95335e-17
+    Region: "WSe2"	RelError: 5.09687e-16	AbsError: 4.98927e-17
+      Equation: "PotentialEquation"	RelError: 5.09687e-16	AbsError: 4.98927e-17
+    Region: "hBN"	RelError: 2.91555e-16	AbsError: 8.71084e-17
+      Equation: "PotentialEquation"	RelError: 2.91555e-16	AbsError: 8.71084e-17
+  unit case TG    : psi 범위 [+0.0000, +1.0000] V
+number of equations 17421
+Iteration: 0
+  Device: "rfet_curve70"	RelError: 1.12525e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 2.62982e+01	AbsError: 2.51099e-01
+      Equation: "PotentialEquation"	RelError: 2.62982e+01	AbsError: 2.51099e-01
+    Region: "AirTop"	RelError: 1.11529e+02	AbsError: 8.92649e-01
+      Equation: "PotentialEquation"	RelError: 1.11529e+02	AbsError: 8.92649e-01
+    Region: "SiO2"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.25245e+09	AbsError: 2.64928e-01
+      Equation: "PotentialEquation"	RelError: 1.25245e+09	AbsError: 2.64928e-01
+    Region: "hBN"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_curve70"	RelError: 9.48992e-06	AbsError: 1.86895e-15
+    Region: "AirBot"	RelError: 3.59595e-14	AbsError: 1.75606e-15
+      Equation: "PotentialEquation"	RelError: 3.59595e-14	AbsError: 1.75606e-15
+    Region: "AirTop"	RelError: 3.48714e-13	AbsError: 1.86895e-15
+      Equation: "PotentialEquation"	RelError: 3.48714e-13	AbsError: 1.86895e-15
+    Region: "SiO2"	RelError: 6.92941e-15	AbsError: 1.43623e-15
+      Equation: "PotentialEquation"	RelError: 6.92941e-15	AbsError: 1.43623e-15
+    Region: "WSe2"	RelError: 2.23458e-06	AbsError: 1.86895e-15
+      Equation: "PotentialEquation"	RelError: 2.23458e-06	AbsError: 1.86895e-15
+    Region: "hBN"	RelError: 7.25533e-06	AbsError: 1.52071e-15
+      Equation: "PotentialEquation"	RelError: 7.25533e-06	AbsError: 1.52071e-15
+Iteration: 2
+  Device: "rfet_curve70"	RelError: 1.76224e-15	AbsError: 7.87105e-17
+    Region: "AirBot"	RelError: 3.22967e-16	AbsError: 3.30507e-17
+      Equation: "PotentialEquation"	RelError: 3.22967e-16	AbsError: 3.30507e-17
+    Region: "AirTop"	RelError: 2.68785e-16	AbsError: 4.37829e-17
+      Equation: "PotentialEquation"	RelError: 2.68785e-16	AbsError: 4.37829e-17
+    Region: "SiO2"	RelError: 2.59016e-16	AbsError: 7.87105e-17
+      Equation: "PotentialEquation"	RelError: 2.59016e-16	AbsError: 7.87105e-17
+    Region: "WSe2"	RelError: 4.65937e-16	AbsError: 4.18156e-17
+      Equation: "PotentialEquation"	RelError: 4.65937e-16	AbsError: 4.18156e-17
+    Region: "hBN"	RelError: 4.45536e-16	AbsError: 9.09582e-18
+      Equation: "PotentialEquation"	RelError: 4.45536e-16	AbsError: 9.09582e-18
+  unit case BG    : psi 범위 [+0.0000, +1.0000] V
+  저장: rfet_devsim_curve70_perp.npz
+-> 종료 코드 0, 소요 3 s
+
+======================================================================
+[STEP 4 FEM curve70 lit]
+$ rfet_fem_semi.py curve70 perp lit
+  V_TG =  -5.0, V_BG =  +0.0: 10 단계, Newton 총 51회
+  V_TG =  -2.5, V_BG =  +0.0: 5 단계, Newton 총 26회
+  V_TG =  +2.5, V_BG =  +0.0: 5 단계, Newton 총 28회
+  V_TG =  +5.0, V_BG =  +0.0: 10 단계, Newton 총 51회
+  V_TG =  +0.0, V_BG = -60.0: 12 단계, Newton 총 69회
+  V_TG =  +0.0, V_BG = -30.0: 6 단계, Newton 총 42회
+  V_TG =  +0.0, V_BG = +30.0: 6 단계, Newton 총 33회
+  V_TG =  +0.0, V_BG = +60.0: 12 단계, Newton 총 57회
+  V_TG =  +0.0, V_BG =  +0.0: 1 단계, Newton 총 0회
+  저장: rfet_semi_curve70_perp_lit.npz
+-> 종료 코드 0, 소요 25 s
+
+======================================================================
+[mesh line70]
+$ rfet_mesh_gmsh.py line70
+mesh 크기 규칙 [nm]: {'s_film': 2.275, 's_edge': 0.5687, 'wedge_angle_bot_deg': 45.4063, 'wedge_angle_top_deg': 43.5735, 'n_sampling': 1258}
+Info    : Meshing 1D...
+Info    : [  0%] Meshing curve 1 (Line)
+Info    : [ 10%] Meshing curve 2 (Line)
+Info    : [ 10%] Meshing curve 3 (Line)
+Info    : [ 20%] Meshing curve 4 (Line)
+Info    : [ 20%] Meshing curve 5 (Line)
+Info    : [ 30%] Meshing curve 6 (Line)
+Info    : [ 30%] Meshing curve 7 (Line)
+Info    : [ 30%] Meshing curve 8 (Line)
+Info    : [ 40%] Meshing curve 9 (Line)
+Info    : [ 40%] Meshing curve 10 (Line)
+Info    : [ 50%] Meshing curve 11 (Line)
+Info    : [ 50%] Meshing curve 12 (Line)
+Info    : [ 50%] Meshing curve 13 (Line)
+Info    : [ 60%] Meshing curve 14 (Line)
+Info    : [ 60%] Meshing curve 15 (Line)
+Info    : [ 70%] Meshing curve 16 (Line)
+Info    : [ 70%] Meshing curve 17 (Line)
+Info    : [ 70%] Meshing curve 18 (Line)
+Info    : [ 80%] Meshing curve 19 (Line)
+Info    : [ 80%] Meshing curve 20 (Line)
+Info    : [ 90%] Meshing curve 21 (Line)
+Info    : [ 90%] Meshing curve 22 (Line)
+Info    : [ 90%] Meshing curve 23 (Line)
+Info    : [100%] Meshing curve 24 (Line)
+Info    : [100%] Meshing curve 25 (Line)
+Info    : Done meshing 1D (Wall 0.312047s, CPU 0.28125s)
+Info    : Meshing 2D...
+Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
+Info    : [ 30%] Meshing surface 2 (Plane, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 3 (Plane, Frontal-Delaunay)
+Info    : [ 70%] Meshing surface 4 (Plane, Frontal-Delaunay)
+Info    : [ 90%] Meshing surface 5 (Plane, Frontal-Delaunay)
+Info    : Done meshing 2D (Wall 0.72927s, CPU 0.6875s)
+Info    : 15840 nodes 33128 elements
+Info    : Writing 'rfet_line70_nm.msh'...
+Info    : Done writing 'rfet_line70_nm.msh'
+저장: rfet_line70_nm.msh (nm),  rfet_line70_cm.msh (cm)
+
+=== mesh 리포트: rfet_line70_nm.msh ===
+노드 15840개, 삼각형 30365개, 선 요소 2600개
+
+[영역별]  삼각형수  면적[nm^2]   해석면적     상대오차  | 최소각  최대각  둔각수  Delaunay위반edge  경계둔각edge
+  SiO2        9553    750000.00    750000.00   0.00e+00 |  29.04  115.96     252               2             1
+  WSe2       11459     22750.00     22750.00   3.20e-16 |  35.74   94.00     519               0             1
+  AirBot       531      2485.00      2485.00   0.00e+00 |  33.90  109.42      18               0             2
+  AirTop      3068     29015.00     29015.00   0.00e+00 |  28.79  112.71      91               1             2
+  hBN         5754     75000.00     75000.00   0.00e+00 |  31.86  108.97     145               0             3
+
+[contact / interface 선]  요소수   총길이[nm]   기대길이[nm]
+  C_BG_SiO2                 50     2500.000     2500.000
+  C_Drain_AirBot            22       71.000       71.000
+  C_Drain_SiO2              54     1000.000     1000.000
+  C_Drain_WSe2             442     1000.000     1000.000
+  C_Source_AirTop           19       55.000       55.000
+  C_Source_WSe2            442     1000.000     1000.000
+  C_Source_hBN              67     1000.000     1000.000
+  C_TG_hBN                  75     1100.256     1100.256
+  I_AirTop_hBN              45      500.256      500.256
+  I_SiO2_AirBot             21       70.000       70.000
+  I_SiO2_WSe2              631     1430.000     1430.000
+  I_WSe2_AirBot             48       99.705       99.705
+  I_WSe2_AirTop            242      529.705      529.705
+  I_WSe2_hBN               442     1000.000     1000.000
+
+[참고] edge 길이: 최소 0.492 nm, 최대 66.19 nm;  전체 최소각 28.79 deg, 전체 최대각 115.96 deg
+[참고] 'Delaunay위반edge'와 '경계둔각edge'는 FAIL이 아니라 진단 값입니다 (허용 범위는 STEP 3에서 Poisson 결과의 mesh 의존성을 보며 정합니다).
+
+판정: (1)(2) 모두 통과
+-> 종료 코드 0, 소요 2 s
+
+======================================================================
+[DEVSIM load line70]
+$ rfet_devsim_load.py line70
+Physical group name C_BG_SiO2 has 0 Tetrahedra.
+Physical group name C_BG_SiO2 has 0 Triangles.
+Physical group name C_BG_SiO2 has 50 Lines.
+Physical group name C_BG_SiO2 has 51 Points.
+Physical group name C_Drain_AirBot has 0 Tetrahedra.
+Physical group name C_Drain_AirBot has 0 Triangles.
+Physical group name C_Drain_AirBot has 22 Lines.
+Physical group name C_Drain_AirBot has 23 Points.
+Physical group name C_Drain_SiO2 has 0 Tetrahedra.
+Physical group name C_Drain_SiO2 has 0 Triangles.
+Physical group name C_Drain_SiO2 has 54 Lines.
+Physical group name C_Drain_SiO2 has 55 Points.
+Physical group name C_Drain_WSe2 has 0 Tetrahedra.
+Physical group name C_Drain_WSe2 has 0 Triangles.
+Physical group name C_Drain_WSe2 has 442 Lines.
+Physical group name C_Drain_WSe2 has 443 Points.
+Physical group name C_Source_AirTop has 0 Tetrahedra.
+Physical group name C_Source_AirTop has 0 Triangles.
+Physical group name C_Source_AirTop has 19 Lines.
+Physical group name C_Source_AirTop has 20 Points.
+Physical group name C_Source_WSe2 has 0 Tetrahedra.
+Physical group name C_Source_WSe2 has 0 Triangles.
+Physical group name C_Source_WSe2 has 442 Lines.
+Physical group name C_Source_WSe2 has 443 Points.
+Physical group name C_Source_hBN has 0 Tetrahedra.
+Physical group name C_Source_hBN has 0 Triangles.
+Physical group name C_Source_hBN has 67 Lines.
+Physical group name C_Source_hBN has 68 Points.
+Physical group name C_TG_hBN has 0 Tetrahedra.
+Physical group name C_TG_hBN has 0 Triangles.
+Physical group name C_TG_hBN has 75 Lines.
+Physical group name C_TG_hBN has 76 Points.
+Physical group name I_AirTop_hBN has 0 Tetrahedra.
+Physical group name I_AirTop_hBN has 0 Triangles.
+Physical group name I_AirTop_hBN has 45 Lines.
+Physical group name I_AirTop_hBN has 46 Points.
+Physical group name I_SiO2_AirBot has 0 Tetrahedra.
+Physical group name I_SiO2_AirBot has 0 Triangles.
+Physical group name I_SiO2_AirBot has 21 Lines.
+Physical group name I_SiO2_AirBot has 22 Points.
+Physical group name I_SiO2_WSe2 has 0 Tetrahedra.
+Physical group name I_SiO2_WSe2 has 0 Triangles.
+Physical group name I_SiO2_WSe2 has 631 Lines.
+Physical group name I_SiO2_WSe2 has 632 Points.
+Physical group name I_WSe2_AirBot has 0 Tetrahedra.
+Physical group name I_WSe2_AirBot has 0 Triangles.
+Physical group name I_WSe2_AirBot has 48 Lines.
+Physical group name I_WSe2_AirBot has 49 Points.
+Physical group name I_WSe2_AirTop has 0 Tetrahedra.
+Physical group name I_WSe2_AirTop has 0 Triangles.
+Physical group name I_WSe2_AirTop has 242 Lines.
+Physical group name I_WSe2_AirTop has 243 Points.
+Physical group name I_WSe2_hBN has 0 Tetrahedra.
+Physical group name I_WSe2_hBN has 0 Triangles.
+Physical group name I_WSe2_hBN has 442 Lines.
+Physical group name I_WSe2_hBN has 443 Points.
+Physical group name R_AirBot has 0 Tetrahedra.
+Physical group name R_AirBot has 531 Triangles.
+Physical group name R_AirBot has 842 Lines.
+Physical group name R_AirBot has 312 Points.
+Physical group name R_AirTop has 0 Tetrahedra.
+Physical group name R_AirTop has 3068 Triangles.
+Physical group name R_AirTop has 4755 Lines.
+Physical group name R_AirTop has 1688 Points.
+Physical group name R_SiO2 has 0 Tetrahedra.
+Physical group name R_SiO2 has 9553 Triangles.
+Physical group name R_SiO2 has 14719 Lines.
+Physical group name R_SiO2 has 5167 Points.
+Physical group name R_WSe2 has 0 Tetrahedra.
+Physical group name R_WSe2 has 11459 Triangles.
+Physical group name R_WSe2 has 18316 Lines.
+Physical group name R_WSe2 has 6858 Points.
+Physical group name R_hBN has 0 Tetrahedra.
+Physical group name R_hBN has 5754 Triangles.
+Physical group name R_hBN has 9001 Lines.
+Physical group name R_hBN has 3248 Points.
+Device rfet_line70 has 15840 coordinates with max index 15840
+Region AirBot has 312 nodes.
+Region AirTop has 1688 nodes.
+Region SiO2 has 5167 nodes.
+Region WSe2 has 6858 nodes.
+Region hBN has 3248 nodes.
+Contact BG_SiO2 in region SiO2 with 51 nodes
+Contact Drain_AirBot in region AirBot with 23 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_SiO2"
+Contact Drain_SiO2 in region SiO2 with 55 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_WSe2"
+Contact Drain_WSe2 in region WSe2 with 443 nodes
+Contact Source_AirTop in region AirTop with 20 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_WSe2"
+Contact Source_WSe2 in region WSe2 with 443 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_hBN"
+Contact Source_hBN in region hBN with 68 nodes
+Contact TG_hBN in region hBN with 76 nodes
+Warning, contact "Source_hBN" shares a node with interface "AirTop_hBN"
+Adding interface AirTop_hBN with 46, 46 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "SiO2_AirBot"
+Adding interface SiO2_AirBot with 22, 22 nodes
+Warning, interface "SiO2_AirBot" shares a node with interface "SiO2_WSe2"
+Adding interface SiO2_WSe2 with 632, 632 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "WSe2_AirBot"
+Warning, interface "SiO2_WSe2" shares a node with interface "WSe2_AirBot"
+Adding interface WSe2_AirBot with 49, 49 nodes
+Warning, contact "Source_WSe2" shares a node with interface "WSe2_AirTop"
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_AirTop"
+Adding interface WSe2_AirTop with 243, 243 nodes
+Warning, interface "WSe2_AirTop" shares a node with interface "WSe2_hBN"
+Adding interface WSe2_hBN with 443, 443 nodes
+=== DEVSIM에 불러온 구조 확인 ===
+  [OK  ] region 목록 일치  차이: set()
+  [OK  ] contact 목록 일치  차이: set()
+  [OK  ] interface 목록 일치  차이: set()
+  [OK  ] contact BG_SiO2 는 region SiO2 에 속함  (실제 ['SiO2'])
+  [OK  ] contact Drain_AirBot 는 region AirBot 에 속함  (실제 ['AirBot'])
+  [OK  ] contact Drain_SiO2 는 region SiO2 에 속함  (실제 ['SiO2'])
+  [OK  ] contact Drain_WSe2 는 region WSe2 에 속함  (실제 ['WSe2'])
+  [OK  ] contact Source_AirTop 는 region AirTop 에 속함  (실제 ['AirTop'])
+  [OK  ] contact Source_WSe2 는 region WSe2 에 속함  (실제 ['WSe2'])
+  [OK  ] contact Source_hBN 는 region hBN 에 속함  (실제 ['hBN'])
+  [OK  ] contact TG_hBN 는 region hBN 에 속함  (실제 ['hBN'])
+
+  region   노드수   x범위[nm]              y범위[nm]
+  SiO2      5167   [-1000.000,  1500.000]   [-300.000,    0.000]
+  [OK  ] SiO2 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[-300.0,0.0])
+  WSe2      6858   [-1000.000,  1500.000]   [   0.000,   80.100]
+  [OK  ] WSe2 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[0.0,80.1])
+  AirBot     312   [  430.000,   500.000]   [   0.000,   71.000]
+  [OK  ] AirBot 좌표 범위 = geometry  (기대 x[430.0,500.0] y[0.0,71.0])
+  AirTop    1688   [    0.000,   500.000]   [   9.100,   80.100]
+  [OK  ] AirTop 좌표 범위 = geometry  (기대 x[0.0,500.0] y[9.1,80.1])
+  hBN       3248   [-1000.000,  1500.000]   [  64.100,  110.100]
+  [OK  ] hBN 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[64.1,110.1])
+mesh 저장 (vtk): rfet_line70_mesh_check*
+
+전체 판정: 모두 통과
+-> 종료 코드 0, 소요 1 s
+
+======================================================================
+[STEP 3 FEM line70]
+$ rfet_fem_reference.py line70 perp
+  [line70/perp] unit case Source: psi 범위 [+0.0000, +1.0000] V
+  [line70/perp] unit case Drain : psi 범위 [+0.0000, +1.0000] V
+  [line70/perp] unit case TG    : psi 범위 [+0.0000, +1.0000] V
+  [line70/perp] unit case BG    : psi 범위 [+0.0000, +1.0000] V
+  저장: rfet_fem_line70_perp.npz
+-> 종료 코드 0, 소요 1 s
+
+======================================================================
+[STEP 3 DEVSIM line70]
+$ rfet_poisson_devsim.py line70 perp
+=== DEVSIM Poisson: config=line70, ε variant=perp (스칼라) ===
+Physical group name C_BG_SiO2 has 0 Tetrahedra.
+Physical group name C_BG_SiO2 has 0 Triangles.
+Physical group name C_BG_SiO2 has 50 Lines.
+Physical group name C_BG_SiO2 has 51 Points.
+Physical group name C_Drain_AirBot has 0 Tetrahedra.
+Physical group name C_Drain_AirBot has 0 Triangles.
+Physical group name C_Drain_AirBot has 22 Lines.
+Physical group name C_Drain_AirBot has 23 Points.
+Physical group name C_Drain_SiO2 has 0 Tetrahedra.
+Physical group name C_Drain_SiO2 has 0 Triangles.
+Physical group name C_Drain_SiO2 has 54 Lines.
+Physical group name C_Drain_SiO2 has 55 Points.
+Physical group name C_Drain_WSe2 has 0 Tetrahedra.
+Physical group name C_Drain_WSe2 has 0 Triangles.
+Physical group name C_Drain_WSe2 has 442 Lines.
+Physical group name C_Drain_WSe2 has 443 Points.
+Physical group name C_Source_AirTop has 0 Tetrahedra.
+Physical group name C_Source_AirTop has 0 Triangles.
+Physical group name C_Source_AirTop has 19 Lines.
+Physical group name C_Source_AirTop has 20 Points.
+Physical group name C_Source_WSe2 has 0 Tetrahedra.
+Physical group name C_Source_WSe2 has 0 Triangles.
+Physical group name C_Source_WSe2 has 442 Lines.
+Physical group name C_Source_WSe2 has 443 Points.
+Physical group name C_Source_hBN has 0 Tetrahedra.
+Physical group name C_Source_hBN has 0 Triangles.
+Physical group name C_Source_hBN has 67 Lines.
+Physical group name C_Source_hBN has 68 Points.
+Physical group name C_TG_hBN has 0 Tetrahedra.
+Physical group name C_TG_hBN has 0 Triangles.
+Physical group name C_TG_hBN has 75 Lines.
+Physical group name C_TG_hBN has 76 Points.
+Physical group name I_AirTop_hBN has 0 Tetrahedra.
+Physical group name I_AirTop_hBN has 0 Triangles.
+Physical group name I_AirTop_hBN has 45 Lines.
+Physical group name I_AirTop_hBN has 46 Points.
+Physical group name I_SiO2_AirBot has 0 Tetrahedra.
+Physical group name I_SiO2_AirBot has 0 Triangles.
+Physical group name I_SiO2_AirBot has 21 Lines.
+Physical group name I_SiO2_AirBot has 22 Points.
+Physical group name I_SiO2_WSe2 has 0 Tetrahedra.
+Physical group name I_SiO2_WSe2 has 0 Triangles.
+Physical group name I_SiO2_WSe2 has 631 Lines.
+Physical group name I_SiO2_WSe2 has 632 Points.
+Physical group name I_WSe2_AirBot has 0 Tetrahedra.
+Physical group name I_WSe2_AirBot has 0 Triangles.
+Physical group name I_WSe2_AirBot has 48 Lines.
+Physical group name I_WSe2_AirBot has 49 Points.
+Physical group name I_WSe2_AirTop has 0 Tetrahedra.
+Physical group name I_WSe2_AirTop has 0 Triangles.
+Physical group name I_WSe2_AirTop has 242 Lines.
+Physical group name I_WSe2_AirTop has 243 Points.
+Physical group name I_WSe2_hBN has 0 Tetrahedra.
+Physical group name I_WSe2_hBN has 0 Triangles.
+Physical group name I_WSe2_hBN has 442 Lines.
+Physical group name I_WSe2_hBN has 443 Points.
+Physical group name R_AirBot has 0 Tetrahedra.
+Physical group name R_AirBot has 531 Triangles.
+Physical group name R_AirBot has 842 Lines.
+Physical group name R_AirBot has 312 Points.
+Physical group name R_AirTop has 0 Tetrahedra.
+Physical group name R_AirTop has 3068 Triangles.
+Physical group name R_AirTop has 4755 Lines.
+Physical group name R_AirTop has 1688 Points.
+Physical group name R_SiO2 has 0 Tetrahedra.
+Physical group name R_SiO2 has 9553 Triangles.
+Physical group name R_SiO2 has 14719 Lines.
+Physical group name R_SiO2 has 5167 Points.
+Physical group name R_WSe2 has 0 Tetrahedra.
+Physical group name R_WSe2 has 11459 Triangles.
+Physical group name R_WSe2 has 18316 Lines.
+Physical group name R_WSe2 has 6858 Points.
+Physical group name R_hBN has 0 Tetrahedra.
+Physical group name R_hBN has 5754 Triangles.
+Physical group name R_hBN has 9001 Lines.
+Physical group name R_hBN has 3248 Points.
+Device rfet_line70 has 15840 coordinates with max index 15840
+Region AirBot has 312 nodes.
+Region AirTop has 1688 nodes.
+Region SiO2 has 5167 nodes.
+Region WSe2 has 6858 nodes.
+Region hBN has 3248 nodes.
+Contact BG_SiO2 in region SiO2 with 51 nodes
+Contact Drain_AirBot in region AirBot with 23 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_SiO2"
+Contact Drain_SiO2 in region SiO2 with 55 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_WSe2"
+Contact Drain_WSe2 in region WSe2 with 443 nodes
+Contact Source_AirTop in region AirTop with 20 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_WSe2"
+Contact Source_WSe2 in region WSe2 with 443 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_hBN"
+Contact Source_hBN in region hBN with 68 nodes
+Contact TG_hBN in region hBN with 76 nodes
+Warning, contact "Source_hBN" shares a node with interface "AirTop_hBN"
+Adding interface AirTop_hBN with 46, 46 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "SiO2_AirBot"
+Adding interface SiO2_AirBot with 22, 22 nodes
+Warning, interface "SiO2_AirBot" shares a node with interface "SiO2_WSe2"
+Adding interface SiO2_WSe2 with 632, 632 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "WSe2_AirBot"
+Warning, interface "SiO2_WSe2" shares a node with interface "WSe2_AirBot"
+Adding interface WSe2_AirBot with 49, 49 nodes
+Warning, contact "Source_WSe2" shares a node with interface "WSe2_AirTop"
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_AirTop"
+Adding interface WSe2_AirTop with 243, 243 nodes
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_hBN"
+Adding interface WSe2_hBN with 443, 443 nodes
+number of equations 17273
+Iteration: 0
+  Device: "rfet_line70"	RelError: 5.00000e+00	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+00	AbsError: 2.92077e-02
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 2.92077e-02
+    Region: "AirTop"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "SiO2"	RelError: 1.00000e+00	AbsError: 9.85334e-01
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 9.85334e-01
+    Region: "WSe2"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_line70"	RelError: 1.50670e-13	AbsError: 4.22366e-15
+    Region: "AirBot"	RelError: 2.69328e-14	AbsError: 7.71270e-16
+      Equation: "PotentialEquation"	RelError: 2.69328e-14	AbsError: 7.71270e-16
+    Region: "AirTop"	RelError: 3.20193e-14	AbsError: 3.98586e-15
+      Equation: "PotentialEquation"	RelError: 3.20193e-14	AbsError: 3.98586e-15
+    Region: "SiO2"	RelError: 3.10392e-14	AbsError: 4.22366e-15
+      Equation: "PotentialEquation"	RelError: 3.10392e-14	AbsError: 4.22366e-15
+    Region: "WSe2"	RelError: 3.20193e-14	AbsError: 4.04561e-15
+      Equation: "PotentialEquation"	RelError: 3.20193e-14	AbsError: 4.04561e-15
+    Region: "hBN"	RelError: 2.86592e-14	AbsError: 1.10947e-15
+      Equation: "PotentialEquation"	RelError: 2.86592e-14	AbsError: 1.10947e-15
+  unit case Source: psi 범위 [+0.0000, +1.0000] V
+number of equations 17273
+Iteration: 0
+  Device: "rfet_line70"	RelError: 3.00186e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "AirTop"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "SiO2"	RelError: 1.86028e+07	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.86028e+07	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_line70"	RelError: 1.01288e-05	AbsError: 6.56001e-15
+    Region: "AirBot"	RelError: 1.11719e-14	AbsError: 6.17943e-15
+      Equation: "PotentialEquation"	RelError: 1.11719e-14	AbsError: 6.17943e-15
+    Region: "AirTop"	RelError: 4.39722e-12	AbsError: 6.56001e-15
+      Equation: "PotentialEquation"	RelError: 4.39722e-12	AbsError: 6.56001e-15
+    Region: "SiO2"	RelError: 4.87757e-08	AbsError: 4.46291e-15
+      Equation: "PotentialEquation"	RelError: 4.87757e-08	AbsError: 4.46291e-15
+    Region: "WSe2"	RelError: 7.35559e-08	AbsError: 6.56001e-15
+      Equation: "PotentialEquation"	RelError: 7.35559e-08	AbsError: 6.56001e-15
+    Region: "hBN"	RelError: 1.00064e-05	AbsError: 3.90088e-15
+      Equation: "PotentialEquation"	RelError: 1.00064e-05	AbsError: 3.90088e-15
+Iteration: 2
+  Device: "rfet_line70"	RelError: 1.49680e-15	AbsError: 8.20252e-17
+    Region: "AirBot"	RelError: 1.09396e-16	AbsError: 6.03576e-17
+      Equation: "PotentialEquation"	RelError: 1.09396e-16	AbsError: 6.03576e-17
+    Region: "AirTop"	RelError: 3.10506e-16	AbsError: 7.70872e-17
+      Equation: "PotentialEquation"	RelError: 3.10506e-16	AbsError: 7.70872e-17
+    Region: "SiO2"	RelError: 3.05067e-16	AbsError: 8.20252e-17
+      Equation: "PotentialEquation"	RelError: 3.05067e-16	AbsError: 8.20252e-17
+    Region: "WSe2"	RelError: 4.94217e-16	AbsError: 7.05041e-17
+      Equation: "PotentialEquation"	RelError: 4.94217e-16	AbsError: 7.05041e-17
+    Region: "hBN"	RelError: 2.77611e-16	AbsError: 7.90527e-17
+      Equation: "PotentialEquation"	RelError: 2.77611e-16	AbsError: 7.90527e-17
+  unit case Drain : psi 범위 [+0.0000, +1.0000] V
+number of equations 17273
+Iteration: 0
+  Device: "rfet_line70"	RelError: 3.99996e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "AirTop"	RelError: 4.83271e+00	AbsError: 9.18800e-01
+      Equation: "PotentialEquation"	RelError: 4.83271e+00	AbsError: 9.18800e-01
+    Region: "SiO2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 9.99962e+09	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 9.99962e+09	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_line70"	RelError: 5.35011e-05	AbsError: 5.13317e-15
+    Region: "AirBot"	RelError: 4.03700e-14	AbsError: 3.91821e-15
+      Equation: "PotentialEquation"	RelError: 4.03700e-14	AbsError: 3.91821e-15
+    Region: "AirTop"	RelError: 1.39479e-14	AbsError: 5.11616e-15
+      Equation: "PotentialEquation"	RelError: 1.39479e-14	AbsError: 5.11616e-15
+    Region: "SiO2"	RelError: 3.53255e-10	AbsError: 4.93715e-15
+      Equation: "PotentialEquation"	RelError: 3.53255e-10	AbsError: 4.93715e-15
+    Region: "WSe2"	RelError: 2.58778e-05	AbsError: 5.13317e-15
+      Equation: "PotentialEquation"	RelError: 2.58778e-05	AbsError: 5.13317e-15
+    Region: "hBN"	RelError: 2.76230e-05	AbsError: 4.01190e-15
+      Equation: "PotentialEquation"	RelError: 2.76230e-05	AbsError: 4.01190e-15
+Iteration: 2
+  Device: "rfet_line70"	RelError: 1.42488e-15	AbsError: 7.80854e-17
+    Region: "AirBot"	RelError: 2.98875e-16	AbsError: 4.27397e-17
+      Equation: "PotentialEquation"	RelError: 2.98875e-16	AbsError: 4.27397e-17
+    Region: "AirTop"	RelError: 1.97667e-16	AbsError: 7.80854e-17
+      Equation: "PotentialEquation"	RelError: 1.97667e-16	AbsError: 7.80854e-17
+    Region: "SiO2"	RelError: 3.11125e-16	AbsError: 4.15807e-17
+      Equation: "PotentialEquation"	RelError: 3.11125e-16	AbsError: 4.15807e-17
+    Region: "WSe2"	RelError: 3.43383e-16	AbsError: 4.24408e-17
+      Equation: "PotentialEquation"	RelError: 3.43383e-16	AbsError: 4.24408e-17
+    Region: "hBN"	RelError: 2.73825e-16	AbsError: 7.80854e-17
+      Equation: "PotentialEquation"	RelError: 2.73825e-16	AbsError: 7.80854e-17
+  unit case TG    : psi 범위 [+0.0000, +1.0000] V
+number of equations 17273
+Iteration: 0
+  Device: "rfet_line70"	RelError: 1.12529e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.69798e+01	AbsError: 1.97456e-01
+      Equation: "PotentialEquation"	RelError: 1.69798e+01	AbsError: 1.97456e-01
+    Region: "AirTop"	RelError: 1.13878e+02	AbsError: 8.92637e-01
+      Equation: "PotentialEquation"	RelError: 1.13878e+02	AbsError: 8.92637e-01
+    Region: "SiO2"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.25293e+09	AbsError: 2.12207e-01
+      Equation: "PotentialEquation"	RelError: 1.25293e+09	AbsError: 2.12207e-01
+    Region: "hBN"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_line70"	RelError: 1.26985e-05	AbsError: 2.47794e-15
+    Region: "AirBot"	RelError: 4.53527e-14	AbsError: 2.39729e-15
+      Equation: "PotentialEquation"	RelError: 4.53527e-14	AbsError: 2.39729e-15
+    Region: "AirTop"	RelError: 2.27643e-13	AbsError: 2.47794e-15
+      Equation: "PotentialEquation"	RelError: 2.27643e-13	AbsError: 2.47794e-15
+    Region: "SiO2"	RelError: 5.93441e-15	AbsError: 1.58961e-15
+      Equation: "PotentialEquation"	RelError: 5.93441e-15	AbsError: 1.58961e-15
+    Region: "WSe2"	RelError: 3.86930e-06	AbsError: 2.47794e-15
+      Equation: "PotentialEquation"	RelError: 3.86930e-06	AbsError: 2.47794e-15
+    Region: "hBN"	RelError: 8.82918e-06	AbsError: 9.75604e-16
+      Equation: "PotentialEquation"	RelError: 8.82918e-06	AbsError: 9.75604e-16
+Iteration: 2
+  Device: "rfet_line70"	RelError: 1.26177e-15	AbsError: 6.81230e-17
+    Region: "AirBot"	RelError: 1.47938e-16	AbsError: 2.63679e-17
+      Equation: "PotentialEquation"	RelError: 1.47938e-16	AbsError: 2.63679e-17
+    Region: "AirTop"	RelError: 1.94850e-16	AbsError: 3.50888e-17
+      Equation: "PotentialEquation"	RelError: 1.94850e-16	AbsError: 3.50888e-17
+    Region: "SiO2"	RelError: 2.58735e-16	AbsError: 6.81230e-17
+      Equation: "PotentialEquation"	RelError: 2.58735e-16	AbsError: 6.81230e-17
+    Region: "WSe2"	RelError: 3.84708e-16	AbsError: 3.53767e-17
+      Equation: "PotentialEquation"	RelError: 3.84708e-16	AbsError: 3.53767e-17
+    Region: "hBN"	RelError: 2.75534e-16	AbsError: 5.25630e-18
+      Equation: "PotentialEquation"	RelError: 2.75534e-16	AbsError: 5.25630e-18
+  unit case BG    : psi 범위 [+0.0000, +1.0000] V
+  저장: rfet_devsim_line70_perp.npz
+-> 종료 코드 0, 소요 3 s
+
+======================================================================
+[STEP 4 FEM line70 lit]
+$ rfet_fem_semi.py line70 perp lit
+  V_TG =  -5.0, V_BG =  +0.0: 10 단계, Newton 총 51회
+  V_TG =  -2.5, V_BG =  +0.0: 5 단계, Newton 총 26회
+  V_TG =  +2.5, V_BG =  +0.0: 5 단계, Newton 총 29회
+  V_TG =  +5.0, V_BG =  +0.0: 10 단계, Newton 총 52회
+  V_TG =  +0.0, V_BG = -60.0: 12 단계, Newton 총 69회
+  V_TG =  +0.0, V_BG = -30.0: 6 단계, Newton 총 42회
+  V_TG =  +0.0, V_BG = +30.0: 6 단계, Newton 총 33회
+  V_TG =  +0.0, V_BG = +60.0: 12 단계, Newton 총 57회
+  V_TG =  +0.0, V_BG =  +0.0: 1 단계, Newton 총 0회
+  저장: rfet_semi_line70_perp_lit.npz
+-> 종료 코드 0, 소요 25 s
+
+======================================================================
+[mesh curve_el_eq]
+$ rfet_mesh_gmsh.py curve_el_eq
+mesh 크기 규칙 [nm]: {'s_film': 2.275, 's_edge': 0.5687, 'wedge_angle_bot_deg': 18.138, 'wedge_angle_top_deg': 18.138, 'n_sampling': 1129}
+Info    : Meshing 1D...
+Info    : [  0%] Meshing curve 1 (Line)
+Info    : [ 10%] Meshing curve 2 (Line)
+Info    : [ 10%] Meshing curve 3 (Line)
+Info    : [ 10%] Meshing curve 4 (Line)
+Info    : [ 10%] Meshing curve 5 (Line)
+Info    : [ 10%] Meshing curve 6 (Line)
+Info    : [ 20%] Meshing curve 7 (Line)
+Info    : [ 20%] Meshing curve 8 (Line)
+Info    : [ 20%] Meshing curve 9 (Line)
+Info    : [ 20%] Meshing curve 10 (Line)
+Info    : [ 20%] Meshing curve 11 (Line)
+Info    : [ 30%] Meshing curve 12 (Line)
+Info    : [ 30%] Meshing curve 13 (Line)
+Info    : [ 30%] Meshing curve 14 (Line)
+Info    : [ 30%] Meshing curve 15 (Line)
+Info    : [ 30%] Meshing curve 16 (Line)
+Info    : [ 30%] Meshing curve 17 (Line)
+Info    : [ 40%] Meshing curve 18 (Line)
+Info    : [ 40%] Meshing curve 19 (Line)
+Info    : [ 40%] Meshing curve 20 (Line)
+Info    : [ 40%] Meshing curve 21 (Line)
+Info    : [ 40%] Meshing curve 22 (Line)
+Info    : [ 50%] Meshing curve 23 (Line)
+Info    : [ 50%] Meshing curve 24 (Line)
+Info    : [ 50%] Meshing curve 25 (Line)
+Info    : [ 50%] Meshing curve 26 (Line)
+Info    : [ 50%] Meshing curve 27 (Line)
+Info    : [ 50%] Meshing curve 28 (Line)
+Info    : [ 60%] Meshing curve 29 (Line)
+Info    : [ 60%] Meshing curve 30 (Line)
+Info    : [ 60%] Meshing curve 31 (Line)
+Info    : [ 60%] Meshing curve 32 (Line)
+Info    : [ 60%] Meshing curve 33 (Line)
+Info    : [ 70%] Meshing curve 34 (Line)
+Info    : [ 70%] Meshing curve 35 (Line)
+Info    : [ 70%] Meshing curve 36 (Line)
+Info    : [ 70%] Meshing curve 37 (Line)
+Info    : [ 70%] Meshing curve 38 (Line)
+Info    : [ 70%] Meshing curve 39 (Line)
+Info    : [ 80%] Meshing curve 40 (Line)
+Info    : [ 80%] Meshing curve 41 (Line)
+Info    : [ 80%] Meshing curve 42 (Line)
+Info    : [ 80%] Meshing curve 43 (Line)
+Info    : [ 80%] Meshing curve 44 (Line)
+Info    : [ 90%] Meshing curve 45 (Line)
+Info    : [ 90%] Meshing curve 46 (Line)
+Info    : [ 90%] Meshing curve 47 (Line)
+Info    : [ 90%] Meshing curve 48 (Line)
+Info    : [ 90%] Meshing curve 49 (Line)
+Info    : [ 90%] Meshing curve 50 (Line)
+Info    : [100%] Meshing curve 51 (Line)
+Info    : [100%] Meshing curve 52 (Line)
+Info    : [100%] Meshing curve 53 (Line)
+Info    : [100%] Meshing curve 54 (Line)
+Info    : [100%] Meshing curve 55 (Line)
+Info    : Done meshing 1D (Wall 0.418559s, CPU 0.390625s)
+Info    : Meshing 2D...
+Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
+Info    : [ 30%] Meshing surface 2 (Plane, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 3 (Plane, Frontal-Delaunay)
+Info    : [ 70%] Meshing surface 4 (Plane, Frontal-Delaunay)
+Info    : [ 90%] Meshing surface 5 (Plane, Frontal-Delaunay)
+Info    : Done meshing 2D (Wall 0.872151s, CPU 0.796875s)
+Info    : 17078 nodes 35714 elements
+Info    : Writing 'rfet_curve_el_eq_nm.msh'...
+Info    : Done writing 'rfet_curve_el_eq_nm.msh'
+저장: rfet_curve_el_eq_nm.msh (nm),  rfet_curve_el_eq_cm.msh (cm)
+
+=== mesh 리포트: rfet_curve_el_eq_nm.msh ===
+노드 17078개, 삼각형 32822개, 선 요소 2703개
+
+[영역별]  삼각형수  면적[nm^2]   해석면적     상대오차  | 최소각  최대각  둔각수  Delaunay위반edge  경계둔각edge
+  SiO2       10243    750000.00    750000.00   0.00e+00 |  28.93  117.57     201               3             0
+  WSe2       11825     22750.00     22750.00   3.20e-16 |  39.68   94.03     344               0             0
+  AirBot      1273      7694.22      7694.22   1.18e-16 |   3.12  105.27      42               0            25
+  AirTop      3118     27805.78     27805.78   0.00e+00 |   3.12  107.67      95               0            25
+  hBN         6363     75000.00     75000.00   0.00e+00 |  30.90  109.90     158               0            10
+
+[contact / interface 선]  요소수   총길이[nm]   기대길이[nm]
+  C_BG_SiO2                 55     2500.000     2500.000
+  C_Drain_AirBot            24       71.000       71.000
+  C_Drain_SiO2              57     1000.000     1000.000
+  C_Drain_WSe2             443     1000.000     1000.000
+  C_Source_AirTop           20       71.000       71.000
+  C_Source_WSe2            442     1000.000     1000.000
+  C_Source_hBN              56     1000.000     1000.000
+  C_TG_hBN                  97     1100.000     1100.000
+  I_AirTop_hBN              73      500.000      500.000
+  I_SiO2_AirBot             52      216.739      216.739
+  I_SiO2_WSe2              570     1283.261     1283.261
+  I_WSe2_AirBot            119      230.067      230.067
+  I_WSe2_AirTop            249      513.329      513.329
+  I_WSe2_hBN               446     1000.000     1000.000
+
+[참고] edge 길이: 최소 0.036 nm, 최대 63.78 nm;  전체 최소각 3.12 deg, 전체 최대각 117.57 deg
+[참고] 'Delaunay위반edge'와 '경계둔각edge'는 FAIL이 아니라 진단 값입니다 (허용 범위는 STEP 3에서 Poisson 결과의 mesh 의존성을 보며 정합니다).
+
+판정: (1)(2) 모두 통과
+-> 종료 코드 0, 소요 3 s
+
+======================================================================
+[DEVSIM load curve_el_eq]
+$ rfet_devsim_load.py curve_el_eq
+Physical group name C_BG_SiO2 has 0 Tetrahedra.
+Physical group name C_BG_SiO2 has 0 Triangles.
+Physical group name C_BG_SiO2 has 55 Lines.
+Physical group name C_BG_SiO2 has 56 Points.
+Physical group name C_Drain_AirBot has 0 Tetrahedra.
+Physical group name C_Drain_AirBot has 0 Triangles.
+Physical group name C_Drain_AirBot has 24 Lines.
+Physical group name C_Drain_AirBot has 25 Points.
+Physical group name C_Drain_SiO2 has 0 Tetrahedra.
+Physical group name C_Drain_SiO2 has 0 Triangles.
+Physical group name C_Drain_SiO2 has 57 Lines.
+Physical group name C_Drain_SiO2 has 58 Points.
+Physical group name C_Drain_WSe2 has 0 Tetrahedra.
+Physical group name C_Drain_WSe2 has 0 Triangles.
+Physical group name C_Drain_WSe2 has 443 Lines.
+Physical group name C_Drain_WSe2 has 444 Points.
+Physical group name C_Source_AirTop has 0 Tetrahedra.
+Physical group name C_Source_AirTop has 0 Triangles.
+Physical group name C_Source_AirTop has 20 Lines.
+Physical group name C_Source_AirTop has 21 Points.
+Physical group name C_Source_WSe2 has 0 Tetrahedra.
+Physical group name C_Source_WSe2 has 0 Triangles.
+Physical group name C_Source_WSe2 has 442 Lines.
+Physical group name C_Source_WSe2 has 443 Points.
+Physical group name C_Source_hBN has 0 Tetrahedra.
+Physical group name C_Source_hBN has 0 Triangles.
+Physical group name C_Source_hBN has 56 Lines.
+Physical group name C_Source_hBN has 57 Points.
+Physical group name C_TG_hBN has 0 Tetrahedra.
+Physical group name C_TG_hBN has 0 Triangles.
+Physical group name C_TG_hBN has 97 Lines.
+Physical group name C_TG_hBN has 98 Points.
+Physical group name I_AirTop_hBN has 0 Tetrahedra.
+Physical group name I_AirTop_hBN has 0 Triangles.
+Physical group name I_AirTop_hBN has 73 Lines.
+Physical group name I_AirTop_hBN has 74 Points.
+Physical group name I_SiO2_AirBot has 0 Tetrahedra.
+Physical group name I_SiO2_AirBot has 0 Triangles.
+Physical group name I_SiO2_AirBot has 52 Lines.
+Physical group name I_SiO2_AirBot has 53 Points.
+Physical group name I_SiO2_WSe2 has 0 Tetrahedra.
+Physical group name I_SiO2_WSe2 has 0 Triangles.
+Physical group name I_SiO2_WSe2 has 570 Lines.
+Physical group name I_SiO2_WSe2 has 571 Points.
+Physical group name I_WSe2_AirBot has 0 Tetrahedra.
+Physical group name I_WSe2_AirBot has 0 Triangles.
+Physical group name I_WSe2_AirBot has 119 Lines.
+Physical group name I_WSe2_AirBot has 120 Points.
+Physical group name I_WSe2_AirTop has 0 Tetrahedra.
+Physical group name I_WSe2_AirTop has 0 Triangles.
+Physical group name I_WSe2_AirTop has 249 Lines.
+Physical group name I_WSe2_AirTop has 250 Points.
+Physical group name I_WSe2_hBN has 0 Tetrahedra.
+Physical group name I_WSe2_hBN has 0 Triangles.
+Physical group name I_WSe2_hBN has 446 Lines.
+Physical group name I_WSe2_hBN has 447 Points.
+Physical group name R_AirBot has 0 Tetrahedra.
+Physical group name R_AirBot has 1273 Triangles.
+Physical group name R_AirBot has 2007 Lines.
+Physical group name R_AirBot has 735 Points.
+Physical group name R_AirTop has 0 Tetrahedra.
+Physical group name R_AirTop has 3118 Triangles.
+Physical group name R_AirTop has 4848 Lines.
+Physical group name R_AirTop has 1731 Points.
+Physical group name R_SiO2 has 0 Tetrahedra.
+Physical group name R_SiO2 has 10243 Triangles.
+Physical group name R_SiO2 has 15743 Lines.
+Physical group name R_SiO2 has 5501 Points.
+Physical group name R_WSe2 has 0 Tetrahedra.
+Physical group name R_WSe2 has 11825 Triangles.
+Physical group name R_WSe2 has 18876 Lines.
+Physical group name R_WSe2 has 7052 Points.
+Physical group name R_hBN has 0 Tetrahedra.
+Physical group name R_hBN has 6363 Triangles.
+Physical group name R_hBN has 9934 Lines.
+Physical group name R_hBN has 3572 Points.
+Device rfet_curve_el_eq has 17078 coordinates with max index 17078
+Region AirBot has 735 nodes.
+Region AirTop has 1731 nodes.
+Region SiO2 has 5501 nodes.
+Region WSe2 has 7052 nodes.
+Region hBN has 3572 nodes.
+Contact BG_SiO2 in region SiO2 with 56 nodes
+Contact Drain_AirBot in region AirBot with 25 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_SiO2"
+Contact Drain_SiO2 in region SiO2 with 58 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_WSe2"
+Contact Drain_WSe2 in region WSe2 with 444 nodes
+Contact Source_AirTop in region AirTop with 21 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_WSe2"
+Contact Source_WSe2 in region WSe2 with 443 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_hBN"
+Contact Source_hBN in region hBN with 57 nodes
+Contact TG_hBN in region hBN with 98 nodes
+Warning, contact "Source_AirTop" shares a node with interface "AirTop_hBN"
+Adding interface AirTop_hBN with 74, 74 nodes
+Warning, contact "Drain_SiO2" shares a node with interface "SiO2_AirBot"
+Adding interface SiO2_AirBot with 53, 53 nodes
+Warning, interface "SiO2_AirBot" shares a node with interface "SiO2_WSe2"
+Adding interface SiO2_WSe2 with 571, 571 nodes
+Warning, contact "Drain_WSe2" shares a node with interface "WSe2_AirBot"
+Warning, interface "SiO2_WSe2" shares a node with interface "WSe2_AirBot"
+Adding interface WSe2_AirBot with 120, 120 nodes
+Warning, contact "Source_WSe2" shares a node with interface "WSe2_AirTop"
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_AirTop"
+Adding interface WSe2_AirTop with 250, 250 nodes
+Warning, interface "WSe2_AirTop" shares a node with interface "WSe2_hBN"
+Adding interface WSe2_hBN with 447, 447 nodes
+=== DEVSIM에 불러온 구조 확인 ===
+  [OK  ] region 목록 일치  차이: set()
+  [OK  ] contact 목록 일치  차이: set()
+  [OK  ] interface 목록 일치  차이: set()
+  [OK  ] contact BG_SiO2 는 region SiO2 에 속함  (실제 ['SiO2'])
+  [OK  ] contact Drain_AirBot 는 region AirBot 에 속함  (실제 ['AirBot'])
+  [OK  ] contact Drain_SiO2 는 region SiO2 에 속함  (실제 ['SiO2'])
+  [OK  ] contact Drain_WSe2 는 region WSe2 에 속함  (실제 ['WSe2'])
+  [OK  ] contact Source_AirTop 는 region AirTop 에 속함  (실제 ['AirTop'])
+  [OK  ] contact Source_WSe2 는 region WSe2 에 속함  (실제 ['WSe2'])
+  [OK  ] contact Source_hBN 는 region hBN 에 속함  (실제 ['hBN'])
+  [OK  ] contact TG_hBN 는 region hBN 에 속함  (실제 ['hBN'])
+
+  region   노드수   x범위[nm]              y범위[nm]
+  SiO2      5501   [-1000.000,  1500.000]   [-300.000,    0.000]
+  [OK  ] SiO2 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[-300.0,0.0])
+  WSe2      7052   [-1000.000,  1500.000]   [   0.000,   80.100]
+  [OK  ] WSe2 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[0.0,80.1])
+  AirBot     735   [  283.261,   500.000]   [   0.000,   71.000]
+  [OK  ] AirBot 좌표 범위 = geometry  (기대 x[283.3,500.0] y[0.0,71.0])
+  AirTop    1731   [    0.000,   500.000]   [   9.100,   80.100]
+  [OK  ] AirTop 좌표 범위 = geometry  (기대 x[0.0,500.0] y[9.1,80.1])
+  hBN       3572   [-1000.000,  1500.000]   [  80.100,  110.100]
+  [OK  ] hBN 좌표 범위 = geometry  (기대 x[-1000.0,1500.0] y[80.1,110.1])
+mesh 저장 (vtk): rfet_curve_el_eq_mesh_check*
+
+전체 판정: 모두 통과
+-> 종료 코드 0, 소요 1 s
+
+======================================================================
+[STEP 3 FEM curve_el_eq]
+$ rfet_fem_reference.py curve_el_eq perp
+  [curve_el_eq/perp] unit case Source: psi 범위 [+0.0000, +1.0000] V
+  [curve_el_eq/perp] unit case Drain : psi 범위 [+0.0000, +1.0000] V
+  [curve_el_eq/perp] unit case TG    : psi 범위 [+0.0000, +1.0000] V
+  [curve_el_eq/perp] unit case BG    : psi 범위 [+0.0000, +1.0000] V
+  저장: rfet_fem_curve_el_eq_perp.npz
+-> 종료 코드 0, 소요 1 s
+
+======================================================================
+[STEP 3 DEVSIM curve_el_eq]
+$ rfet_poisson_devsim.py curve_el_eq perp
+=== DEVSIM Poisson: config=curve_el_eq, ε variant=perp (스칼라) ===
+Physical group name C_BG_SiO2 has 0 Tetrahedra.
+Physical group name C_BG_SiO2 has 0 Triangles.
+Physical group name C_BG_SiO2 has 55 Lines.
+Physical group name C_BG_SiO2 has 56 Points.
+Physical group name C_Drain_AirBot has 0 Tetrahedra.
+Physical group name C_Drain_AirBot has 0 Triangles.
+Physical group name C_Drain_AirBot has 24 Lines.
+Physical group name C_Drain_AirBot has 25 Points.
+Physical group name C_Drain_SiO2 has 0 Tetrahedra.
+Physical group name C_Drain_SiO2 has 0 Triangles.
+Physical group name C_Drain_SiO2 has 57 Lines.
+Physical group name C_Drain_SiO2 has 58 Points.
+Physical group name C_Drain_WSe2 has 0 Tetrahedra.
+Physical group name C_Drain_WSe2 has 0 Triangles.
+Physical group name C_Drain_WSe2 has 443 Lines.
+Physical group name C_Drain_WSe2 has 444 Points.
+Physical group name C_Source_AirTop has 0 Tetrahedra.
+Physical group name C_Source_AirTop has 0 Triangles.
+Physical group name C_Source_AirTop has 20 Lines.
+Physical group name C_Source_AirTop has 21 Points.
+Physical group name C_Source_WSe2 has 0 Tetrahedra.
+Physical group name C_Source_WSe2 has 0 Triangles.
+Physical group name C_Source_WSe2 has 442 Lines.
+Physical group name C_Source_WSe2 has 443 Points.
+Physical group name C_Source_hBN has 0 Tetrahedra.
+Physical group name C_Source_hBN has 0 Triangles.
+Physical group name C_Source_hBN has 56 Lines.
+Physical group name C_Source_hBN has 57 Points.
+Physical group name C_TG_hBN has 0 Tetrahedra.
+Physical group name C_TG_hBN has 0 Triangles.
+Physical group name C_TG_hBN has 97 Lines.
+Physical group name C_TG_hBN has 98 Points.
+Physical group name I_AirTop_hBN has 0 Tetrahedra.
+Physical group name I_AirTop_hBN has 0 Triangles.
+Physical group name I_AirTop_hBN has 73 Lines.
+Physical group name I_AirTop_hBN has 74 Points.
+Physical group name I_SiO2_AirBot has 0 Tetrahedra.
+Physical group name I_SiO2_AirBot has 0 Triangles.
+Physical group name I_SiO2_AirBot has 52 Lines.
+Physical group name I_SiO2_AirBot has 53 Points.
+Physical group name I_SiO2_WSe2 has 0 Tetrahedra.
+Physical group name I_SiO2_WSe2 has 0 Triangles.
+Physical group name I_SiO2_WSe2 has 570 Lines.
+Physical group name I_SiO2_WSe2 has 571 Points.
+Physical group name I_WSe2_AirBot has 0 Tetrahedra.
+Physical group name I_WSe2_AirBot has 0 Triangles.
+Physical group name I_WSe2_AirBot has 119 Lines.
+Physical group name I_WSe2_AirBot has 120 Points.
+Physical group name I_WSe2_AirTop has 0 Tetrahedra.
+Physical group name I_WSe2_AirTop has 0 Triangles.
+Physical group name I_WSe2_AirTop has 249 Lines.
+Physical group name I_WSe2_AirTop has 250 Points.
+Physical group name I_WSe2_hBN has 0 Tetrahedra.
+Physical group name I_WSe2_hBN has 0 Triangles.
+Physical group name I_WSe2_hBN has 446 Lines.
+Physical group name I_WSe2_hBN has 447 Points.
+Physical group name R_AirBot has 0 Tetrahedra.
+Physical group name R_AirBot has 1273 Triangles.
+Physical group name R_AirBot has 2007 Lines.
+Physical group name R_AirBot has 735 Points.
+Physical group name R_AirTop has 0 Tetrahedra.
+Physical group name R_AirTop has 3118 Triangles.
+Physical group name R_AirTop has 4848 Lines.
+Physical group name R_AirTop has 1731 Points.
+Physical group name R_SiO2 has 0 Tetrahedra.
+Physical group name R_SiO2 has 10243 Triangles.
+Physical group name R_SiO2 has 15743 Lines.
+Physical group name R_SiO2 has 5501 Points.
+Physical group name R_WSe2 has 0 Tetrahedra.
+Physical group name R_WSe2 has 11825 Triangles.
+Physical group name R_WSe2 has 18876 Lines.
+Physical group name R_WSe2 has 7052 Points.
+Physical group name R_hBN has 0 Tetrahedra.
+Physical group name R_hBN has 6363 Triangles.
+Physical group name R_hBN has 9934 Lines.
+Physical group name R_hBN has 3572 Points.
+Device rfet_curve_el_eq has 17078 coordinates with max index 17078
+Region AirBot has 735 nodes.
+Region AirTop has 1731 nodes.
+Region SiO2 has 5501 nodes.
+Region WSe2 has 7052 nodes.
+Region hBN has 3572 nodes.
+Contact BG_SiO2 in region SiO2 with 56 nodes
+Contact Drain_AirBot in region AirBot with 25 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_SiO2"
+Contact Drain_SiO2 in region SiO2 with 58 nodes
+Warning, contact "Drain_AirBot" shares a node with contact "Drain_WSe2"
+Contact Drain_WSe2 in region WSe2 with 444 nodes
+Contact Source_AirTop in region AirTop with 21 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_WSe2"
+Contact Source_WSe2 in region WSe2 with 443 nodes
+Warning, contact "Source_AirTop" shares a node with contact "Source_hBN"
+Contact Source_hBN in region hBN with 57 nodes
+Contact TG_hBN in region hBN with 98 nodes
+Warning, contact "Source_hBN" shares a node with interface "AirTop_hBN"
+Adding interface AirTop_hBN with 74, 74 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "SiO2_AirBot"
+Adding interface SiO2_AirBot with 53, 53 nodes
+Warning, interface "SiO2_AirBot" shares a node with interface "SiO2_WSe2"
+Adding interface SiO2_WSe2 with 571, 571 nodes
+Warning, contact "Drain_AirBot" shares a node with interface "WSe2_AirBot"
+Warning, interface "SiO2_WSe2" shares a node with interface "WSe2_AirBot"
+Adding interface WSe2_AirBot with 120, 120 nodes
+Warning, contact "Source_WSe2" shares a node with interface "WSe2_AirTop"
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_AirTop"
+Adding interface WSe2_AirTop with 250, 250 nodes
+Warning, interface "AirTop_hBN" shares a node with interface "WSe2_hBN"
+Adding interface WSe2_hBN with 447, 447 nodes
+number of equations 18591
+Iteration: 0
+  Device: "rfet_curve_el_eq"	RelError: 5.00000e+00	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+00	AbsError: 9.94640e-02
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 9.94640e-02
+    Region: "AirTop"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "SiO2"	RelError: 1.00000e+00	AbsError: 9.85326e-01
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 9.85326e-01
+    Region: "WSe2"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_curve_el_eq"	RelError: 1.61052e-13	AbsError: 3.57377e-15
+    Region: "AirBot"	RelError: 3.29382e-14	AbsError: 1.99907e-15
+      Equation: "PotentialEquation"	RelError: 3.29382e-14	AbsError: 1.99907e-15
+    Region: "AirTop"	RelError: 3.30176e-14	AbsError: 1.96579e-15
+      Equation: "PotentialEquation"	RelError: 3.30176e-14	AbsError: 1.96579e-15
+    Region: "SiO2"	RelError: 2.23328e-14	AbsError: 3.57377e-15
+      Equation: "PotentialEquation"	RelError: 2.23328e-14	AbsError: 3.57377e-15
+    Region: "WSe2"	RelError: 3.62966e-14	AbsError: 2.47962e-15
+      Equation: "PotentialEquation"	RelError: 3.62966e-14	AbsError: 2.47962e-15
+    Region: "hBN"	RelError: 3.64666e-14	AbsError: 1.08191e-15
+      Equation: "PotentialEquation"	RelError: 3.64666e-14	AbsError: 1.08191e-15
+  unit case Source: psi 범위 [+0.0000, +1.0000] V
+number of equations 18591
+Iteration: 0
+  Device: "rfet_curve_el_eq"	RelError: 3.00200e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "AirTop"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "SiO2"	RelError: 1.99703e+07	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.99703e+07	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_curve_el_eq"	RelError: 4.56583e-06	AbsError: 3.92428e-15
+    Region: "AirBot"	RelError: 1.52610e-14	AbsError: 3.08214e-15
+      Equation: "PotentialEquation"	RelError: 1.52610e-14	AbsError: 3.08214e-15
+    Region: "AirTop"	RelError: 9.45534e-12	AbsError: 3.92428e-15
+      Equation: "PotentialEquation"	RelError: 9.45534e-12	AbsError: 3.92428e-15
+    Region: "SiO2"	RelError: 3.15108e-08	AbsError: 3.39851e-15
+      Equation: "PotentialEquation"	RelError: 3.15108e-08	AbsError: 3.39851e-15
+    Region: "WSe2"	RelError: 9.34196e-08	AbsError: 3.92428e-15
+      Equation: "PotentialEquation"	RelError: 9.34196e-08	AbsError: 3.92428e-15
+    Region: "hBN"	RelError: 4.44089e-06	AbsError: 3.91943e-15
+      Equation: "PotentialEquation"	RelError: 4.44089e-06	AbsError: 3.91943e-15
+Iteration: 2
+  Device: "rfet_curve_el_eq"	RelError: 1.68952e-15	AbsError: 7.90268e-17
+    Region: "AirBot"	RelError: 1.97306e-16	AbsError: 7.61650e-17
+      Equation: "PotentialEquation"	RelError: 1.97306e-16	AbsError: 7.61650e-17
+    Region: "AirTop"	RelError: 2.08922e-16	AbsError: 5.66942e-17
+      Equation: "PotentialEquation"	RelError: 2.08922e-16	AbsError: 5.66942e-17
+    Region: "SiO2"	RelError: 3.73783e-16	AbsError: 6.76476e-17
+      Equation: "PotentialEquation"	RelError: 3.73783e-16	AbsError: 6.76476e-17
+    Region: "WSe2"	RelError: 4.19707e-16	AbsError: 6.61720e-17
+      Equation: "PotentialEquation"	RelError: 4.19707e-16	AbsError: 6.61720e-17
+    Region: "hBN"	RelError: 4.89800e-16	AbsError: 7.90268e-17
+      Equation: "PotentialEquation"	RelError: 4.89800e-16	AbsError: 7.90268e-17
+  unit case Drain : psi 범위 [-0.0000, +1.0000] V
+number of equations 18591
+Iteration: 0
+  Device: "rfet_curve_el_eq"	RelError: 3.99997e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "AirTop"	RelError: 2.02304e+00	AbsError: 9.26270e-01
+      Equation: "PotentialEquation"	RelError: 2.02304e+00	AbsError: 9.26270e-01
+    Region: "SiO2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+    Region: "hBN"	RelError: 9.99966e+09	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 9.99966e+09	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_curve_el_eq"	RelError: 7.14796e-05	AbsError: 5.46879e-15
+    Region: "AirBot"	RelError: 6.27010e-14	AbsError: 5.42232e-15
+      Equation: "PotentialEquation"	RelError: 6.27010e-14	AbsError: 5.42232e-15
+    Region: "AirTop"	RelError: 1.31218e-14	AbsError: 5.34763e-15
+      Equation: "PotentialEquation"	RelError: 1.31218e-14	AbsError: 5.34763e-15
+    Region: "SiO2"	RelError: 2.88788e-10	AbsError: 5.20520e-15
+      Equation: "PotentialEquation"	RelError: 2.88788e-10	AbsError: 5.20520e-15
+    Region: "WSe2"	RelError: 3.57397e-05	AbsError: 5.46879e-15
+      Equation: "PotentialEquation"	RelError: 3.57397e-05	AbsError: 5.46879e-15
+    Region: "hBN"	RelError: 3.57397e-05	AbsError: 3.57444e-15
+      Equation: "PotentialEquation"	RelError: 3.57397e-05	AbsError: 3.57444e-15
+Iteration: 2
+  Device: "rfet_curve_el_eq"	RelError: 1.44253e-15	AbsError: 8.07308e-17
+    Region: "AirBot"	RelError: 1.84295e-16	AbsError: 6.82304e-17
+      Equation: "PotentialEquation"	RelError: 1.84295e-16	AbsError: 6.82304e-17
+    Region: "AirTop"	RelError: 1.67170e-16	AbsError: 7.29935e-17
+      Equation: "PotentialEquation"	RelError: 1.67170e-16	AbsError: 7.29935e-17
+    Region: "SiO2"	RelError: 2.66323e-16	AbsError: 3.92704e-17
+      Equation: "PotentialEquation"	RelError: 2.66323e-16	AbsError: 3.92704e-17
+    Region: "WSe2"	RelError: 4.52855e-16	AbsError: 6.87436e-17
+      Equation: "PotentialEquation"	RelError: 4.52855e-16	AbsError: 6.87436e-17
+    Region: "hBN"	RelError: 3.71885e-16	AbsError: 8.07308e-17
+      Equation: "PotentialEquation"	RelError: 3.71885e-16	AbsError: 8.07308e-17
+  unit case TG    : psi 범위 [+0.0000, +1.0000] V
+number of equations 18591
+Iteration: 0
+  Device: "rfet_curve_el_eq"	RelError: 1.12693e+10	AbsError: 1.00000e+00
+    Region: "AirBot"	RelError: 4.07624e+01	AbsError: 5.34052e-01
+      Equation: "PotentialEquation"	RelError: 4.07624e+01	AbsError: 5.34052e-01
+    Region: "AirTop"	RelError: 1.57279e+02	AbsError: 8.99573e-01
+      Equation: "PotentialEquation"	RelError: 1.57279e+02	AbsError: 8.99573e-01
+    Region: "SiO2"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+00	AbsError: 1.00000e+00
+    Region: "WSe2"	RelError: 1.26927e+09	AbsError: 5.53178e-01
+      Equation: "PotentialEquation"	RelError: 1.26927e+09	AbsError: 5.53178e-01
+    Region: "hBN"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+      Equation: "PotentialEquation"	RelError: 1.00000e+10	AbsError: 1.00000e+00
+Iteration: 1
+  Device: "rfet_curve_el_eq"	RelError: 1.44605e-05	AbsError: 3.93761e-15
+    Region: "AirBot"	RelError: 2.73893e-13	AbsError: 3.81274e-15
+      Equation: "PotentialEquation"	RelError: 2.73893e-13	AbsError: 3.81274e-15
+    Region: "AirTop"	RelError: 4.15718e-13	AbsError: 3.86902e-15
+      Equation: "PotentialEquation"	RelError: 4.15718e-13	AbsError: 3.86902e-15
+    Region: "SiO2"	RelError: 5.25435e-15	AbsError: 1.16260e-15
+      Equation: "PotentialEquation"	RelError: 5.25435e-15	AbsError: 1.16260e-15
+    Region: "WSe2"	RelError: 2.98131e-06	AbsError: 3.93761e-15
+      Equation: "PotentialEquation"	RelError: 2.98131e-06	AbsError: 3.93761e-15
+    Region: "hBN"	RelError: 1.14792e-05	AbsError: 3.15993e-15
+      Equation: "PotentialEquation"	RelError: 1.14792e-05	AbsError: 3.15993e-15
+Iteration: 2
+  Device: "rfet_curve_el_eq"	RelError: 1.85562e-15	AbsError: 8.36690e-17
+    Region: "AirBot"	RelError: 3.14581e-16	AbsError: 5.20950e-17
+      Equation: "PotentialEquation"	RelError: 3.14581e-16	AbsError: 5.20950e-17
+    Region: "AirTop"	RelError: 3.95027e-16	AbsError: 5.51959e-17
+      Equation: "PotentialEquation"	RelError: 3.95027e-16	AbsError: 5.51959e-17
+    Region: "SiO2"	RelError: 2.65978e-16	AbsError: 8.36690e-17
+      Equation: "PotentialEquation"	RelError: 2.65978e-16	AbsError: 8.36690e-17
+    Region: "WSe2"	RelError: 4.62434e-16	AbsError: 5.51959e-17
+      Equation: "PotentialEquation"	RelError: 4.62434e-16	AbsError: 5.51959e-17
+    Region: "hBN"	RelError: 4.17597e-16	AbsError: 7.16415e-18
+      Equation: "PotentialEquation"	RelError: 4.17597e-16	AbsError: 7.16415e-18
+  unit case BG    : psi 범위 [-0.0000, +1.0000] V
+  저장: rfet_devsim_curve_el_eq_perp.npz
+-> 종료 코드 0, 소요 3 s
+
+======================================================================
+[STEP 4 FEM curve_el_eq lit]
+$ rfet_fem_semi.py curve_el_eq perp lit
+  V_TG =  -5.0, V_BG =  +0.0: 10 단계, Newton 총 49회
+  V_TG =  -2.5, V_BG =  +0.0: 5 단계, Newton 총 25회
+  V_TG =  +2.5, V_BG =  +0.0: 5 단계, Newton 총 30회
+  V_TG =  +5.0, V_BG =  +0.0: 10 단계, Newton 총 53회
+  V_TG =  +0.0, V_BG = -60.0: 12 단계, Newton 총 69회
+  V_TG =  +0.0, V_BG = -30.0: 6 단계, Newton 총 42회
+  V_TG =  +0.0, V_BG = +30.0: 6 단계, Newton 총 35회
+  V_TG =  +0.0, V_BG = +60.0: 12 단계, Newton 총 59회
+  V_TG =  +0.0, V_BG =  +0.0: 1 단계, Newton 총 0회
+  저장: rfet_semi_curve_el_eq_perp_lit.npz
+-> 종료 코드 0, 소요 28 s
+
+======================================================================
+[STEP 3 비교 그림/표]
+$ rfet_post.py rfet_fem_curve_el_perp.npz rfet_fem_line_el_perp.npz rfet_fem_curve70_perp.npz rfet_fem_line70_perp.npz rfet_fem_curve_el_eq_perp.npz rfet_devsim_curve_el_perp.npz rfet_devsim_line_el_perp.npz rfet_devsim_curve70_perp.npz rfet_devsim_line70_perp.npz rfet_devsim_curve_el_eq_perp.npz
+findfont: Failed to find font weight medium for DejaVu Sans, now using 400.
+findfont: Failed to find font weight medium for DejaVu Sans, now using 400.
+
+[박막 중앙선 전위 응답, V per V]   (x 는 junction 에서의 거리; S쪽 = x, D쪽 = L - x)
+  data                      gate | S+ 10 S+ 25 S+ 50 | D- 10 D- 25 D- 50 | mid
+  curve_el/perp (fem)        TG   | 0.072 0.132 0.212 | 0.352 0.516 0.621 | 0.406
+  curve_el/perp (fem)        BG   | 0.091 0.151 0.217 | 0.009 0.021 0.052 | 0.368
+  line_el/perp (fem)         TG   | 0.072 0.132 0.212 | 0.280 0.424 0.538 | 0.407
+  line_el/perp (fem)         BG   | 0.091 0.151 0.217 | 0.012 0.029 0.066 | 0.367
+  curve70/perp (fem)         TG   | 0.072 0.131 0.211 | 0.240 0.304 0.278 | 0.394
+  curve70/perp (fem)         BG   | 0.092 0.151 0.218 | 0.014 0.054 0.189 | 0.372
+  line70/perp (fem)          TG   | 0.072 0.131 0.211 | 0.180 0.264 0.290 | 0.393
+  line70/perp (fem)          BG   | 0.092 0.151 0.218 | 0.020 0.063 0.165 | 0.372
+  curve_el_eq/perp (fem)     TG   | 0.060 0.111 0.181 | 0.340 0.497 0.598 | 0.377
+  curve_el_eq/perp (fem)     BG   | 0.094 0.156 0.226 | 0.010 0.024 0.057 | 0.382
+  curve_el/perp (devsim)     TG   | 0.072 0.132 0.212 | 0.351 0.514 0.620 | 0.406
+  curve_el/perp (devsim)     BG   | 0.091 0.150 0.217 | 0.009 0.021 0.052 | 0.368
+  line_el/perp (devsim)      TG   | 0.072 0.133 0.213 | 0.280 0.424 0.538 | 0.407
+  line_el/perp (devsim)      BG   | 0.091 0.150 0.217 | 0.012 0.029 0.066 | 0.367
+  curve70/perp (devsim)      TG   | 0.072 0.132 0.211 | 0.240 0.305 0.279 | 0.394
+  curve70/perp (devsim)      BG   | 0.092 0.151 0.217 | 0.014 0.054 0.189 | 0.371
+  line70/perp (devsim)       TG   | 0.072 0.132 0.211 | 0.181 0.265 0.291 | 0.393
+  line70/perp (devsim)       BG   | 0.092 0.151 0.217 | 0.020 0.062 0.165 | 0.370
+  curve_el_eq/perp (devsim)  TG   | 0.061 0.111 0.181 | 0.340 0.498 0.599 | 0.377
+  curve_el_eq/perp (devsim)  BG   | 0.094 0.155 0.225 | 0.010 0.023 0.056 | 0.382
+
+그림 저장: rfet_post_profiles.png, rfet_post_maps.png
+-> 종료 코드 0, 소요 10 s
+
+======================================================================
+[STEP 4 비교 표 (다섯 config)]
+$ rfet_post_semi.py rfet_semi_curve_el_perp_lit.npz rfet_semi_line_el_perp_lit.npz rfet_semi_curve70_perp_lit.npz rfet_semi_line70_perp_lit.npz rfet_semi_curve_el_eq_perp_lit.npz
+findfont: Failed to find font weight medium for DejaVu Sans, now using 400.
+
+[E_c - E_F at distance from junction, eV]  (S+d: source 쪽, D-d: drain 쪽)
+  data / bias                       | S+10  S+25  S+50 | D-10  D-25  D-50 | n_mid    p_mid  [cm^-3]
+  curve_el/perp/lit BG_TG+0.0_BG+30.0    |  0.17  0.17  0.17 |  0.48  0.39  0.24 |  2.6e+18  7.0e+02
+  curve_el/perp/lit BG_TG+0.0_BG+60.0    |  0.16  0.16  0.16 |  0.44  0.32  0.20 |  5.3e+18  5.9e+02
+  curve_el/perp/lit BG_TG+0.0_BG-30.0    |  0.97  1.06  1.06 |  0.64  0.76  0.96 |  7.0e+02  2.6e+18
+  curve_el/perp/lit BG_TG+0.0_BG-60.0    |  1.02  1.07  1.07 |  0.68  0.84  1.03 |  5.8e+02  5.3e+18
+  curve_el/perp/lit TG_TG+2.5_BG+0.0     |  0.24  0.23  0.22 |  0.19  0.17  0.18 |  1.4e+17  5.0e+03
+  curve_el/perp/lit TG_TG+5.0_BG+0.0     |  0.22  0.21  0.20 |  0.17  0.16  0.17 |  3.4e+17  2.2e+03
+  curve_el/perp/lit TG_TG-2.5_BG+0.0     |  0.42  0.58  0.79 |  1.02  1.06  1.05 |  5.7e+03  1.2e+17
+  curve_el/perp/lit TG_TG-5.0_BG+0.0     |  0.48  0.70  0.94 |  1.05  1.07  1.06 |  2.3e+03  3.3e+17
+  curve_el/perp/lit flat_TG+0.0_BG+0.0   |  0.29  0.34  0.39 |  0.55  0.57  0.58 |  3.3e+11  1.9e+09
+  line_el/perp/lit BG_TG+0.0_BG+30.0    |  0.17  0.17  0.17 |  0.46  0.34  0.21 |  2.7e+18  6.9e+02
+  line_el/perp/lit BG_TG+0.0_BG+60.0    |  0.16  0.16  0.16 |  0.43  0.28  0.18 |  5.6e+18  5.8e+02
+  line_el/perp/lit BG_TG+0.0_BG-30.0    |  0.97  1.06  1.06 |  0.65  0.81  1.01 |  6.8e+02  2.7e+18
+  line_el/perp/lit BG_TG+0.0_BG-60.0    |  1.02  1.07  1.07 |  0.69  0.89  1.04 |  5.7e+02  5.6e+18
+  line_el/perp/lit TG_TG+2.5_BG+0.0     |  0.24  0.23  0.22 |  0.20  0.18  0.19 |  1.3e+17  5.2e+03
+  line_el/perp/lit TG_TG+5.0_BG+0.0     |  0.22  0.21  0.20 |  0.18  0.17  0.17 |  3.3e+17  2.2e+03
+  line_el/perp/lit TG_TG-2.5_BG+0.0     |  0.42  0.58  0.79 |  0.99  1.04  1.04 |  6.1e+03  1.1e+17
+  line_el/perp/lit TG_TG-5.0_BG+0.0     |  0.48  0.70  0.94 |  1.04  1.06  1.06 |  2.4e+03  3.2e+17
+  line_el/perp/lit flat_TG+0.0_BG+0.0   |  0.29  0.34  0.39 |  0.55  0.56  0.57 |  3.3e+11  1.9e+09
+  curve70/perp/lit BG_TG+0.0_BG+30.0    |  0.17  0.17  0.17 |  0.51  0.39  0.17 |  2.3e+18  7.3e+02
+  curve70/perp/lit BG_TG+0.0_BG+60.0    |  0.16  0.16  0.16 |  0.50  0.36  0.16 |  4.7e+18  6.0e+02
+  curve70/perp/lit BG_TG+0.0_BG-30.0    |  0.97  1.06  1.06 |  0.60  0.75  1.06 |  7.3e+02  2.3e+18
+  curve70/perp/lit BG_TG+0.0_BG-60.0    |  1.02  1.07  1.07 |  0.61  0.80  1.07 |  6.0e+02  4.7e+18
+  curve70/perp/lit TG_TG+2.5_BG+0.0     |  0.24  0.23  0.22 |  0.19  0.19  0.23 |  1.5e+17  4.6e+03
+  curve70/perp/lit TG_TG+5.0_BG+0.0     |  0.22  0.21  0.20 |  0.17  0.16  0.20 |  3.6e+17  2.1e+03
+  curve70/perp/lit TG_TG-2.5_BG+0.0     |  0.42  0.59  0.79 |  1.02  1.04  0.99 |  5.1e+03  1.3e+17
+  curve70/perp/lit TG_TG-5.0_BG+0.0     |  0.48  0.70  0.94 |  1.05  1.06  1.03 |  2.2e+03  3.4e+17
+  curve70/perp/lit flat_TG+0.0_BG+0.0   |  0.29  0.34  0.39 |  0.55  0.55  0.56 |  3.4e+11  1.9e+09
+  line70/perp/lit BG_TG+0.0_BG+30.0    |  0.17  0.17  0.17 |  0.48  0.35  0.18 |  2.3e+18  7.3e+02
+  line70/perp/lit BG_TG+0.0_BG+60.0    |  0.16  0.16  0.16 |  0.46  0.30  0.17 |  4.7e+18  6.0e+02
+  line70/perp/lit BG_TG+0.0_BG-30.0    |  0.97  1.06  1.06 |  0.62  0.80  1.04 |  7.3e+02  2.3e+18
+  line70/perp/lit BG_TG+0.0_BG-60.0    |  1.02  1.07  1.07 |  0.64  0.86  1.06 |  6.0e+02  4.7e+18
+  line70/perp/lit TG_TG+2.5_BG+0.0     |  0.24  0.23  0.22 |  0.23  0.20  0.21 |  1.5e+17  4.6e+03
+  line70/perp/lit TG_TG+5.0_BG+0.0     |  0.22  0.21  0.20 |  0.18  0.17  0.19 |  3.6e+17  2.1e+03
+  line70/perp/lit TG_TG-2.5_BG+0.0     |  0.42  0.59  0.79 |  0.93  1.02  1.01 |  5.1e+03  1.3e+17
+  line70/perp/lit TG_TG-5.0_BG+0.0     |  0.48  0.70  0.94 |  1.03  1.05  1.04 |  2.2e+03  3.4e+17
+  line70/perp/lit flat_TG+0.0_BG+0.0   |  0.29  0.34  0.39 |  0.54  0.55  0.56 |  3.5e+11  1.9e+09
+  curve_el_eq/perp/lit BG_TG+0.0_BG+30.0    |  0.17  0.17  0.17 |  0.47  0.38  0.24 |  2.6e+18  6.9e+02
+  curve_el_eq/perp/lit BG_TG+0.0_BG+60.0    |  0.16  0.16  0.16 |  0.44  0.32  0.20 |  5.3e+18  5.8e+02
+  curve_el_eq/perp/lit BG_TG+0.0_BG-30.0    |  0.97  1.06  1.06 |  0.64  0.77  0.96 |  6.9e+02  2.6e+18
+  curve_el_eq/perp/lit BG_TG+0.0_BG-60.0    |  1.02  1.07  1.07 |  0.68  0.85  1.03 |  5.8e+02  5.3e+18
+  curve_el_eq/perp/lit TG_TG+2.5_BG+0.0     |  0.24  0.24  0.23 |  0.19  0.17  0.18 |  1.2e+17  5.7e+03
+  curve_el_eq/perp/lit TG_TG+5.0_BG+0.0     |  0.23  0.22  0.21 |  0.17  0.16  0.17 |  3.0e+17  2.4e+03
+  curve_el_eq/perp/lit TG_TG-2.5_BG+0.0     |  0.40  0.54  0.73 |  1.02  1.06  1.05 |  6.8e+03  1.0e+17
+  curve_el_eq/perp/lit TG_TG-5.0_BG+0.0     |  0.45  0.64  0.88 |  1.05  1.07  1.06 |  2.6e+03  2.9e+17
+  curve_el_eq/perp/lit flat_TG+0.0_BG+0.0   |  0.29  0.33  0.38 |  0.55  0.57  0.57 |  3.9e+11  1.6e+09
+
+그림 저장: rfet_post_semi_bands.png, rfet_post_semi_carriers.png
+-> 종료 코드 0, 소요 21 s
+
+======================================================================
+[mesh 그림]
+$ rfet_plot_mesh.py rfet_curve_el_nm.msh rfet_line_el_nm.msh rfet_curve70_nm.msh rfet_line70_nm.msh rfet_curve_el_eq_nm.msh
+findfont: Failed to find font weight medium for DejaVu Sans, now using 400.
+저장: fig_mesh_curve_el.png
+저장: fig_mesh_line_el.png
+저장: fig_mesh_curve70.png
+저장: fig_mesh_line70.png
+저장: fig_mesh_curve_el_eq.png
+-> 종료 코드 0, 소요 12 s
+
+요약: {'geo': 0, 'mesh_curve_el': 0, 'load_curve_el': 0, 'fem3_curve_el': 0, 'dev3_curve_el': 0, 'fem4_curve_el': 0, 'mesh_line_el': 0, 'load_line_el': 0, 'fem3_line_el': 0, 'dev3_line_el': 0, 'fem4_line_el': 0, 'mesh_curve70': 0, 'load_curve70': 0, 'fem3_curve70': 0, 'dev3_curve70': 0, 'fem4_curve70': 0, 'mesh_line70': 0, 'load_line70': 0, 'fem3_line70': 0, 'dev3_line70': 0, 'fem4_line70': 0, 'mesh_curve_el_eq': 0, 'load_curve_el_eq': 0, 'fem3_curve_el_eq': 0, 'dev3_curve_el_eq': 0, 'fem4_curve_el_eq': 0, 'post3': 0, 'post4': 0, 'figs': 0}
