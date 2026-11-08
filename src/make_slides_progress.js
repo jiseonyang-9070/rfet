@@ -27,11 +27,33 @@ function fit(s, file, box, ratio) { let w = box.w, h = w / ratio; if (h > box.h)
 // 수식 이미지: 높이 h(인치) 기준, 왼쪽 정렬, 폭 제한
 function eq(s, name, x, y, h, maxW) { const r = EQI[name].ratio; let hh = h, w = h * r; if (maxW && w > maxW) { w = maxW; hh = w / r; }
   s.addImage({ path: EQD + name + ".png", x, y, w, h: hh }); return hh; }
+
+// 아래첨자/위첨자: "E_c", "φ_Bn", "ψ_TG" (한 글자 기호 + _) → subscript run,  "Γ^−¼" → superscript run
+function S(t, extra = {}) {
+  if (typeof t !== "string" || !/[_^]/.test(t)) return t;
+  const re = /(^|[^A-Za-z0-9])([A-Za-zΦφψχεμηΓ])_([A-Za-z0-9]+)|\^([^\s),]+)/g;
+  const runs = []; let last = 0, m;
+  while ((m = re.exec(t)) !== null) {
+    if (m[4] !== undefined) {                     // 위첨자
+      if (m.index > last) runs.push({ text: t.slice(last, m.index), options: { ...extra } });
+      runs.push({ text: m[4], options: { ...extra, superscript: true } });
+    } else {
+      const pre = t.slice(last, m.index) + m[1] + m[2];
+      if (pre) runs.push({ text: pre, options: { ...extra } });
+      runs.push({ text: m[3], options: { ...extra, subscript: true } });
+    }
+    last = m.index + m[0].length;
+  }
+  if (last < t.length) runs.push({ text: t.slice(last), options: { ...extra } });
+  return runs;
+}
+const T = (rows) => rows.map(r => r.map(c => (typeof c === "string" && /[_^]/.test(c)) ? { text: S(c) } : c));
+
 function card(s, x, y, w, h, fill = LT) { s.addShape(pres.ShapeType.roundRect, { x, y, w, h, fill: { color: fill }, line: { color: fill }, rectRadius: 0.08 }); }
 function txt(s, t, x, y, w, h, size = 16, color = INK, bold = false, align = "left", valign = "top") {
-  s.addText(t, { x, y, w, h, fontSize: size, color, bold, margin: 0, align, valign }); }
+  s.addText(S(t), { x, y, w, h, fontSize: size, color, bold, margin: 0, align, valign }); }
 const TBL = (fs) => ({ fontSize: fs, color: INK, border: { type: "solid", pt: 0.75, color: LINE }, valign: "middle", margin: 0.06 });
-const hdr = (t) => ({ text: t, options: { bold: true, color: "FFFFFF", fill: { color: NAVY }, align: "center" } });
+const hdr = (t) => ({ text: S(t), options: { bold: true, color: "FFFFFF", fill: { color: NAVY }, align: "center" } });
 const B = (t) => ({ text: t, options: { bold: true } });
 // 이론 페이지: 왼쪽 라벨 + 수식 이미지 줄들, 아래 기호 표
 function theory(s, title, lines, symbols, note) {
@@ -45,10 +67,10 @@ function theory(s, title, lines, symbols, note) {
   if (symbols && symbols.length) {
     const rows = [[hdr("기호"), hdr("뜻"), hdr("우리 값")]].concat(symbols);
     const ty = Math.max(y + 0.05, 4.55);
-    s.addTable(rows, { x: 0.6, y: ty, w: 12.1, colW: [1.5, 6.4, 4.2], rowH: 0.36, ...TBL(13.5) });
-    y = ty + rows.length * 0.36 + 0.08;
+    s.addTable(T(rows), { x: 0.6, y: ty, w: 12.1, colW: [1.5, 6.4, 4.2], rowH: 0.33, ...TBL(13) });
+    y = ty + rows.length * 0.4 + 0.05;
   }
-  if (note) txt(s, note, 0.6, Math.min(Math.max(y, 6.3), 6.65), 12.1, 0.4, 13.5, GRAY);
+  if (note) txt(s, note, 0.6, Math.min(Math.max(y, 6.3), 6.72), 12.1, 0.4, 13.5, GRAY);
 }
 
 
@@ -221,14 +243,14 @@ def rho(psi):
     ["패드 · TG 여유 · 쐐기 ε", "1000 · 300/300 nm · 1", "[C]", "fringe 3배 밖 · 대칭 · 하한"],
     ["도핑 · 고정전하 · μ", "0 · 0 · 100 cm²/Vs", "[C]", "값 없음, fitting 금지"],
   ];
-  s.addTable(rows, { x: 0.5, y: 1.25, w: 12.33, colW: [3.0, 2.8, 0.8, 5.73], rowH: 0.46, ...TBL(13.5) });
+  s.addTable(T(rows), { x: 0.5, y: 1.25, w: 12.33, colW: [3.0, 2.8, 0.8, 5.73], rowH: 0.46, ...TBL(13.5) });
 }
 
 // ---------- 이론 ① 정전기 ----------
 {
   const s = pres.addSlide();
   theory(s, "이론 ① 정전기 — 푸아송 방정식과 게이트",
-    [["poisson", 0.6, "푸아송"], ["cap", 0.7, "커패시터"], ["superpos", 0.48, "선형 중첩"], ["gauss", 0.8, "유한체적"]],
+    [["poisson", 0.55, "푸아송"], ["cap", 0.64, "커패시터"], ["superpos", 0.45, "선형 중첩"], ["gauss", 0.74, "유한체적"]],
     [["ψ", "정전기 전위 (전압)", "미지수"], ["ε", "유전율 — 층 방향 ⊥ 값 (이방성은 FEM 텐서로 확인)", "WSe₂ 7.9 · h-BN 3.76 · SiO₂ 3.9 · 공기 1"],
      ["ψ_TG", "TG 1 V, 나머지 0 V 일 때의 해  →  단위 V/V", "STEP 3 결과"], ["Q_node", "노드 주위 상자 안의 전하", "STEP 3: 0  ·  STEP 4: q(p−n)"]],
     "금속 내부는 풀지 않음 — 등전위, 경계선에 전압만 (Dirichlet) → 금속 뒤쪽은 전기장을 못 느낀다 = 차폐");
@@ -238,7 +260,7 @@ def rho(psi):
 {
   const s = pres.addSlide();
   theory(s, "이론 ② 밴드와 쇼트키 장벽",
-    [["band", 0.52, "밴드 ↔ 전압"], ["schottky", 0.52, "장벽"], ["contact", 0.8, "경계조건"], ["thermionic", 0.8, "열전자 방출"]],
+    [["band", 0.48, "밴드 ↔ 전압"], ["schottky", 0.48, "장벽"], ["contact", 0.72, "경계조건"], ["thermionic", 0.72, "열전자 방출"]],
     [["χ", "전자친화도 (E_c 에서 진공까지)", "4.03 eV"], ["E_g", "밴드갭", "1.2 eV"], ["φ_Bn", "전자 쇼트키 장벽 (핀닝 S = 0.03 → 금속에 거의 무관)", "Pd 0.22 · Au 0.53 eV"],
      ["Φ_m", "게이트 일함수 — flat band 가 되는 값 [C]", "χ + E_g/2 = 4.63 eV"]],
     "φ_Bp = 1.2 − 0.22 = 0.98 eV  →  exp(−0.98/0.0259) ≈ 10⁻¹⁷ : 열전자만으로는 p형 전류가 나오지 않는 이유");
@@ -248,7 +270,7 @@ def rho(psi):
 {
   const s = pres.addSlide();
   theory(s, "이론 ③ 캐리어 밀도 — 2차원 상태밀도 페르미–디랙",
-    [["dos2d", 0.72, "2D 상태밀도"], ["fd", 0.78, "전자 밀도"], ["fdlimits", 0.52, "극한"], ["nc14", 0.48, "14층"]],
+    [["dos2d", 0.66, "2D 상태밀도"], ["fd", 0.72, "전자 밀도"], ["fdlimits", 0.48, "극한"], ["nc14", 0.44, "14층"]],
     [["m_d", "상태밀도 유효질량 √(m_l m_t)", "전자 0.56 m₀ · 정공 0.997 m₀"], ["g_v", "골짜기 수 (스핀 포함)", "전자 6 · 정공 2"],
      ["η", "(E_F − E_c)/kT — 게이트가 바꾸는 양", "STEP 4 표의 E_c − E_F"], ["ρ", "q(p − n), 도핑 0 [C]", "푸아송 우변"]],
     "적분이 닫힌 꼴 → 전자가 많이 모여도 발산 없음 → V_BG ±60 V 수렴  (Boltzmann 근사는 ±10 V 가 한계)");
@@ -259,7 +281,7 @@ def rho(psi):
   const s = pres.addSlide();
   theory(s, "이론 ④ 박막이 휘는 모양과 길이 — 에너지 최소화",
     [["beam", 0.7, "판의 평형"], ["bend", 0.8, "굽힘 에너지"], ["lstar", 0.76, "접착과 균형"], ["strain", 0.7, "변형률 검사"]],
-    [["E, ν", "영률 · 포아송비", "167 GPa (Zhang 2016) · 0.2 [C]"], ["t, h", "박막 두께 · 올라갈 높이 (Drain)", "9.1 · 71 nm"], ["Γ", "접착 에너지 (차용)", "0.45 J/m²   (ℓ ∝ Γ^−¼)"]],
+    [["E, ν", "영률 · 포아송비", "167 GPa (Zhang 2016) · 0.2 [C]"], ["t, h", "박막 두께 · 올라갈 높이 (Drain)", "9.1 · 71 nm"], ["Γ", "접착 에너지 (차용)", "0.45 J/m²   (ℓ ∝ Γ^−¼ )"]],
     "경계조건 4개(양 끝 높이·기울기) → 3차식만 가능.  h-BN 에 같은 식: ℓ* ≈ 700 nm > L → 곧은 판");
 }
 
@@ -278,7 +300,7 @@ def rho(psi):
   fit(s, FIG("rfet_geometry_curve_el.png"), { x: 0.4, y: 1.2, w: 8.4, h: 5.7 }, 1.5);
   const rows = [[hdr("요소"), hdr("nm")], ["Source (Pd/Au)", "55, 박막 위"], ["Drain (Au/Ti)", "71, 박막 아래"], ["채널 L", "500"],
     ["WSe₂", "9.1 · 283→500 S자"], ["h-BN", "30 · 곧은 판"], ["TG", "−300 → 800"], ["SiO₂", "300"], ["빈 공간", "공기 ε = 1"]];
-  s.addTable(rows, { x: 9.0, y: 1.4, w: 3.9, colW: [1.7, 2.2], rowH: 0.55, ...TBL(14) });
+  s.addTable(T(rows), { x: 9.0, y: 1.4, w: 3.9, colW: [1.7, 2.2], rowH: 0.55, ...TBL(14) });
 }
 
 // ---------- 경사 민감도 ----------
@@ -293,7 +315,7 @@ def rho(psi):
     ["line70", "직선 70 nm", "0.18", "0.07", "0.09", "0.020"],
     ["curve_el_eq", "Source 두께 71", "0.34", B("0.06"), "0.09", "0.010"],
   ];
-  s.addTable(rows, { x: 0.5, y: 4.6, w: 12.33, colW: [2.2, 3.0, 1.8, 1.8, 1.8, 1.73], rowH: 0.36, ...TBL(14), align: "center" });
+  s.addTable(T(rows), { x: 0.5, y: 4.6, w: 12.33, colW: [2.2, 3.0, 1.8, 1.8, 1.8, 1.73], rowH: 0.36, ...TBL(14), align: "center" });
 }
 
 // ---------- 격자 ----------
@@ -309,7 +331,7 @@ def rho(psi):
   const s = pres.addSlide(); header(s, "STEP 3 · 게이트 1 V 가 채널 어디를 움직이나");
   fit(s, FIG("fig_step3_profiles_slope.png"), { x: 0.4, y: 1.1, w: 12.5, h: 4.1 }, 2.62);
   const rows = [[hdr("1 V 당"), hdr("Source 쪽"), hdr("Drain 쪽")], ["TG", "0.07", B("0.35")], ["BG", B("0.09"), "0.009"]];
-  s.addTable(rows, { x: 0.8, y: 5.5, w: 5.2, colW: [1.4, 1.9, 1.9], rowH: 0.45, ...TBL(16), align: "center" });
+  s.addTable(T(rows), { x: 0.8, y: 5.5, w: 5.2, colW: [1.4, 1.9, 1.9], rowH: 0.45, ...TBL(16), align: "center" });
   card(s, 6.5, 5.5, 6.4, 1.4);
   s.addText([B("TG → Drain 쪽  5배"), { text: "\n", options: {} }, B("BG → Source 쪽  10배")], { x: 6.7, y: 5.6, w: 6.1, h: 1.2, fontSize: 18, color: NAVY, margin: 0, valign: "top" });
 }
@@ -323,7 +345,7 @@ def rho(psi):
   const s = pres.addSlide(); header(s, "STEP 4 · 밴드 : 어느 게이트가 어느 쪽을 n/p 로 만드나");
   fit(s, FIG("fig_step4_bands_slope.png"), { x: 0.4, y: 1.15, w: 8.6, h: 5.9 }, 1.415);
   const rows = [[hdr("E_c − E_F (eV)"), hdr("S 쪽"), hdr("D 쪽")], ["0 V", "0.29", "0.55"], ["TG −5 V", "0.48", B("1.05")], ["BG −60 → +60", B("1.02 → 0.16"), "0.68 → 0.44"]];
-  s.addTable(rows, { x: 9.2, y: 1.5, w: 3.7, colW: [1.5, 1.1, 1.1], rowH: 0.6, ...TBL(14), align: "center" });
+  s.addTable(T(rows), { x: 9.2, y: 1.5, w: 3.7, colW: [1.5, 1.1, 1.1], rowH: 0.6, ...TBL(14), align: "center" });
   card(s, 9.2, 4.2, 3.7, 1.6);
   s.addText([B("TG → Drain 쪽만 p 형"), { text: "\n", options: {} }, B("BG → Source 쪽만")], { x: 9.35, y: 4.3, w: 3.4, h: 1.4, fontSize: 16, color: NAVY, margin: 0, valign: "top" });
 }
@@ -341,7 +363,7 @@ def rho(psi):
     ["n형 · TG −5", "BG 무관 바닥 10⁻¹¹", "바닥 10⁻¹⁰"],
     ["p형 · TG −5", "정공 10⁻¹⁶ ≈ 0", "정공 10⁻⁹, BG 가 끔"],
   ];
-  s.addTable(rows, { x: 0.5, y: 4.5, w: 12.33, colW: [2.6, 5.0, 4.73], rowH: 0.5, ...TBL(15) });
+  s.addTable(T(rows), { x: 0.5, y: 4.5, w: 12.33, colW: [2.6, 5.0, 4.73], rowH: 0.5, ...TBL(15) });
   txt(s, "구조 bridge 로 계산 (curve_el 재계산 예정) · 단위 A/µm", 0.5, 6.6, 12.3, 0.4, 13, GRAY);
 }
 
@@ -351,7 +373,7 @@ def rho(psi):
   fit(s, FIG("fig_mesh_convergence_simple.png"), { x: 0.4, y: 1.3, w: 6.6, h: 5.4 }, 1.71);
   const rows = [[hdr("검증"), hdr("결과")], ["해석해 (2층 평행판)", "FEM 일치"], ["DEVSIM vs 직접 짠 FEM", "소수 셋째 자리 일치"],
     ["격자 4 → 6 → 8", "ψ ≤ 0.001 V/V · E_c ≤ 5 meV"], ["전류 보존", "6×10⁻⁵"], ["텐서 유전율", "스칼라 대비 10–15 %"]];
-  s.addTable(rows, { x: 7.2, y: 1.6, w: 5.7, colW: [2.7, 3.0], rowH: 0.65, ...TBL(15) });
+  s.addTable(T(rows), { x: 7.2, y: 1.6, w: 5.7, colW: [2.7, 3.0], rowH: 0.65, ...TBL(15) });
 }
 
 // ---------- 가정과 한계 ----------
@@ -361,7 +383,7 @@ def rho(psi):
     ["장벽 0.22 / 0.53 — 다른 시료 값", "절대 E_c ±0.2 eV → 대조군으로 분리"], ["φ_Bp = E_g − φ_Bn", "p형 전류 결정"],
     ["도핑 · 고정전하 0, flat-band Φ_m", "V_th 위치는 비교 대상 아님"], ["열전자 DD 만", "p형 과소 → 터널링 다음"],
     ["μ = 100 cm²/Vs", "전류 절대값 ∝ μ"], ["Γ 차용, 박막 늘어남 무시", "ℓ: 217 (하한) ~ 500 (상한)"]];
-  s.addTable(rows, { x: 0.5, y: 1.3, w: 12.33, colW: [6.0, 6.33], rowH: 0.58, ...TBL(16) });
+  s.addTable(T(rows), { x: 0.5, y: 1.3, w: 12.33, colW: [6.0, 6.33], rowH: 0.58, ...TBL(16) });
 }
 
 // ---------- 정리 ----------
@@ -373,7 +395,7 @@ def rho(psi):
     ["STEP 4 밴드", "TG 는 Drain 쪽만, BG 는 Source 쪽만", "완료"],
     ["STEP 5 전류", "n형 선택적 제어 확인 · p형은 터널링 필요", "DD 완료"],
     ["다음", "터널링 (WKB) → 채널 길이 500 → 100 nm", "예정"]];
-  s.addTable(rows, { x: 0.5, y: 1.4, w: 12.33, colW: [2.4, 7.4, 2.53], rowH: 0.65, ...TBL(17) });
+  s.addTable(T(rows), { x: 0.5, y: 1.4, w: 12.33, colW: [2.4, 7.4, 2.53], rowH: 0.65, ...TBL(17) });
   txt(s, "GitHub  jiseonyang-9070/rfet", 0.5, 6.4, 12.3, 0.45, 14, GRAY, false, "center");
 }
 
