@@ -39,6 +39,7 @@ docs/
   05_verification.md             검증 전부: 해석해, DEVSIM vs FEM, mesh 수렴, 실행 로그
   06_assumptions_and_limits.md   모든 가정 목록과 각각이 결과에 주는 영향, 미해결 항목
   07_next_steps.md               STEP 5 이후 계획 (장벽 분석, WKB, scaling)
+  08_team_comparison.md          팀원 코드와 비교·실행 결과, 합친 STEP 5-DD 의 설계
   references.md                  인용 문헌 전체 (DOI, 표/그림 위치)
 src/
   rfet_geometry.py        2D 단면 geometry (점·다각형), 10가지 기하 검사, 단면도
@@ -57,9 +58,10 @@ src/
   rfet_poisson_semi_devsim.py  DEVSIM 비선형 Poisson
   rfet_post_semi.py       STEP 4 후처리 (밴드 다이어그램, 캐리어)
   rfet_converge_report.py mesh 수렴 리포트
+  rfet_transport_devsim.py STEP 5-DD: 드리프트-확산 전류 (우리 모델 + 팀원 DD 레시피 + 2D-DOS 정확 FD)
   rfet_plotstyle.py       그림 공통 스타일 (색 = 의미)
   rfet_schematic.py       발표용 개략도 (비례도 아님)
-  run_all.py / run_resume.py / run_converge.py / run_figs.py / run_check.py   실행 스크립트
+  run_all.py / run_resume.py / run_converge.py / run_figs.py / run_check.py / run_transport.py   실행 스크립트
 figures/                 실제 mesh 결과 그림 (아래 "그림 목록")
 results/                 수치 표(txt)와 사용자 PC 실행 로그 3개
 ```
