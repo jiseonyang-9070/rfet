@@ -1,0 +1,16 @@
+14849:-> 종료 코드 0, 소요 294 s
+143522:-> 종료 코드 0, 소요 2643 s
+270615:-> 종료 코드 0, 소요 1952 s
+
+[요약] bridge 구조, DD(열전자만, 터널링 없음), 2D-DOS FD, mu=100 cm2/Vs [모델 가정], Vbg -60..60 (5 V 간격)
+== lit (phiBn S 0.22 / D 0.53)
+  Vds=-2 Vtg=-5: Imax=9.36e-16 A/um @Vbg=-60 (정공), Imin=1.96e-20 @Vbg=+15, on/off=4.8e+04
+  Vds=-2 Vtg=+5: Imax=3.55e-08 A/um @Vbg=+60 (전자), Imin=1.50e-15 @Vbg=-60, on/off=2.4e+07
+  Vds=+2 Vtg=-5: Imax=3.67e-09 A/um @Vbg=+60 (전자), Imin=4.77e-11 @Vbg=-3, on/off=7.7e+01
+  Vds=+2 Vtg=+5: Imax=1.37e-04 A/um @Vbg=+60 (전자), Imin=2.55e-20 @Vbg=-20, on/off=5.4e+15
+== equal_mid (0.60 / 0.60)
+  Vds=-2 Vtg=-5: Imax=2.24e-09 A/um @Vbg=-60 (정공), Imin=2.39e-20 @Vbg=+20, on/off=9.4e+10
+  Vds=-2 Vtg=+5: Imax=3.06e-09 A/um @Vbg=-60 (정공), Imin=2.38e-09 @Vbg=-6, on/off=1.3e+00
+  Vds=+2 Vtg=-5: Imax=8.14e-09 A/um @Vbg=+60 (전자), Imin=7.07e-10 @Vbg=+6, on/off=1.2e+01
+  Vds=+2 Vtg=+5: Imax=7.56e-09 A/um @Vbg=+60 (전자), Imin=2.35e-20 @Vbg=-20, on/off=3.2e+11
+전류 보존 |Id+Is|/|Id| < 6e-5 (|Id| > 1e-14 A/um); 그 아래는 수치 잡음 바닥.
