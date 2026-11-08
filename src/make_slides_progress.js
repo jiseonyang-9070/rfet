@@ -121,30 +121,33 @@ function codeSlide(title, file, code, notes, codeW = 8.0, fs = 12) {
 
 // ---------- 3. 연구 질문 ----------
 {
-  const s = pres.addSlide(); header(s, "연구 질문 : 채널을 줄이면 어디서부터 선택적 제어가 무너지나");
-  const xs = [1.2, 4.3, 7.4, 10.5], labs = ["2 µm", "500 nm", "200 nm", "100 nm"], sub = ["", "선행논문 · 우리 재현", "", "crosstalk?"];
-  s.addShape(pres.ShapeType.line, { x: 1.2, y: 3.0, w: 9.6, h: 0, line: { color: NAVY, width: 2.5 } });
+  const s = pres.addSlide(); header(s, "연구 질문");
+  card(s, 0.6, 1.35, 12.1, 1.3, LT);
+  txt(s, "채널 길이를 500 nm 에서 줄여 가면, 어디서부터 \"한 게이트 = 한 접합\" 이 무너지는가?", 0.9, 1.45, 11.5, 1.1, 24, NAVY, true, "left", "middle");
+  const xs = [1.6, 4.8, 8.0, 11.2], labs = ["2 µm", "500 nm", "200 nm", "100 nm"];
+  s.addShape(pres.ShapeType.line, { x: 1.6, y: 3.75, w: 9.6, h: 0, line: { color: NAVY, width: 3 } });
   xs.forEach((x, i) => {
-    s.addShape(pres.ShapeType.ellipse, { x: x - 0.14, y: 2.86, w: 0.28, h: 0.28, fill: { color: i === 1 ? GOLD : NAVY }, line: { color: "FFFFFF", width: 1 } });
-    txt(s, labs[i], x - 1.2, 2.1, 2.4, 0.6, 22, i === 1 ? ORANGE : NAVY, true, "center");
-    if (sub[i]) txt(s, sub[i], x - 1.5, 3.25, 3.0, 0.4, 14, GRAY, false, "center");
+    s.addShape(pres.ShapeType.ellipse, { x: x - 0.17, y: 3.58, w: 0.34, h: 0.34, fill: { color: i === 1 ? GOLD : NAVY }, line: { color: "FFFFFF", width: 1 } });
+    txt(s, labs[i], x - 1.2, 2.85, 2.4, 0.6, 24, i === 1 ? ORANGE : NAVY, true, "center");
   });
-  card(s, 0.8, 4.3, 5.9, 1.9); card(s, 6.9, 4.3, 5.9, 1.9);
-  s.addText([B("1단계 (지금까지)"), { text: "\n500 nm 소자 재현 — 전위 · 밴드 · 전류", options: {} }], { x: 1.0, y: 4.45, w: 5.6, h: 1.6, fontSize: 18, color: INK, margin: 0, valign: "top" });
-  s.addText([B("2단계 (다음)"), { text: "\n터널링 → p형  ·  채널 길이 스윕", options: {} }], { x: 7.1, y: 4.45, w: 5.6, h: 1.6, fontSize: 18, color: INK, margin: 0, valign: "top" });
+  txt(s, "선행논문 소자 · 지금까지 재현", 3.0, 4.05, 3.6, 0.45, 16, ORANGE, true, "center");
+  txt(s, "길이를 줄이며 TG 전기장이 Source 접합까지 번지는 지점을 찾는다", 0.6, 4.55, 12.1, 0.45, 17, GRAY, false, "center");
+  card(s, 0.6, 5.2, 5.9, 1.6); card(s, 6.8, 5.2, 5.9, 1.6);
+  s.addText([B("지금까지"), { text: "\n500 nm 소자 재현 — 전위 · 밴드 · 전류", options: {} }], { x: 0.85, y: 5.35, w: 5.5, h: 1.3, fontSize: 20, color: INK, margin: 0, valign: "top" });
+  s.addText([B("다음"), { text: "\n터널링 추가 → p형  ·  채널 길이 스윕", options: {} }], { x: 7.05, y: 5.35, w: 5.5, h: 1.3, fontSize: 20, color: INK, margin: 0, valign: "top" });
 }
 
 // ---------- 4. 원칙 ----------
 {
   const s = pres.addSlide(); header(s, "진행 원칙");
-  const items = [["독립 구현", "구조 · 물리 · 코드를 처음부터\n→ 두 가지 방법으로 교차 검증", NAVY],
-                 ["숫자 분류", "[A] 논문값\n[B] 1차 문헌값\n[C] 모델 가정", BLUE],
-                 ["하지 않은 것", "단층 물성을 14층에 그대로\n실험 전류 fitting\n임의 지표", ORANGE]];
+  const items = [["처음부터 독립 구현", "구조 · 물리 · 코드를 직접 만든다\n\n→ 서로 다른 두 방법(DEVSIM, 직접 짠 FEM)으로 같은 답이 나오는지 확인", NAVY],
+                 ["모든 숫자에 출처", "[A]  논문에 적힌 값\n[B]  다른 1차 문헌값 (DOI 포함)\n[C]  우리가 정한 가정 (이유와 영향 명시)", BLUE],
+                 ["하지 않은 것", "1층 물성값을 14층 박막에 그대로 쓰지 않는다\n\n실험 전류에 맞추려고 파라미터를 조정(fitting)하지 않는다\n\n근거 없는 지표를 만들지 않는다 — 전위·밴드 원자료부터 본다", ORANGE]];
   items.forEach((it, i) => { const x = 0.6 + i * 4.15;
-    card(s, x, 1.6, 3.9, 3.6);
-    s.addShape(pres.ShapeType.rect, { x, y: 1.6, w: 3.9, h: 0.8, fill: { color: it[2] }, line: { color: it[2] } });
-    txt(s, it[0], x, 1.6, 3.9, 0.8, 22, "FFFFFF", true, "center", "middle");
-    s.addText(it[1], { x: x + 0.25, y: 2.6, w: 3.4, h: 2.4, fontSize: 18, color: INK, margin: 0, valign: "top", paraSpaceAfter: 10 });
+    card(s, x, 1.6, 3.9, 4.6);
+    s.addShape(pres.ShapeType.rect, { x, y: 1.6, w: 3.9, h: 0.9, fill: { color: it[2] }, line: { color: it[2] } });
+    txt(s, it[0], x, 1.6, 3.9, 0.9, 22, "FFFFFF", true, "center", "middle");
+    s.addText(it[1], { x: x + 0.25, y: 2.7, w: 3.4, h: 3.4, fontSize: 18, color: INK, margin: 0, valign: "top" });
   });
 }
 
