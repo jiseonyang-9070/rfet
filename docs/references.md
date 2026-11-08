@@ -10,11 +10,11 @@
 
 ## 밴드 구조·물성
 - **[Wickramaratne 2014]** D. Wickramaratne, F. Zahid, R. K. Lake, "Electronic and thermoelectric properties of few-layer transition metal dichalcogenides", *J. Chem. Phys.* **140**, 124710 (2014). DOI 10.1063/1.4869142 (arXiv:1401.0502). Table II 유효질량(bulk WSe₂ CB Σ점 0.489/0.643, VB Γ점 0.997; 1L 은 K점 0.345/0.341), Table III 밴드갭 1.188 eV (PBE+SOC), Table I 실험 인용값 1.20 eV. → `rfet_semiconductor.py`. **원문 확인 2026-11-09** (arXiv 1401.0502).
-- **[McDonnell 2014]** S. McDonnell et al., "Hole contacts on transition metal dichalcogenides: Interface chemistry and band alignments", *ACS Nano* **8**, 6265 (2014). DOI 10.1021/nn501728w. Table 3: χ = 4.03 ± 0.1 eV, IE = 5.19 ± 0.1 eV, E_g = 1.16 ± 0.03 eV (bulk WSe₂). → `rfet_semiconductor.py`. **원문 미확인(유료)** — χ 는 Smyth 2017 의 IE − E_g 와 일치.
+- **[McDonnell 2014]** S. McDonnell et al., "Hole contacts on transition metal dichalcogenides: Interface chemistry and band alignments", *ACS Nano* **8**, 6265 (2014). DOI 10.1021/nn501728w. Table 3 (SKexp 행): IE = 5.19 ± 0.1 eV (Schlaf et al. 실험), E_g = 1.16 ± 0.03 eV (Kautek et al. 실험), χ = 4.03 ± 0.1 eV (= IE − E_g 유도; LDA 계산도 4.03). → `rfet_semiconductor.py`. **원문 확인 2026-11-09** (Berkeley 공개본).
 - **[Smyth 2017]** C. M. Smyth et al., "WSe₂-contact metal interface chemistry and band alignment under high vacuum and ultra high vacuum deposition conditions", *2D Mater.* **4**, 025084 (2017). DOI 10.1088/2053-1583/aa6bea. 본문: UHV Au / bulk WSe₂ 전자 Schottky 장벽 0.53 eV ("measured in this work"; 표/그림 없음); E_g = 1.3 ± 0.1 eV (STS, ref.44 인용), IE 5.33 eV (ref.68 인용). → Drain 장벽. **원문 확인 2026-11-09**.
 
 ## 접점 장벽
-- **[Jang 2022]** J. Jang et al., "Fermi-level pinning-free WSe₂ transistors via 2D van der Waals metal contacts and their circuits", *Adv. Mater.* **34**, 2109899 (2022). DOI 10.1002/adma.202109899. Fig. 3f: 증착 Ti/Au/Pd on 8–12 nm WSe₂ 전자 장벽 0.19–0.25 eV, pinning factor S = 0.03. → Source(Pd) 장벽 0.22 eV. **원문 미확인(유료)**.
+- **[Jang 2022]** J. Jang et al., "Fermi-level pinning-free WSe₂ transistors via 2D van der Waals metal contacts and their circuits", *Adv. Mater.* **34**, 2109899 (2022). DOI 10.1002/adma.202109899. Fig. 3f: 증착 Ti/Au/Pd on 8–12 nm WSe₂ 전자 장벽 "≈190 to 250 meV" (금속 일함수에 거의 무관), pinning factor S = 0.03; 온도 의존 I–V(열전자, flat-band)로 추출. → Source 장벽 0.22 eV (범위 중앙값; Pd 개별값은 논문에 없음). **원문 확인 2026-11-09** (DNB 공개본).
 - **[Prakash 2017]** A. Prakash, H. Ilatikhameneh, P. Wu, J. Appenzeller, "Understanding contact gating in Schottky barrier transistors from 2D channels", *Sci. Rep.* **7**, 12596 (2017). Ni/WSe₂ 0.4–0.5 eV. → 장벽 산포 참고.
 
 ## h-BN 역학 (단차 형상 추정)

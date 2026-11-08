@@ -25,13 +25,13 @@ STEP 4-A : WSe2 를 "반도체"로 만드는 물성과, 그로부터 전하밀�
        (arXiv:1401.0502). DFT(VASP, PBE+SOC). Table II: 유효질량, Table III: 밴드갭.
   M14  S. McDonnell et al., ACS Nano 8, 6265 (2014), DOI 10.1021/nn501728w. Table 3: bulk WSe2
        전자친화도 4.03 ± 0.1 eV, 이온화에너지 5.19 ± 0.1 eV, 밴드갭 1.16 ± 0.03 eV (Kautek 인용값).
-       [검증 상태: 원문 미확인(유료). χ=4.03 은 S17 의 IE 5.33 − E_g 1.3 과 일치하므로 간접 확인됨]
+       χ = 4.03 은 측정값이 아니라 Schlaf(IE 5.19) − Kautek(E_g 1.16) 유도값 (같은 표 LDA 계산도 4.03).  [검증 상태: 원문 확인 2026-11-09]
   S17  C. M. Smyth et al., 2D Mater. 4, 025084 (2017), DOI 10.1088/2053-1583/aa6bea. XPS, bulk WSe2,
        UHV 증착 Au: 전자 Schottky 장벽 0.53 eV (본문 문장; 표/그림에 정리돼 있지 않음). bulk 밴드갭
        1.3 ± 0.1 eV (STS, ref.44 인용), 이온화에너지 5.33 eV (ref.68 인용).  [검증 상태: 원문 확인 2026-11-09]
   J22  J. Jang et al., Adv. Mater. 34, 2109899 (2022), DOI 10.1002/adma.202109899. 8~12 nm 다층 WSe2 에
        증착한 Ti, Au, Pd: 전자 장벽 ≈ 0.19~0.25 eV (Fig. 3f), pinning factor S = 0.03 (온도 의존 I-V).
-       [검증 상태: 원문 미확인(유료). 원문 대조 전까지 PHI_BN_SOURCE 는 ±0.1 eV 로 취급하고 PHI_BN_VARIANTS 대조군과 함께 해석]
+       논문은 Pd 개별값 없이 "≈190~250 meV" 범위만 준다 → 0.22 eV 는 범위 중앙값. 8~12 nm 두께. [검증 상태: 원문 확인 2026-11-09]
   C17  A. Prakash & J. Appenzeller 등, "Understanding contact gating in Schottky barrier transistors from
        2D channels", Sci. Rep. 7, 12596 (2017): Ni/WSe2 전자 장벽 0.4~0.5 eV (두께 의존).
 """
@@ -56,8 +56,8 @@ KT_EV = KB_EV * T_K             # 0.02585 eV
 # ==============================================================================
 # 섹션 2. 밴드 파라미터 (다층 ≈ bulk, 9.1 nm = 14층: rfet_materials.wse2_layer_count)
 # ==============================================================================
-# [문헌값] 밴드갭 E_g [eV]. 실험값 범위가 넓다: 1.16 ± 0.03 (M14 Table 3, 미확인), 1.3 ± 0.1 (S17 인용 STS, 확인),
-#   W14 Table I 의 실험 인용값 1.20 (확인), DFT(PBE+SOC) bulk 간접갭 1.188 (W14 Table III, 확인).
+# [문헌값] 밴드갭 E_g [eV]. 실험값 범위가 넓다: 1.16 ± 0.03 (M14 Table 3, Kautek 측정 인용), 1.3 ± 0.1 (S17 인용 STS),
+#   W14 Table I 의 실험 인용값 1.20, DFT(PBE+SOC) bulk 간접갭 1.188 (W14 Table III). 전부 원문 확인(2026-11-09).
 #   baseline 1.2 eV 는 W14 Table I 의 실험값이자 범위의 중앙값. 민감도: EG_RANGE.
 EG_EV = 1.2
 EG_RANGE = (1.16, 1.3)
@@ -108,7 +108,8 @@ NM3_TO_CM3 = 1e21
 # 섹션 4. 접점 파라미터
 # ==============================================================================
 # [문헌값] Schottky 장벽 (전자 기준, φ_Bp = E_g - φ_Bn 는 pinning 된 준위가 하나라는 가정)
-#   Source = 증착 Pd (WSe2 위) : J22 Fig. 3f 의 증착 Pd 범위 0.19~0.25 eV -> 0.22 eV. 8~12 nm 다층(우리 9.1 nm 와 일치).
+#   Source = 증착 Pd (WSe2 위) : J22 Fig. 3f 의 증착 Ti/Au/Pd 범위 0.19~0.25 eV (금속 종류에 거의 무관, S=0.03) 의 중앙값 0.22 eV.
+#                                  8~12 nm 다층(우리 9.1 nm 와 일치). Pd 개별값은 논문에 없음.
 #   Drain  = vdW Au (WSe2 아래): S17 Au/bulk WSe2 XPS 0.53 eV. (증착이 아닌 vdW 계면 -> J22 의 강한 pinning 과 다를 수 있음)
 #   주의: 두 값은 서로 다른 시료·방법에서 나온 것이라 "같은 소자에서 같은 방법으로 잰 값" 이 아니다.
 #   불확실성이 크므로 PHI_BN_VARIANTS 로 민감도를 반드시 돌린다. 특히 "S/D 같은 장벽" 은 금속 비대칭을
