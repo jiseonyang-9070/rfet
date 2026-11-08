@@ -51,6 +51,20 @@ function theory(s, title, lines, symbols, note) {
   if (note) txt(s, note, 0.6, Math.min(Math.max(y, 6.3), 6.65), 12.1, 0.4, 13.5, GRAY);
 }
 
+
+// 코드 보여주기 슬라이드: 왼쪽 코드(고정폭), 오른쪽 짧은 메모
+function codeSlide(title, file, code, notes, codeW = 8.0, fs = 12) {
+  const s = pres.addSlide(); header(s, title);
+  s.addShape(pres.ShapeType.rect, { x: 0.5, y: 1.25, w: codeW, h: 5.6, fill: { color: "1E1E2E" }, line: { color: "1E1E2E" } });
+  s.addText(file, { x: 0.6, y: 1.3, w: codeW - 0.2, h: 0.3, fontSize: 11, color: "9DA5B4", fontFace: "Consolas", margin: 0 });
+  s.addText(code, { x: 0.6, y: 1.65, w: codeW - 0.2, h: 5.1, fontSize: fs, color: "E6E6E6", fontFace: "Consolas", margin: 0, valign: "top", lineSpacingMultiple: 1.05 });
+  const nx = 0.5 + codeW + 0.3, nw = 12.83 - nx, hh = 5.6 / notes.length;
+  notes.forEach((n, i) => { const y = 1.25 + i * hh;
+    card(s, nx, y, nw, hh - 0.12);
+    s.addText(n, { x: nx + 0.15, y: y + 0.1, w: nw - 0.3, h: hh - 0.3, fontSize: 15, color: NAVY, bold: true, margin: 0, valign: "middle" });
+  });
+}
+
 // ---------- 1. 표지 ----------
 {
   const s = pres.addSlide(); s.background = { color: "FFFFFF" };
@@ -131,6 +145,56 @@ function theory(s, title, lines, symbols, note) {
     y += 1.05;
   });
 }
+
+
+// ---------- 5b. 코드: 푸아송 ----------
+codeSlide("코드 · STEP 3 푸아송 (DEVSIM)", "rfet_poisson_devsim.py",
+`# 미지수: 노드마다 전위 ψ
+devsim.node_solution(device, region, name="Potential")
+
+# edge 전기장  E = (ψ_n0 − ψ_n1) / L_edge
+devsim.edge_model(device, region, name="ElectricField",
+    equation="(Potential@n0 - Potential@n1)*EdgeInverseLength")
+
+# 전속밀도  D = ε E
+devsim.edge_model(device, region, name="PotentialEdgeFlux",
+    equation="Permittivity*ElectricField")
+
+# Σ D·A = Q   (STEP 3: Q = 0)
+devsim.equation(device, region, name="PotentialEquation",
+    variable_name="Potential", edge_model="PotentialEdgeFlux")
+
+# 금속: ψ = V          재료 경계: ψ, εE 연속
+devsim.contact_node_model(device, contact, name=bc,
+    equation=f"Potential - {bias}")
+devsim.interface_equation(device, interface,
+    name="PotentialEquation", type="continuous")`,
+  ["방정식을 문자열로 적는다", "edge 마다 D = εE → 합산 (가우스 법칙)", "금속 = Dirichlet · 경계 = continuous", "같은 격자를 FEM 코드도 읽어 비교"]);
+
+// ---------- 5c. 코드: 캐리어 ----------
+codeSlide("코드 · STEP 4 캐리어 밀도 (2D-DOS 페르미–디랙)", "rfet_semiconductor.py",
+`# [문헌값] Wickramaratne 2014 (bulk)
+ME_SIGMA_L, ME_SIGMA_T, MH_GAMMA = 0.489, 0.643, 0.997
+EG_EV, CHI_EV = 1.2, 4.03                 # [문헌값]
+PHI_BN_SOURCE, PHI_BN_DRAIN = 0.22, 0.53  # [문헌값] Pd / Au
+
+# 한 층당  N_c,2D = g_v m_d kT / (π ħ²)  →  × 14층 / 9.1 nm
+NC_EQ = layers_2d_dos(ME_SIGMA_L, ME_SIGMA_T, g_v=6) * N_LAYERS / T_WSE2_NM
+
+def softplus(x):                  # ln(1 + e^x)
+    return np.where(x > 0, x, 0.0) + np.log1p(np.exp(-np.abs(x)))
+
+def carriers(psi):
+    eta_n = ( psi + CHI_EV) / KT_EV           # (E_F − E_c)/kT
+    eta_p = (-psi - CHI_EV - EG_EV) / KT_EV   # (E_v − E_F)/kT
+    return NC_EQ * softplus(eta_n), NV_EQ * softplus(eta_p)
+
+def rho(psi):
+    n, p = carriers(psi)
+    return p - n                              # 도핑 0 [모델 가정]
+
+# 접점:  ψ = V − (φ_Bn + χ)      게이트:  ψ = V_g − Φ_m`,
+  ["n = N_c ln(1 + e^η) — 닫힌 꼴", "E_c = −ψ − χ 로 전압과 연결", "값마다 [문헌값] / [모델 가정] 표시", "FEM 과 DEVSIM 이 같은 함수 사용"]);
 
 // ---------- 6. 값과 출처 ----------
 {
