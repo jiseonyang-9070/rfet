@@ -24,7 +24,7 @@ def run(title, args, timeout):
     p = subprocess.Popen([PY, "-u"] + args, cwd=HERE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
                          encoding="utf-8", errors="replace", bufsize=1, env=dict(os.environ, PYTHONIOENCODING="utf-8", MPLBACKEND="Agg"))
     for line in p.stdout:
-        LOG.write(line)
+        LOG.write(line); LOG.flush()
         if not NOISE.match(line):
             print(line.rstrip("\n"), flush=True)
     try:
