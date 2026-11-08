@@ -55,11 +55,11 @@ def size_map(points, polygons, p: geo.Params, X, Y):
     top_apex = "touch" if "touch" in points else "slope_top_end"
     s3a = threshold(np.hypot(X - points["apex"][0], Y - points["apex"][1]), s_edge, 0.0, math.tan(theta) / M.N_ACROSS_WEDGE)
     s3b = threshold(np.hypot(X - points[top_apex][0], Y - points[top_apex][1]), s_edge, 0.0,
-                    math.tan(slope_at_touch + desc) / M.N_ACROSS_WEDGE)
+                    math.tan(max(slope_at_touch + desc, math.radians(1.0))) / M.N_ACROSS_WEDGE)
 
     # 규칙 4: TG 양 끝 + 꺾임점
     d_tg = np.full(X.shape, np.inf)
-    for name in ["tg_l", "tg_r", "hbn_kink_src", "hbn_kink_drn"] + [n for n in ("hbn_kink_touch", "hbn_kink_lift") if n in points]:
+    for name in ["tg_l", "tg_r", "hbn_kink_src", "hbn_kink_drn"] + [n for n in points if n in ("hbn_kink_touch", "hbn_kink_lift") or n.startswith("hk_")]:
         d_tg = np.minimum(d_tg, np.hypot(X - points[name][0], Y - points[name][1]))
     s4 = threshold(d_tg, M.S_TG_EDGE, 0.0, M.GROWTH)
 

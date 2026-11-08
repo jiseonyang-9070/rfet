@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-run_slope.py : WSe2 경사 형상 민감도 (docs/06 G2).  elastic(경사 0→L, h-BN 449) · ramp140 · ramp70 (h-BN 449) · conf140 · conf70 (h-BN 45° 밀착)
-  세 config 모두 h-BN 은 탄성 추정 전이 길이 449 nm → 다른 것은 'WSe2 가 어디서부터 올라가는가' 뿐.
+run_slope.py : WSe2 경사 형상 민감도 (docs/06 G2).  h-BN·TG 는 곧은 판(두께 일정, 꺾임 없음), WSe2 만 Drain 앞에서 휨.
+  line = 꺾인 직선 경사, curve = S자 곡선 경사; 140 nm(탄성 추정) / 70 nm(팀원 45°).  비교 기준(bridge)은 이미 계산돼 있음.
   mesh(gmsh) → STEP 3 (FEM + DEVSIM) → STEP 4 (FEM, DEVSIM lit) → 비교 그림/표 → mesh 그림
 사용법:  py C:\\Users\\대진\\Documents\\rfet\\run_slope.py       (10~20분)
 """
@@ -23,7 +23,7 @@ def run(title, args, timeout=3600):
     p.wait(timeout=timeout); msg = f"-> 종료 코드 {p.returncode}, 소요 {time.time() - t0:.0f} s"
     print(msg, flush=True); LOG.write(msg + "\n"); LOG.flush(); return p.returncode
 
-CFGS = ["elastic", "ramp140", "ramp70", "conf140", "conf70"]
+CFGS = ["line140", "curve140", "line70", "curve70"]   # 판 h-BN + WSe2 만 휨: 직선 vs 곡선, 140 vs 70 nm
 rc = {}
 rc["geo"] = run("geometry 검사 (전체 config)", ["rfet_geometry.py"])
 for c in CFGS:

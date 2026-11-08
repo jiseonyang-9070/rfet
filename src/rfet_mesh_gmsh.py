@@ -225,13 +225,15 @@ def add_size_fields(points, point_tag, line_of, loops, p: geo.Params):
     top_apex = "touch" if "touch" in point_tag else "slope_top_end"
     slope_at_touch = theta if p.l_step > p.x_lift + 1e-9 else 0.0   # touch 가 평평 구간이면 박막 기울기 0
     t_apex_bot = threshold(distance_to(pts=[point_tag["apex"]]), s_edge, 0.0, math.tan(theta) / N_ACROSS_WEDGE)
-    t_apex_top = threshold(distance_to(pts=[point_tag[top_apex]]), s_edge, 0.0, math.tan(slope_at_touch + desc) / N_ACROSS_WEDGE)
+    # 곡선 경사/접선 접촉에서는 쐐기 꼭지각이 0 에 가까울 수 있다 → 하한 1° (0 이면 전체 도메인이 s_edge 로 세분되어 버림)
+    ang_top = max(slope_at_touch + desc, math.radians(1.0))
+    t_apex_top = threshold(distance_to(pts=[point_tag[top_apex]]), s_edge, 0.0, math.tan(ang_top) / N_ACROSS_WEDGE)
 
     # --- 규칙 4: Top Gate 양 끝 + TG 선의 꺾임점 ------------------------------------------
     # 왜: TG 가장자리에서 전기장이 휘어져 나온다(fringing). TG 선이 꺾이는 점(h-BN이 단차를 따라
     #     내려오는 곳)도 도체 표면의 모서리라 전기장이 집중된다. WSe2에서 30 nm 이상 떨어져 있어
     #     접촉 모서리만큼 촘촘할 필요는 없다.
-    tg_pts = ["tg_l", "tg_r", "hbn_kink_src", "hbn_kink_drn"] + [n for n in ("hbn_kink_touch", "hbn_kink_lift") if n in point_tag]
+    tg_pts = ["tg_l", "tg_r", "hbn_kink_src", "hbn_kink_drn"] + [n for n in point_tag if n in ("hbn_kink_touch", "hbn_kink_lift") or n.startswith("hk_")]
     # lift_top(박막이 꺾이는 점)도 전기장이 집중되는 모서리 → 접촉 모서리와 같은 크기로
     if "lift_top" in point_tag:
         t_edge = threshold(distance_to(pts=[point_tag["src_edge_bot"], point_tag["drn_corner"], point_tag["src_edge_top"],
