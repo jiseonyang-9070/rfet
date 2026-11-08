@@ -1,0 +1,13 @@
+
+[박막 중앙선 전위 응답, V per V]   (x 는 junction 에서의 거리; S쪽 = x, D쪽 = L - x)
+  data                      gate | S+ 10 S+ 25 S+ 50 | D- 10 D- 25 D- 50 | mid
+  bridge/perp (devsim)       TG   | 0.078 0.152 0.265 | 0.335 0.513 0.666 | 0.688
+  bridge/perp (devsim)       BG   | 0.079 0.129 0.180 | 0.008 0.018 0.036 | 0.188
+  bridge/perp (fem)          TG   | 0.078 0.152 0.265 | 0.336 0.513 0.667 | 0.687
+  bridge/perp (fem)          BG   | 0.080 0.129 0.180 | 0.008 0.018 0.037 | 0.188
+  bridge/tensor (fem)        TG   | 0.073 0.139 0.241 | 0.291 0.440 0.588 | 0.667
+  bridge/tensor (fem)        BG   | 0.068 0.109 0.156 | 0.009 0.019 0.037 | 0.180
+  sag45/perp (fem)           TG   | 0.170 0.339 0.606 | 0.377 0.584 0.763 | 0.911
+  sag45/perp (fem)           BG   | 0.056 0.080 0.084 | 0.005 0.010 0.019 | 0.058
+
+그림 저장: rfet_post_profiles.png, rfet_post_maps.png
