@@ -147,19 +147,31 @@ def _fd_current(device, region, carrier):
 
     전자:  ψ_n = ψ − V_t g(n/N_c),  Δ = (ψ_n(n0) − ψ_n(n1))/V_t,  J_n = K [ n1 B(Δ) + n1 Δ − n0 B(Δ) ] = K [ n1 B(−Δ) − n0 B(Δ) ]
     정공:  ψ_p = ψ + V_t g(p/N_v),  Δ = (ψ_p(n0) − ψ_p(n1))/V_t,  J_p = −K [ p1 B(Δ) − p0 B(Δ) − p0 Δ ] = −K [ p1 B(Δ) − p0 B(−Δ) ]
-    K = q μ V_t / L_edge.   g(u) = u + ln((1−e^{−u})/u),   g'(u) = 1/(1−e^{−u}) − 1/u   (u 에 1e-12 를 더해 u=0 회피)"""
+    K = q μ V_t / L_edge.   g(u) = u + ln((1−e^{−u})/u) (u ≥ U0), 급수 (u < U0) — 아래 주석"""
     electron = carrier == "Electrons"
     dos, mu, tag = ("Nc", "mu_n", "n") if electron else ("Nv", "mu_p", "p")
     sgn = -1.0 if electron else +1.0                       # ψ_eff = ψ + sgn·V_t·g
     vdiff, bern, J = f"vdiff_{tag}", f"Bern01_{tag}", ("ElectronCurrent" if electron else "HoleCurrent")
     K = f"(ElectronCharge*{mu}*EdgeInverseLength*V_t)"
 
-    def u(nd):      # 정규화 농도 (0 회피)
-        return f"({carrier}@{nd}/{dos} + 1e-12)"
+    # [수치해석 설정] g(u) = u + ln((1−e^{−u})/u) 는 u ≪ 1 에서 (1−e^{−u}) 의 자릿수 소거로 틀린다
+    #   (u = 1e-12 에서 g 오차 9e-5, g' 은 −9e7 — PC 실행에서 정공 식이 RelError 1e-4 에 멈춘 원인, 2026-11-09).
+    #   → u < U0 에서는 급수 S(u) = u/2 + u²/24 − u⁴/2880, u ≥ U0 에서는 정확식 X(u) 를 쓰고 U0 에서 이어 붙인다
+    #     (팀원이 Joyce–Dixon 에 쓴 min/max 이어붙이기와 같은 수법). U0 = 0.05 에서 두 식의 차이 < 1e-13.
+    U0 = 0.05
+    def u(nd):
+        return f"({carrier}@{nd}/{dos})"
+    def S(v):   return f"({v}/2 + {v}^2/24 - {v}^4/2880)"
+    def dS(v):  return f"(0.5 + {v}/12 - {v}^3/720)"
+    def X(v):   return f"({v} + log((1 - exp(-{v}))/{v}))"
+    def dX(v):  return f"(1/(1 - exp(-{v})) - 1/{v})"
     def g(nd):
-        return f"({u(nd)} + log((1 - exp(-{u(nd)}))/{u(nd)}))"
-    def dg(nd):     # g'(u)
-        return f"(1/(1 - exp(-{u(nd)})) - 1/{u(nd)})"
+        us, ul = f"min({u(nd)}, {U0})", f"max({u(nd)}, {U0})"
+        return f"({S(us)} + {X(ul)} - {X(str(U0))})"
+    def dg(nd):     # g'(u): u < U0 이면 S', 아니면 X'  (지시함수는 abs 로 만든다: DEVSIM 수식에 조건문이 없음)
+        ind = f"(0.5*(1 + ({U0} - {u(nd)})/(abs({U0} - {u(nd)}) + 1e-300)))"
+        us, ul = f"min({u(nd)}, {U0})", f"max({u(nd)}, {U0})"
+        return f"({ind}*{dS(us)} + (1 - {ind})*{dX(ul)})"
 
     # --- Δ 와 도함수 ---
     E = lambda name, eq: CreateEdgeModel(device, region, name, eq)
