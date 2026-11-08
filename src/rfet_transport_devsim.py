@@ -36,8 +36,7 @@ import time
 
 import numpy as np
 import devsim
-from devsim.python_packages.model_create import (CreateEdgeModel, CreateEdgeModelDerivatives,
-                                                 CreateContactNodeModel, CreateSolution)
+from devsim.python_packages.model_create import CreateEdgeModel, CreateContactNodeModel, CreateSolution
 from devsim.python_packages.simple_physics import CreateSiliconDriftDiffusion
 
 import rfet_geometry as geo
@@ -135,29 +134,57 @@ def setup_transport(device, region="WSe2"):
 
 
 def _fd_current(device, region, carrier):
-    """팀원 브랜치 create_fermi_current 의 구조를 그대로 두고 g(u) 만 2D-DOS 정확식으로 바꾼 것.
-    J_n = q μ_n V_t /L · [ n1 B(Δ) − n0 B(−Δ) ],  Δ = (ψ_n(n0) − ψ_n(n1))/V_t,  B = Bernoulli (DEVSIM 내장 B, dBdx)"""
+    """팀원 브랜치 create_fermi_current 와 같은 구조(SG 전류의 ψ 를 유효 전위로 교체)이지만,
+    (1) g(u) 는 2D-DOS 정확식, (2) 도함수를 전부 손으로 적는다.
+    [수치해석 설정] 처음 버전은 DEVSIM 의 기호 미분(CreateEdgeModelDerivatives)에 맡겼는데, exp/log 가 중첩된 식을
+    네 변수(Potential@n0/n1, 캐리어@n0/n1)로 미분·단순화하는 단계에서 멈춰 버렸다(사용자 PC, 2026-11-09). 그래서 수식마다
+    ':변수@노드' 도함수 모델을 직접 만든다 — STEP 3·4 의 Poisson 에서도 같은 방식을 썼다.
+
+    전자:  ψ_n = ψ − V_t g(n/N_c),  Δ = (ψ_n(n0) − ψ_n(n1))/V_t,  J_n = K [ n1 B(Δ) + n1 Δ − n0 B(Δ) ] = K [ n1 B(−Δ) − n0 B(Δ) ]
+    정공:  ψ_p = ψ + V_t g(p/N_v),  Δ = (ψ_p(n0) − ψ_p(n1))/V_t,  J_p = −K [ p1 B(Δ) − p0 B(Δ) − p0 Δ ] = −K [ p1 B(Δ) − p0 B(−Δ) ]
+    K = q μ V_t / L_edge.   g(u) = u + ln((1−e^{−u})/u),   g'(u) = 1/(1−e^{−u}) − 1/u   (u 에 1e-12 를 더해 u=0 회피)"""
     electron = carrier == "Electrons"
     dos, mu, tag = ("Nc", "mu_n", "n") if electron else ("Nv", "mu_p", "p")
-    sign = "-" if electron else "+"
-    psi = lambda nd: f"(Potential@{nd} {sign} V_t*{g_exact(f'{carrier}@{nd}/{dos}')})"
-    vdiff, bern = f"vdiff_{tag}", f"Bern01_{tag}"
-    expr = f"({psi('n0')} - {psi('n1')})/V_t"
-    CreateEdgeModel(device, region, vdiff, expr)
-    CreateEdgeModel(device, region, bern, f"B({vdiff})")
+    sgn = -1.0 if electron else +1.0                       # ψ_eff = ψ + sgn·V_t·g
+    vdiff, bern, J = f"vdiff_{tag}", f"Bern01_{tag}", ("ElectronCurrent" if electron else "HoleCurrent")
+    K = f"(ElectronCharge*{mu}*EdgeInverseLength*V_t)"
+
+    def u(nd):      # 정규화 농도 (0 회피)
+        return f"({carrier}@{nd}/{dos} + 1e-12)"
+    def g(nd):
+        return f"({u(nd)} + log((1 - exp(-{u(nd)}))/{u(nd)}))"
+    def dg(nd):     # g'(u)
+        return f"(1/(1 - exp(-{u(nd)})) - 1/{u(nd)})"
+
+    # --- Δ 와 도함수 ---
+    E = lambda name, eq: CreateEdgeModel(device, region, name, eq)
+    E(vdiff, f"(Potential@n0 - Potential@n1)/V_t + ({sgn:+.0f})*({g('n0')} - {g('n1')})")
+    E(f"{vdiff}:Potential@n0", "1/V_t")
+    E(f"{vdiff}:Potential@n1", "-1/V_t")
+    E(f"{vdiff}:{carrier}@n0", f"({sgn:+.0f})*{dg('n0')}/{dos}")
+    E(f"{vdiff}:{carrier}@n1", f"({-sgn:+.0f})*{dg('n1')}/{dos}")
+    # --- Bernoulli 와 도함수 (연쇄법칙) ---
+    E(bern, f"B({vdiff})")
     for v in ("Potential", carrier):
-        CreateEdgeModelDerivatives(device, region, vdiff, expr, v)
         for nd in ("n0", "n1"):
-            CreateEdgeModel(device, region, f"{bern}:{v}@{nd}", f"dBdx({vdiff})*{vdiff}:{v}@{nd}")
+            E(f"{bern}:{v}@{nd}", f"dBdx({vdiff})*{vdiff}:{v}@{nd}")
+    # --- 전류와 도함수 ---
     if electron:
-        name = "ElectronCurrent"
-        J = f"ElectronCharge*{mu}*EdgeInverseLength*V_t*kahan3(Electrons@n1*{bern}, Electrons@n1*{vdiff}, -Electrons@n0*{bern})"
+        n0, n1 = "Electrons@n0", "Electrons@n1"
+        E(J, f"{K}*kahan3({n1}*{bern}, {n1}*{vdiff}, -{n0}*{bern})")
+        for v in ("Potential",):
+            for nd in ("n0", "n1"):
+                E(f"{J}:{v}@{nd}", f"{K}*({n1}*{bern}:{v}@{nd} + {n1}*{vdiff}:{v}@{nd} - {n0}*{bern}:{v}@{nd})")
+        E(f"{J}:Electrons@n0", f"{K}*({n1}*{bern}:Electrons@n0 + {n1}*{vdiff}:Electrons@n0 - {n0}*{bern}:Electrons@n0 - {bern})")
+        E(f"{J}:Electrons@n1", f"{K}*({bern} + {vdiff} + {n1}*{bern}:Electrons@n1 + {n1}*{vdiff}:Electrons@n1 - {n0}*{bern}:Electrons@n1)")
     else:
-        name = "HoleCurrent"
-        J = f"-ElectronCharge*{mu}*EdgeInverseLength*V_t*kahan3(Holes@n1*{bern}, -Holes@n0*{bern}, -Holes@n0*{vdiff})"
-    CreateEdgeModel(device, region, name, J)
-    for v in ("Potential", carrier):
-        CreateEdgeModelDerivatives(device, region, name, J, v)
+        p0, p1 = "Holes@n0", "Holes@n1"
+        E(J, f"-{K}*kahan3({p1}*{bern}, -{p0}*{bern}, -{p0}*{vdiff})")
+        for v in ("Potential",):
+            for nd in ("n0", "n1"):
+                E(f"{J}:{v}@{nd}", f"-{K}*({p1}*{bern}:{v}@{nd} - {p0}*{bern}:{v}@{nd} - {p0}*{vdiff}:{v}@{nd})")
+        E(f"{J}:Holes@n0", f"-{K}*({p1}*{bern}:Holes@n0 - {p0}*{bern}:Holes@n0 - {p0}*{vdiff}:Holes@n0 - {bern} - {vdiff})")
+        E(f"{J}:Holes@n1", f"-{K}*({bern} + {p1}*{bern}:Holes@n1 - {p0}*{bern}:Holes@n1 - {p0}*{vdiff}:Holes@n1)")
 
 
 def setup_schottky_carriers(device, phi_bn):
