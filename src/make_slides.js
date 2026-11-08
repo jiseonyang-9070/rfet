@@ -169,8 +169,8 @@ pres.addSection({ title: "STEP 1" });
 pres.addSection({ title: "STEP 2" });
 // 5. 좌표계 / 구조
 {
-  const s = content("STEP 2 — 단면 구조 (실제 치수)", "STEP 2", H.accent3);
-  fitImage(s, FIG("fig_geometry_bridge.png"), { x: 0.5, y: 1.35, w: 8.5, h: 5.5 }, 1.49, "geometry");
+  const s = content("STEP 2 — 구조와 계산 격자 (실제 mesh)", "STEP 2", H.accent3);
+  fitImage(s, FIG("fig_mesh_bridge.png"), { x: 0.4, y: 1.3, w: 8.7, h: 5.6 }, 1.77, "geometry+mesh");
   const items = [
     ["x = 0", "source junction", H.accent6],
     ["x = L = 500", "drain junction", H.accent6],
@@ -188,8 +188,8 @@ pres.addSection({ title: "STEP 2" });
 // 6. h-BN 형상 비교
 {
   const s = content("STEP 2 — h-BN 단차 형상: 두 극단", "STEP 2", H.accent3);
-  fitImage(s, FIG("fig_geometry_bridge.png"), { x: 0.5, y: 1.9, w: 6.1, h: 4.0 }, 1.49, "bridge");
-  fitImage(s, FIG("fig_geometry_sag45.png"), { x: 6.75, y: 1.9, w: 6.1, h: 4.0 }, 1.49, "sag45");
+  fitImage(s, FIG("fig_mesh_bridge.png"), { x: 0.5, y: 1.9, w: 6.1, h: 4.0 }, 1.77, "bridge");
+  fitImage(s, FIG("fig_mesh_sag45.png"), { x: 6.75, y: 1.9, w: 6.1, h: 4.0 }, 1.77, "sag45");
   s.addText("bridge (다리형) — 기준", { x: 0.5, y: 1.4, w: 6.1, h: 0.5, fontSize: 24, bold: true, color: H.accent1, margin: 0, isTextBox: true, objectName: "lbl bridge" });
   s.addText("sag45 (처짐형) — 비물리적 극단", { x: 6.75, y: 1.4, w: 6.1, h: 0.5, fontSize: 24, bold: true, color: H.accent2, margin: 0, isTextBox: true, objectName: "lbl sag" });
   card(s, 0.5, 6.0, 6.1, 1.0, "elastic card");

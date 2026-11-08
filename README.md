@@ -46,6 +46,7 @@ src/
   rfet_mesh_tools.py      .msh 읽기, 단위 변환, mesh 품질 리포트
   rfet_devsim_load.py     DEVSIM 에 mesh 읽기 + 구조 일치 확인
   rfet_size_map.py        mesh 크기 규칙 시각화 (gmsh 불필요)
+  rfet_plot_mesh.py       실제 .msh 를 읽어 구조+격자 그림 (fig_mesh_*.png)
   rfet_materials.py       유전율 [문헌값], 스칼라/텐서 선택, ρ=0 가정
   rfet_fem_reference.py   독립 P1 FEM (선형, 스칼라/텐서 ε) + 해석해 selftest
   rfet_poisson_devsim.py  DEVSIM 선형 Poisson (단위 응답 4개)
@@ -81,6 +82,7 @@ py run_figs.py       # 계산된 .npz 로 모든 그림 재생성 + 해석해 �
 | 파일 | 내용 |
 |---|---|
 | `fig_schematic_bridge.png`, `fig_schematic_sag45.png` | 발표용 개략도 (두께 과장) |
+| `fig_mesh_bridge.png`, `fig_mesh_sag45.png` | **실제 gmsh mesh** 위에 영역·전극을 그린 구조도 (전체 + source/채널/drain 확대) |
 | `fig_geometry_bridge.png`, `fig_geometry_elastic.png`, `fig_geometry_sag45.png` | 정확한 치수의 단면도 (시뮬레이션에 들어간 geometry 그대로) |
 | `fig_mesh_size_rules_bridge.png` | mesh 크기 규칙 지도 (어디를 왜 촘촘히 하는가) |
 | `fig_step3_profiles.png` | 게이트 1 V 당 채널 전위 응답, DEVSIM(점) vs FEM(선), 구조 변형 비교 |
