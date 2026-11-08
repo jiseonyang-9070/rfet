@@ -60,6 +60,7 @@ VBG_BAND = 20.0                                   # 밴드 저장 Vbg
 # [수치해석 설정] Newton 허용오차. 팀원 발견: 상대오차 1e-10 은 정공 식 반올림 한계(~1e-9)보다 작아 '수렴 실패' 가 났다 → 1e-7
 REL, ABS, MAXIT = 1e-7, 1e10, 60
 RAMP_STEP0, RAMP_MIN = 0.5, 0.002                 # 전압 램프 초기 간격 / 최소 간격 [V]
+CARRIER_FLOOR = 1e-3                              # [수치해석 설정] 캐리어 초기값 바닥 [cm^-3] (0 방지)
 A_PER_CM_TO_A_PER_UM = 1e-4
 
 
@@ -112,9 +113,13 @@ def setup_transport(device, region="WSe2"):
         devsim.set_parameter(device=device, region=region, name=name, value=val)
 
     # 3-2. 평형 해의 닫힌꼴 n_eq, p_eq 를 초기값으로 하여 Electrons / Holes 를 미지수(node_solution)로 만든다
+    # [수치해석 설정] 닫힌꼴 p_eq 는 η_p ≪ 0 인 노드에서 정확히 0 (exp 언더플로)이 되는데, DEVSIM 의 variable_update="positive"
+    #   는 0 이하 값을 허용하지 않아 첫 solve 에서 "negative or zero value before update" 로 죽는다 (PC 실행, 2026-11-09).
+    #   → 초기값에 바닥 CARRIER_FLOOR 를 둔다. 물리적으로 무의미한 크기(1e-3 cm^-3)라 결과에 영향 없음.
     for var, init in (("Electrons", "n_eq"), ("Holes", "p_eq")):
         CreateSolution(device, region, var)                           # node_solution + edge_from_node_model
-        devsim.set_node_values(device=device, region=region, name=var, init_from=init)
+        vals = np.maximum(np.array(devsim.get_node_model_values(device=device, region=region, name=init)), CARRIER_FLOOR)
+        devsim.set_node_values(device=device, region=region, name=var, values=list(map(float, vals)))
     devsim.node_model(device=device, region=region, name="NetDoping", equation="0")   # [모델 가정] 도핑 0 (simple_physics 가 요구)
 
     # 3-3. 팀원 방식: simple_physics.CreateSiliconDriftDiffusion 이
