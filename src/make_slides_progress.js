@@ -61,7 +61,12 @@ function codeSlide(title, file, code, notes, codeW = 8.0, fs = 12) {
   const nx = 0.5 + codeW + 0.3, nw = 12.83 - nx, hh = 5.6 / notes.length;
   notes.forEach((n, i) => { const y = 1.25 + i * hh;
     card(s, nx, y, nw, hh - 0.12);
-    s.addText(n, { x: nx + 0.15, y: y + 0.1, w: nw - 0.3, h: hh - 0.3, fontSize: 15, color: NAVY, bold: true, margin: 0, valign: "middle" });
+    if (typeof n === "object" && n.eq) {
+      const r = EQI[n.eq].ratio; let w = nw - 0.4, h = w / r; if (h > hh - 0.5) { h = hh - 0.5; w = h * r; }
+      s.addImage({ path: EQD + n.eq + ".png", x: nx + (nw - w) / 2, y: y + (hh - 0.12 - h) / 2, w, h });
+    } else {
+      s.addText(n, { x: nx + 0.15, y: y + 0.1, w: nw - 0.3, h: hh - 0.3, fontSize: 15, color: NAVY, bold: true, margin: 0, valign: "middle" });
+    }
   });
 }
 
@@ -178,7 +183,7 @@ ME_SIGMA_L, ME_SIGMA_T, MH_GAMMA = 0.489, 0.643, 0.997
 EG_EV, CHI_EV = 1.2, 4.03                 # [문헌값]
 PHI_BN_SOURCE, PHI_BN_DRAIN = 0.22, 0.53  # [문헌값] Pd / Au
 
-# 한 층당  N_c,2D = g_v m_d kT / (π ħ²)  →  × 14층 / 9.1 nm
+# 한 층당 2D 유효 상태밀도 → × 14층 / 9.1 nm
 NC_EQ = layers_2d_dos(ME_SIGMA_L, ME_SIGMA_T, g_v=6) * N_LAYERS / T_WSE2_NM
 
 def softplus(x):                  # ln(1 + e^x)
@@ -194,25 +199,29 @@ def rho(psi):
     return p - n                              # 도핑 0 [모델 가정]
 
 # 접점:  ψ = V − (φ_Bn + χ)      게이트:  ψ = V_g − Φ_m`,
-  ["n = N_c ln(1 + e^η) — 닫힌 꼴", "E_c = −ψ − χ 로 전압과 연결", "값마다 [문헌값] / [모델 가정] 표시", "FEM 과 DEVSIM 이 같은 함수 사용"]);
+  [{ eq: "fd" }, { eq: "band" }, { eq: "nc14" }, "값마다 [문헌값] / [모델 가정] 표시"]);
 
-// ---------- 6. 값과 출처 ----------
+// ---------- 6. 값과 출처 (출처 셀 = DOI 하이퍼링크) ----------
 {
-  const s = pres.addSlide(); header(s, "값과 출처");
+  const s = pres.addSlide(); header(s, "값과 출처   (출처 클릭 → 논문)");
+  const DOI = { jiao: "https://doi.org/10.1063/5.0338649", lat: "https://doi.org/10.1038/s41699-018-0050-x", mcd: "https://doi.org/10.1021/nn501728w",
+    smy: "https://doi.org/10.1088/2053-1583/aa6bea", wic: "https://doi.org/10.1063/1.4869142", jang: "https://doi.org/10.1002/adma.202109899",
+    zha: "https://doi.org/10.1063/1.4940982", koe: "https://doi.org/10.1038/nnano.2011.123" };
+  const L = (t, k) => ({ text: t, options: { hyperlink: { url: DOI[k] }, color: BLUE } });
   const rows = [
     [hdr("항목"), hdr("값"), hdr("분류"), hdr("출처")],
-    ["WSe₂ / h-BN / SiO₂ 두께", "9.1 / 30 / 300 nm", "[A]", "Jiao 2026"],
-    ["Source Pd/Au · Drain Ti/Au", "5/50 → 55 · 1/70 → 71 nm", "[A]", "Jiao 2026"],
-    ["채널 길이 L", "≈ 500 nm", "[A]", "Jiao 2026"],
-    ["ε WSe₂ ⊥/∥ · h-BN ⊥/∥", "7.9/16.0 · 3.76/6.93", "[B]", "Laturia 2018, Table 1·2"],
-    ["E_g · χ", "1.2 eV · 4.03 eV", "[B]", "McDonnell 2014 · Smyth 2017"],
-    ["m*  (e 종/횡, h)", "0.489 / 0.643 / 0.997 m₀", "[B]", "Wickramaratne 2014"],
-    ["φ_Bn  Pd · Au", "0.22 · 0.53 eV", "[B]", "Jang 2022 · Smyth 2017"],
-    ["E (WSe₂) · Γ", "167 GPa · 0.45 J/m²", "[B]", "Zhang 2016 · Koenig 2011"],
+    ["WSe₂ / h-BN / SiO₂ 두께", "9.1 / 30 / 300 nm", "[A]", L("Jiao 2026, APL 128, 263504", "jiao")],
+    ["Source Pd/Au · Drain Ti/Au", "5/50 → 55 · 1/70 → 71 nm", "[A]", L("Jiao 2026", "jiao")],
+    ["채널 길이 L", "≈ 500 nm", "[A]", L("Jiao 2026", "jiao")],
+    ["ε WSe₂ ⊥/∥ · h-BN ⊥/∥", "7.9/16.0 · 3.76/6.93", "[B]", L("Laturia 2018, npj 2D Mater. Appl. 2, 6 (Table 1·2)", "lat")],
+    ["E_g · χ", "1.2 eV · 4.03 eV", "[B]", { text: [L("McDonnell 2014, ACS Nano 8, 6265", "mcd"), { text: "  ·  " }, L("Smyth 2017, 2D Mater. 4, 025084", "smy")] }],
+    ["m*  (e 종/횡, h)", "0.489 / 0.643 / 0.997 m₀", "[B]", L("Wickramaratne 2014, J. Chem. Phys. 140, 124710", "wic")],
+    ["φ_Bn  Pd · Au", "0.22 · 0.53 eV", "[B]", { text: [L("Jang 2022, Adv. Mater. 34, 2109899", "jang"), { text: "  ·  " }, L("Smyth 2017", "smy")] }],
+    ["E (WSe₂) · Γ", "167 GPa · 0.45 J/m²", "[B]", { text: [L("Zhang 2016, APL 108, 042104", "zha"), { text: "  ·  " }, L("Koenig 2011, Nat. Nanotechnol. 6, 543", "koe")] }],
     ["패드 · TG 여유 · 쐐기 ε", "1000 · 300/300 nm · 1", "[C]", "fringe 3배 밖 · 대칭 · 하한"],
     ["도핑 · 고정전하 · μ", "0 · 0 · 100 cm²/Vs", "[C]", "값 없음, fitting 금지"],
   ];
-  s.addTable(rows, { x: 0.5, y: 1.3, w: 12.33, colW: [3.4, 3.4, 0.9, 4.63], rowH: 0.5, ...TBL(15) });
+  s.addTable(rows, { x: 0.5, y: 1.25, w: 12.33, colW: [3.0, 2.8, 0.8, 5.73], rowH: 0.46, ...TBL(13.5) });
 }
 
 // ---------- 이론 ① 정전기 ----------
