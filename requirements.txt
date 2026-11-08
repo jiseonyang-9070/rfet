@@ -1,0 +1,8 @@
+# 실제 실행 환경: Windows, Python 3.15.2 (3.11+ 가능)
+devsim==2.11.2
+gmsh>=4.7
+numpy
+scipy
+matplotlib
+# Windows 에서 DEVSIM 이 "Error loading math libraries" 를 내면 필요 (Intel MKL 런타임)
+mkl ; platform_system == "Windows"

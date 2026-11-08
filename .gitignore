@@ -1,0 +1,12 @@
+# 계산 산출물 (재생성 가능, 용량 큼)
+*.npz
+*.msh
+*.vtu
+*.dat
+# 가상환경 / 캐시
+venv/
+.venv/
+__pycache__/
+*.pyc
+# 작업 중 그림 (정식 그림은 figures/ 에 복사)
+src/*.png
