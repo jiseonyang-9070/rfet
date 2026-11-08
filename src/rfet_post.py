@@ -55,10 +55,17 @@ def draw_structure(ax, pts, polys, p):
     ax.text(0.5 * L, -108, "back gate at y = −300 nm", color="white", fontsize=7.5, ha="center")
     ax.text(L + 90, pts["hbn_kink_drn"][1] - 13, "h-BN", color="white", fontsize=8, ha="center")
     ax.text(-90, pts["hbn_tl"][1] - 13, "h-BN", color="white", fontsize=8, ha="center")
-    ax.text(0.30 * L, 0.5 * p.film_top(0.30 * L) * 0.45, "air", color="white", fontsize=7.5, ha="center")
-    ax.text(0.25 * L, 0.5 * (y_src_top + p.film_top(0.25 * L)) + 2, "air", color="white", fontsize=7.5, ha="center")
-    ax.annotate("", xy=(L, p.film_top(L) + 14), xytext=(0, p.film_top(0) + 14), arrowprops=dict(arrowstyle="<->", color="white", lw=0.9))
-    ax.text(0.5 * L, 0.5 * (p.film_top(0) + p.film_top(L)) + 22, "WSe₂ channel (9.1 nm)", color="white", fontsize=8, ha="center")
+    # 공기 라벨: 아래 공기는 박막이 떠 있는 x_lift~L 구간에만, 위 공기는 h-BN 판과 박막 윗면 사이(0~l_step)에
+    if p.l_ramp > 40:
+        xa = p.x_lift + 0.55 * p.l_ramp
+        ax.text(xa, 0.45 * float(p.film_bottom(xa)), "air", color="white", fontsize=7.5, ha="center")
+    l_step = p.l_step
+    xu = 0.3 * l_step
+    plate_y = y_src_top + (float(p.film_top(l_step)) - y_src_top) * xu / l_step     # h-BN 아랫면(곧은 판) 높이
+    ax.text(xu, 0.5 * (plate_y + float(p.film_top(xu))), "air", color="white", fontsize=7.5, ha="center")
+    # 채널 길이 표시: SiO2 안(어두운 영역)에 수평 화살표
+    ax.annotate("", xy=(L, -16), xytext=(0, -16), arrowprops=dict(arrowstyle="<->", color="white", lw=0.9))
+    ax.text(0.5 * L, -30, f"WSe₂ channel  L = {L:.0f} nm  (film 9.1 nm)", color="white", fontsize=8, ha="center")
     ax.plot([0, L], [p.t_wse2, p.t_drain], "o", color=st.RED, ms=4.5, mec="white", mew=0.7, zorder=6)
     ax.text(-90, -18, "WSe₂ under Source", color="white", fontsize=7.5, ha="center")
     ax.text(L + 90, p.t_drain + p.t_wse2 + 4, "WSe₂ on Drain", color="white", fontsize=7.5, ha="center", va="bottom")

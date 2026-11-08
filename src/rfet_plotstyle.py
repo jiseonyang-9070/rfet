@@ -101,9 +101,12 @@ def structure_strip(ax, p, height=0.16):
     # 배경 유전체 (아래 SiO2, 위 h-BN)
     ins.add_patch(Rectangle((x0, 0.0), x1 - x0, film_y, fc=MATERIAL_FACE["SiO2"], ec="none"))
     ins.add_patch(Rectangle((x0, film_y + film_h), x1 - x0, 1 - film_y - film_h, fc=MATERIAL_FACE["hBN"], ec="none"))
-    # 채널 구간의 공기 쐐기 (아래: SiO2 와 박막 사이, 위: 박막과 h-BN 사이)
-    ins.add_patch(Rectangle((0, 0.0), L, film_y, fc="white", ec="none", hatch="////", lw=0))
-    ins.add_patch(Rectangle((0, film_y + film_h), L, 1 - film_y - film_h, fc="white", ec="none", hatch="////", lw=0))
+    # 채널 구간의 공기 쐐기 — config 에 따라 다르다.
+    #   아래 공기(AirBot): 박막이 SiO2 에서 떠 있는 구간 x_lift ~ L 에만 있다 (bridge 는 0~L, curve_el 은 283~L).
+    #   위 공기(AirTop): h-BN 판이 박막 윗면에 닿는 점(l_step)까지 0 ~ l_step.
+    x_lift, l_step = p.x_lift, p.l_step
+    ins.add_patch(Rectangle((x_lift, 0.0), L - x_lift, film_y, fc="white", ec="none", hatch="////", lw=0))
+    ins.add_patch(Rectangle((0, film_y + film_h), l_step, 1 - film_y - film_h, fc="white", ec="none", hatch="////", lw=0))
     # 박막
     ins.add_patch(Rectangle((x0, film_y), x1 - x0, film_h, fc=MATERIAL_FACE["WSe2"], ec=INK2, lw=0.5))
     # 금속: Source 는 박막 위 (x<0), Drain 은 박막 아래 (x>L)
@@ -113,8 +116,13 @@ def structure_strip(ax, p, height=0.16):
     kwh = dict(kw, bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none"))   # 빗금 위 글자는 흰 바탕
     ins.text(x0 / 2, film_y + film_h + 0.5 * (1 - film_y - film_h), "Source metal", **kw)
     ins.text(L + (x1 - L) / 2, film_y / 2, "Drain metal", **kw)
-    ins.text(L / 2, film_y + film_h + 0.5 * (1 - film_y - film_h), "air gap → h-BN → TG", **kwh)
-    ins.text(L / 2, film_y / 2, "air gap → SiO₂ → BG", **kwh)
+    ins.text(l_step / 2, film_y + film_h + 0.5 * (1 - film_y - film_h), "air gap → h-BN → TG", **kwh)
+    if L - x_lift > 0.3 * L:
+        ins.text(x_lift + (L - x_lift) / 2, film_y / 2, "air gap → SiO₂ → BG", **kwh)
+    else:
+        ins.text(x_lift + (L - x_lift) / 2, film_y / 2, "air", **kwh)
+    if x_lift > 0.2 * L:
+        ins.text(x_lift / 2, film_y / 2, "SiO₂ → BG", **kw)
     ins.text(x0 / 2, film_y / 2, "SiO₂", **kw)
     ins.text(L + (x1 - L) / 2, film_y + film_h + 0.5 * (1 - film_y - film_h), "h-BN · TG", **kw)
     ins.text(x1, film_y + film_h / 2, " WSe₂", fontsize=7, ha="left", va="center", color=INK, clip_on=False)
