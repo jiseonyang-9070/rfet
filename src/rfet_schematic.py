@@ -3,12 +3,12 @@
 rfet_schematic.py
 ================================================================================
 발표/논문용 소자 "개략도"(schematic). 정확한 치수의 단면도(rfet_geometry.py 그림)와 달리
-두께를 과장하고 입체감을 주어 구조가 한눈에 읽히게 그린다.  ** 비례도가 아님 (not to scale) **
+두께를 과장해 구조가 한눈에 읽히게 그린다.  ** 비례도가 아님 (not to scale) **
+(v2: 입체 옆면/윗면 없이 정면(2D 단면)만, 모든 층의 좌우 끝을 도메인 경계에 맞춤 — 모델 geometry 와 동일)
 
 그리는 요소 (우리 모델의 적층 순서 그대로)
   Si(BG) / SiO2 / Drain(아래 접촉) / WSe2(원자 층으로 표현, Source 아래 평평 → Drain 위로 경사) /
   Source(위 접촉) / h-BN / Top gate.   l_hbn_step 에 따라 h-BN 아랫면이 bridge(팽팽) 또는 sag(처짐)으로 바뀐다.
-입체감: 각 블록을 앞면 + 윗면 + 오른쪽 옆면(등각 투영) 세 조각으로 그리고 윗면은 밝게, 옆면은 어둡게 칠한다.
 
 실행:  python rfet_schematic.py            -> fig_schematic_bridge.png, fig_schematic_sag45.png
 """
@@ -18,7 +18,7 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon, Circle, FancyBboxPatch
+from matplotlib.patches import Polygon, Circle
 import matplotlib.patheffects as pe
 
 import rfet_geometry as geo
@@ -32,19 +32,13 @@ C = {
     "W":     "#3b6fd6",
     "Se":    "#f2c94c",
 }
-DX, DY = 22.0, 14.0          # 등각 투영 깊이 (x, y 방향 오프셋, 그림 단위)
 EDGE = "#3a3a3a"
 
 
-def box3d(ax, x0, y0, w, h, colors, z=1, radius=0.0):
-    """앞면 + 윗면 + 오른쪽 옆면. colors = (앞, 윗, 옆)"""
-    front, top, side = colors
-    ax.add_patch(Polygon([(x0 + w, y0), (x0 + w, y0 + h), (x0 + w + DX, y0 + h + DY), (x0 + w + DX, y0 + DY)],
-                         closed=True, fc=side, ec=EDGE, lw=0.8, zorder=z))
-    ax.add_patch(Polygon([(x0, y0 + h), (x0 + w, y0 + h), (x0 + w + DX, y0 + h + DY), (x0 + DX, y0 + h + DY)],
-                         closed=True, fc=top, ec=EDGE, lw=0.8, zorder=z))
-    ax.add_patch(FancyBboxPatch((x0, y0), w, h, boxstyle=f"round,pad=0,rounding_size={radius}",
-                                fc=front, ec=EDGE, lw=0.9, zorder=z + 0.1))
+def box2d(ax, x0, y0, w, h, colors, z=1):
+    """정면 사각형 하나. colors[0] = 면 색 (옆면·윗면은 그리지 않는다: 2D 단면 모델이므로)"""
+    ax.add_patch(Polygon([(x0, y0), (x0 + w, y0), (x0 + w, y0 + h), (x0, y0 + h)], closed=True,
+                         fc=colors[0], ec=EDGE, lw=0.9, zorder=z))
 
 
 def label(ax, x, y, text, z=10, fs=11, color="#1a1a1a", weight="bold"):
@@ -88,50 +82,42 @@ def draw(config, outfile):
     fig, ax = plt.subplots(figsize=(9.2, 5.6))
     ax.set_aspect("equal"); ax.axis("off")
 
+    X0, X1 = x_s0, x_d1                    # 도메인 좌우 끝: 모든 층(Si, SiO2, WSe2, h-BN)과 S/D 패드가 여기서 끝난다
     # 1) Si, SiO2
-    box3d(ax, x_s0 - 30, y_si, x_d1 + 30, h_si, C["Si"], z=1)
-    box3d(ax, x_s0 - 30, y_ox, x_d1 + 30, h_ox, C["SiO2"], z=2)
-    # 2) Drain (SiO2 위, 아래 접촉)
-    box3d(ax, x_d0, y0, Ld, h_d, C["metal"], z=3, radius=4)
-    # 3) WSe2: Source 아래 평평 -> 경사 -> Drain 위 평평 (원자 층)
-    xs = np.array([x_s0 - 10, Ls, x_d0, x_d1 + 10])
+    box2d(ax, X0, y_si, X1 - X0, h_si, C["Si"], z=1)
+    box2d(ax, X0, y_ox, X1 - X0, h_ox, C["SiO2"], z=2)
+    # 2) Drain (SiO2 위, 아래 접촉) — 오른쪽 끝까지
+    box2d(ax, x_d0, y0, X1 - x_d0, h_d, C["metal"], z=3)
+    # 3) WSe2: Source 아래 평평 -> 경사 -> Drain 위 평평 (원자 층), 왼쪽 끝 ~ 오른쪽 끝
+    xs = np.array([X0, Ls, x_d0, X1])
     ys = np.array([y0 + t_film / 2, y0 + t_film / 2, y0 + h_d + t_film / 2, y0 + h_d + t_film / 2])
     xx = np.linspace(xs[0], xs[-1], 400); yy = np.interp(xx, xs, ys)
     atoms_along(ax, xx, yy, z=6)
-    # 4) Source (WSe2 위, 위 접촉)
-    box3d(ax, x_s0 - 10, y_film_s, Ls + 10, h_s, C["metal"], z=7, radius=4)
+    # 4) Source (WSe2 위, 위 접촉) — 왼쪽 끝부터 x = Ls (source junction) 까지
+    box2d(ax, X0, y_film_s, Ls - X0, h_s, C["metal"], z=7)
     # 5) h-BN: 아랫면 = Source 윗면 -> (전이) -> 경사 WSe2 윗면 -> Drain 쪽 WSe2 윗면, 윗면 = 아랫면 + h_bn
     x_touch = Ls + l_frac * L
     y_touch = np.interp(x_touch, xs, ys) + t_film / 2 + 4
-    bottom = [(x_s0 - 10, y_src_top), (Ls, y_src_top), (x_touch, y_touch)]
+    bottom = [(X0, y_src_top), (Ls, y_src_top), (x_touch, y_touch)]
     if l_frac < 1.0:
         bottom.append((x_d0, y_film_d + 4))
-    bottom.append((x_d1 + 10, y_film_d + 4))
+    bottom.append((X1, y_film_d + 4))
     top = [(x, y + h_bn) for (x, y) in bottom]
-    poly_front = bottom + top[::-1]
-    ax.add_patch(Polygon(poly_front, closed=True, fc=C["hBN"][0], ec=EDGE, lw=0.9, zorder=8))
-    ax.add_patch(Polygon(top + [(x + DX, y + DY) for (x, y) in top[::-1]], closed=True, fc=C["hBN"][1], ec=EDGE, lw=0.8, zorder=8))
-    xr, yr = top[-1]
-    ax.add_patch(Polygon([(xr, yr - h_bn), (xr, yr), (xr + DX, yr + DY), (xr + DX, yr - h_bn + DY)], closed=True,
-                         fc=C["hBN"][2], ec=EDGE, lw=0.8, zorder=8))
+    ax.add_patch(Polygon(bottom + top[::-1], closed=True, fc=C["hBN"][0], ec=EDGE, lw=0.9, zorder=8))
     # 6) Top gate: h-BN 윗면을 따라 (Source 일부 ~ Drain 일부)
     x_tg0, x_tg1 = Ls - 70, x_d0 + 70
     tg_bottom = [(x, np.interp(x, [q[0] for q in top], [q[1] for q in top])) for x in
                  sorted({x_tg0, x_tg1} | {q[0] for q in top if x_tg0 < q[0] < x_tg1})]
     tg_top = [(x, y + h_tg) for (x, y) in tg_bottom]
     ax.add_patch(Polygon(tg_bottom + tg_top[::-1], closed=True, fc=C["metal"][0], ec=EDGE, lw=0.9, zorder=9))
-    ax.add_patch(Polygon(tg_top + [(x + DX, y + DY) for (x, y) in tg_top[::-1]], closed=True, fc=C["metal"][1], ec=EDGE, lw=0.8, zorder=9))
-    xr, yr = tg_top[-1]
-    ax.add_patch(Polygon([(xr, yr - h_tg), (xr, yr), (xr + DX, yr + DY), (xr + DX, yr - h_tg + DY)], closed=True,
-                         fc=C["metal"][2], ec=EDGE, lw=0.8, zorder=9))
 
     # 7) 라벨
-    label(ax, (x_s0 + x_d1) / 2, y_si + h_si / 2, "Si  (back gate, BG)", color="white")
+    label(ax, (X0 + X1) / 2, y_si + h_si / 2, "Si  (back gate, BG)", color="white")
     label(ax, Ls * 0.55, y_ox + h_ox / 2, "SiO₂  300 nm", color="white")
-    label(ax, Ls / 2, y_film_s + h_s / 2, "Source (S)\nPd/Au")
-    label(ax, x_d0 + Ld / 2, y0 + h_d / 2, "Drain (D)\nAu/Ti")
+    label(ax, (X0 + Ls) / 2, y_film_s + h_s / 2, "Source (S)\nPd/Au")
+    label(ax, (x_d0 + X1) / 2, y0 + h_d / 2, "Drain (D)\nAu/Ti")
     label(ax, (x_tg0 + x_tg1) / 2, np.mean([q[1] for q in tg_top]) - h_tg / 2 + 1, "Top gate (TG)")
-    label(ax, x_d1 - 60, y_film_d + 4 + h_bn / 2, "h-BN  30 nm", fs=9.5, weight="semibold")
+    label(ax, X1 - 70, y_film_d + 4 + h_bn / 2, "h-BN  30 nm", fs=9.5, weight="semibold")
     ax.annotate("WSe₂  9.1 nm", xy=(Ls + 0.55 * L, np.interp(Ls + 0.55 * L, xs, ys) + 7), xytext=(Ls + 0.55 * L + 20, y_src_top + h_bn + h_tg + 55),
                 fontsize=10.5, fontweight="bold", ha="left", arrowprops=dict(arrowstyle="-", color=EDGE, lw=0.9), zorder=12)
     ax.annotate("", xy=(x_d0, y0 - 40), xytext=(Ls, y0 - 40), arrowprops=dict(arrowstyle="<->", color="white", lw=1.1), zorder=12)
@@ -145,16 +131,17 @@ def draw(config, outfile):
     ax.annotate("drain junction", xy=(x_d0, y0 + h_d), xytext=(x_d0 - 28, y0 + h_d - 22), fontsize=8.5, color="#b3302f", fontweight="semibold",
                 ha="right", va="top", zorder=13, path_effects=halo, arrowprops=dict(arrowstyle="-", color="#b3302f", lw=0.8))
 
-    title = {"bridge": "h-BN taut over the step (bridge)", "sag45": "h-BN sagging onto the channel (sag45)"}[config]
+    title = {"bridge": "h-BN taut over the step (bridge)", "sag45": "h-BN sagging onto the channel (sag45)",
+             "elastic": "h-BN step length from elastic estimate"}.get(config, config)
     ax.set_title(f"WSe₂ reconfigurable FET — model cross-section schematic   ·   {title}", loc="left", fontsize=11, pad=10)
-    ax.text(x_d1 + DX + 30, y_si - 12, "schematic, not to scale (vertical thicknesses exaggerated)", ha="right", va="top", fontsize=8, color="#666", style="italic")
-    ax.set_xlim(x_s0 - 40, x_d1 + DX + 40)
-    ax.set_ylim(y_si - 45, y_src_top + h_bn + h_tg + DY + 90)
+    ax.text(X1, y_si - 12, "schematic, not to scale (vertical thicknesses exaggerated)", ha="right", va="top", fontsize=8, color="#666", style="italic")
+    ax.set_xlim(X0 - 12, X1 + 12)
+    ax.set_ylim(y_si - 45, y_src_top + h_bn + h_tg + 90)
     fig.savefig(outfile, dpi=220, bbox_inches="tight", facecolor="white")
     plt.close(fig)
     return outfile
 
 
 if __name__ == "__main__":
-    for cfg in geo.CONFIGS:
+    for cfg in ("bridge", "sag45"):
         print("저장:", draw(cfg, f"fig_schematic_{cfg}.png"))
