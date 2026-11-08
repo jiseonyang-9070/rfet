@@ -25,10 +25,13 @@ STEP 4-A : WSe2 를 "반도체"로 만드는 물성과, 그로부터 전하밀�
        (arXiv:1401.0502). DFT(VASP, PBE+SOC). Table II: 유효질량, Table III: 밴드갭.
   M14  S. McDonnell et al., ACS Nano 8, 6265 (2014), DOI 10.1021/nn501728w. Table 3: bulk WSe2
        전자친화도 4.03 ± 0.1 eV, 이온화에너지 5.19 ± 0.1 eV, 밴드갭 1.16 ± 0.03 eV (Kautek 인용값).
-  S17  J. T. Smyth et al., 2D Mater. 4, 025084 (2017), DOI 10.1088/2053-1583/aa6bea. XPS, bulk WSe2,
-       UHV 증착 Au: 전자 Schottky 장벽 0.53 eV (Fig. 1, 4). bulk 밴드갭 1.3 ± 0.1 eV (STS, 인용값).
+       [검증 상태: 원문 미확인(유료). χ=4.03 은 S17 의 IE 5.33 − E_g 1.3 과 일치하므로 간접 확인됨]
+  S17  C. M. Smyth et al., 2D Mater. 4, 025084 (2017), DOI 10.1088/2053-1583/aa6bea. XPS, bulk WSe2,
+       UHV 증착 Au: 전자 Schottky 장벽 0.53 eV (본문 문장; 표/그림에 정리돼 있지 않음). bulk 밴드갭
+       1.3 ± 0.1 eV (STS, ref.44 인용), 이온화에너지 5.33 eV (ref.68 인용).  [검증 상태: 원문 확인 2026-11-09]
   J22  J. Jang et al., Adv. Mater. 34, 2109899 (2022), DOI 10.1002/adma.202109899. 8~12 nm 다층 WSe2 에
        증착한 Ti, Au, Pd: 전자 장벽 ≈ 0.19~0.25 eV (Fig. 3f), pinning factor S = 0.03 (온도 의존 I-V).
+       [검증 상태: 원문 미확인(유료). 원문 대조 전까지 PHI_BN_SOURCE 는 ±0.1 eV 로 취급하고 PHI_BN_VARIANTS 대조군과 함께 해석]
   C17  A. Prakash & J. Appenzeller 등, "Understanding contact gating in Schottky barrier transistors from
        2D channels", Sci. Rep. 7, 12596 (2017): Ni/WSe2 전자 장벽 0.4~0.5 eV (두께 의존).
 """
@@ -53,9 +56,9 @@ KT_EV = KB_EV * T_K             # 0.02585 eV
 # ==============================================================================
 # 섹션 2. 밴드 파라미터 (다층 ≈ bulk, 9.1 nm = 14층: rfet_materials.wse2_layer_count)
 # ==============================================================================
-# [문헌값] 밴드갭 E_g [eV]. 실험값 범위가 넓다: 1.16 ± 0.03 (M14 Table 3), 1.3 ± 0.1 (S17 인용 STS),
-#   DFT(PBE+SOC) bulk 간접갭 1.188 (W14 Table III). baseline 1.2 eV 는 이 범위의 중앙값이며
-#   "실험 범위 1.16~1.3 eV 안의 대표값" 이라는 의미의 선택이다. 민감도: EG_RANGE.
+# [문헌값] 밴드갭 E_g [eV]. 실험값 범위가 넓다: 1.16 ± 0.03 (M14 Table 3, 미확인), 1.3 ± 0.1 (S17 인용 STS, 확인),
+#   W14 Table I 의 실험 인용값 1.20 (확인), DFT(PBE+SOC) bulk 간접갭 1.188 (W14 Table III, 확인).
+#   baseline 1.2 eV 는 W14 Table I 의 실험값이자 범위의 중앙값. 민감도: EG_RANGE.
 EG_EV = 1.2
 EG_RANGE = (1.16, 1.3)
 
