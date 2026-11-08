@@ -23,12 +23,12 @@ BLUE, ORANGE, AQUA, YELLOW, MAGENTA, VIOLET, RED = "#2a78d6", "#eb6834", "#1baf7
 INK, INK2, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 
 CONFIG_COLOR = {"bridge": BLUE, "sag45": ORANGE, "elastic": AQUA, "ramp140": VIOLET, "ramp70": RED, "conf70": MAGENTA, "conf140": YELLOW,
-                "line140": BLUE, "curve140": ORANGE, "line70": AQUA, "curve70": RED}
+                "line140": BLUE, "curve140": ORANGE, "line70": AQUA, "curve70": RED, "line140_eq": VIOLET}
 CONFIG_LABEL = {"bridge": "bridge (h-BN taut, l = L)", "sag45": "sag45 (h-BN 45° descent)",
                 "elastic": "elastic (ramp 0→L, h-BN touch 449)", "ramp140": "ramp140 (flat + 140 nm ramp, 27°)", "ramp70": "ramp70 (flat + 70 nm ramp, 45°)",
                 "conf70": "conf70 (h-BN conformal, 70 nm ramp)", "conf140": "conf140 (h-BN conformal, 140 nm ramp)",
                 "line140": "line140 (plate h-BN, kinked ramp 140)", "curve140": "curve140 (plate h-BN, S-curve ramp 140)",
-                "line70": "line70 (plate h-BN, kinked ramp 70)", "curve70": "curve70 (plate h-BN, S-curve ramp 70)"}
+                "line70": "line70 (plate h-BN, kinked ramp 70)", "curve70": "curve70 (plate h-BN, S-curve ramp 70)", "line140_eq": "line140_eq (t_source = 71, plate level)"}
 VARIANT_LS = {"perp": "-", "para": ":", "tensor": "--"}
 VARIANT_LABEL = {"perp": r"$\varepsilon_\perp$ scalar", "para": r"$\varepsilon_\parallel$ scalar", "tensor": r"$\varepsilon$ tensor"}
 

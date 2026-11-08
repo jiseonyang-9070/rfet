@@ -254,6 +254,10 @@ for _l in (140.0, 70.0):
     _pc = replace(_base, l_slope=_l, ramp_shape="smooth")
     CONFIGS[f"line{int(_l)}"] = replace(_pl, l_hbn_step=None if hbn_tangent_touch(_pl) >= _pl.l_ch - 1e-9 else hbn_tangent_touch(_pl))
     CONFIGS[f"curve{int(_l)}"] = replace(_pc, l_hbn_step=hbn_tangent_touch(_pc))
+# line140_eq: [민감도] Source 두께를 Drain 과 같은 71 nm 로 두면 Source 윗면(80.1) = Drain 쪽 WSe2 윗면(80.1) 이라 h-BN 판이 정확히 수평.
+#   논문값(55)을 바꾼 것이므로 기준이 아니라 "16 nm 두께 차이와 1.8° 기울기가 결과에 영향을 주는가" 를 보는 용도.
+_pe = replace(_base, l_slope=140.0, ramp_shape="linear", t_source=71.0)
+CONFIGS["line140_eq"] = replace(_pe, l_hbn_step=None if hbn_tangent_touch(_pe) >= _pe.l_ch - 1e-9 else hbn_tangent_touch(_pe))
 
 
 # ==============================================================================

@@ -23,7 +23,7 @@ def run(title, args, timeout=3600):
     p.wait(timeout=timeout); msg = f"-> 종료 코드 {p.returncode}, 소요 {time.time() - t0:.0f} s"
     print(msg, flush=True); LOG.write(msg + "\n"); LOG.flush(); return p.returncode
 
-CFGS = ["line140", "curve140", "line70", "curve70"]   # 판 h-BN + WSe2 만 휨: 직선 vs 곡선, 140 vs 70 nm
+CFGS = ["line140", "curve140", "line70", "curve70", "line140_eq"]   # 판 h-BN + WSe2 만 휨: 직선 vs 곡선, 140 vs 70 nm
 rc = {}
 rc["geo"] = run("geometry 검사 (전체 config)", ["rfet_geometry.py"])
 for c in CFGS:
