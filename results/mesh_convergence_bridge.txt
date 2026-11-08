@@ -1,0 +1,19 @@
+[mesh 크기] N=4: 노드 25658, 삼각형 49700, N=6: 노드 40915, 삼각형 79734, N=8: 노드 59893, 삼각형 117222
+
+[STEP 3 선형] 연속 mesh 간 최대 차이 (V/V), junction ±10 nm 제외
+  psi_TG: N4 vs N6: 0.0010  -> OK
+  psi_TG: N6 vs N8: 0.0004  -> OK
+  psi_BG: N4 vs N6: 0.0003  -> OK
+  psi_BG: N6 vs N8: 0.0001  -> OK
+
+[STEP 4 비선형] 연속 mesh 간 E_c 최대 차이 (eV), junction ±10 nm 제외
+  E_c TG_TG+5.0_BG+0.0    : N4 vs N6: 0.0026  -> OK
+  E_c TG_TG+5.0_BG+0.0    : N6 vs N8: 0.0016  -> OK
+  E_c BG_TG+0.0_BG+60.0   : N4 vs N6: 0.0009  -> OK
+  E_c BG_TG+0.0_BG+60.0   : N6 vs N8: 0.0004  -> OK
+  E_c BG_TG+0.0_BG-60.0   : N4 vs N6: 0.0049  -> OK
+  E_c BG_TG+0.0_BG-60.0   : N6 vs N8: 0.0037  -> OK
+  E_c flat_TG+0.0_BG+0.0  : N4 vs N6: 0.0002  -> OK
+  E_c flat_TG+0.0_BG+0.0  : N6 vs N8: 0.0001  -> OK
+
+판정: 수렴 (N_LAYERS_FILM=4 로 충분)   그림: rfet_converge_bridge.png

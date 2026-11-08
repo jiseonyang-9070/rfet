@@ -1,0 +1,245 @@
+=== start Sun Nov  8 22:01:53 2026 ===
+
+===== STEP 3 DEVSIM 해석해 검증 (bloat 수정본) =====
+$ venv\Scripts\python.exe rfet_poisson_check.py
+Creating Region SiO2
+Creating Region hBN
+There should be at least 2 contacts on the device and there are only 0
+Adding 162 nodes
+Adding 421 edges with 359 duplicates removed
+Adding 260 triangles  with 0 duplicate removed
+Adding 66 nodes
+Adding 165 edges with 135 duplicates removed
+Adding 100 triangles  with 0 duplicate removed
+Interface SiO2_hBN SiO2 hBN has 6 node pairs
+Adding interface SiO2_hBN with 6, 6 nodes
+Traceback (most recent call last):
+  File "C:\Users\대진\Documents\rfet\rfet_poisson_check.py", line 82, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\대진\Documents\rfet\rfet_poisson_check.py", line 54, in main
+    P.setup_contact(device, "BG_SiO2", "SiO2", "BG")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\대진\Documents\rfet\rfet_poisson_devsim.py", line 84, in setup_contact
+    devsim.contact_node_model(device=device, contact=contact, name=bc, equation=f"Potential - {bias}")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+devsim_py3.error: on Contact "BG_SiO2" on Device "pp" does not exist.
+
+[exit 1, 0.2 s]
+
+===== mesh bridge N_LAYERS_FILM=6 =====
+$ venv\Scripts\python.exe rfet_mesh_gmsh.py bridge
+mesh 크기 규칙 [nm]: {'s_film': 1.5167, 's_edge': 0.3792, 'wedge_angle_bot_deg': 8.082, 'wedge_angle_top_deg': 6.2491, 'n_sampling': 1319}
+Info    : Meshing 1D...
+Info    : [  0%] Meshing curve 1 (Line)
+Info    : [ 10%] Meshing curve 2 (Line)
+Info    : [ 10%] Meshing curve 3 (Line)
+Info    : [ 20%] Meshing curve 4 (Line)
+Info    : [ 20%] Meshing curve 5 (Line)
+Info    : [ 30%] Meshing curve 6 (Line)
+Info    : [ 30%] Meshing curve 7 (Line)
+Info    : [ 30%] Meshing curve 8 (Line)
+Info    : [ 40%] Meshing curve 9 (Line)
+Info    : [ 40%] Meshing curve 10 (Line)
+Info    : [ 50%] Meshing curve 11 (Line)
+Info    : [ 50%] Meshing curve 12 (Line)
+Info    : [ 60%] Meshing curve 13 (Line)
+Info    : [ 60%] Meshing curve 14 (Line)
+Info    : [ 60%] Meshing curve 15 (Line)
+Info    : [ 70%] Meshing curve 16 (Line)
+Info    : [ 70%] Meshing curve 17 (Line)
+Info    : [ 80%] Meshing curve 18 (Line)
+Info    : [ 80%] Meshing curve 19 (Line)
+Info    : [ 80%] Meshing curve 20 (Line)
+Info    : [ 90%] Meshing curve 21 (Line)
+Info    : [ 90%] Meshing curve 22 (Line)
+Info    : [100%] Meshing curve 23 (Line)
+Info    : [100%] Meshing curve 24 (Line)
+Info    : Done meshing 1D (Wall 0.178403s, CPU 0.140625s)
+Info    : Meshing 2D...
+Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
+Info    : [ 30%] Meshing surface 2 (Plane, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 3 (Plane, Frontal-Delaunay)
+Info    : [ 70%] Meshing surface 4 (Plane, Frontal-Delaunay)
+Info    : [ 90%] Meshing surface 5 (Plane, Frontal-Delaunay)
+Info    : Done meshing 2D (Wall 1.13825s, CPU 1.10938s)
+Info    : 40915 nodes 84189 elements
+Info    : Writing 'rfet_bridge_n6_nm.msh'...
+Info    : Done writing 'rfet_bridge_n6_nm.msh'
+저장: rfet_bridge_n6_nm.msh (nm),  rfet_bridge_n6_cm.msh (cm)
+
+=== mesh 리포트: rfet_bridge_n6_nm.msh ===
+노드 40915개, 삼각형 79734개, 선 요소 4276개
+
+[영역별]  삼각형수  면적[nm^2]   해석면적     상대오차  | 최소각  최대각  둔각수  Delaunay위반edge  경계둔각edge
+  SiO2       25296    750000.00    750000.00   0.00e+00 |  29.80  114.21     239               3             0
+  WSe2       26355     22750.00     22750.00   3.20e-16 |  35.34  103.20      11               0             0
+  AirBot      6715     17750.00     17750.00   0.00e+00 |   7.65  131.96     107               0            12
+  AirTop      5451     13750.00     13750.00   0.00e+00 |   5.97  131.54      97               0            16
+  hBN        15917     75000.00     75000.00   0.00e+00 |  30.04  114.14     241               0             1
+
+[contact / interface 선]  요소수   총길이[nm]   기대길이[nm]
+  C_BG_SiO2                118     2500.000     2500.000
+  C_Drain_AirBot            47       71.000       71.000
+  C_Drain_SiO2              93     1000.000     1000.000
+  C_Drain_WSe2             671     1000.000     1000.000
+  C_Source_AirTop           36       55.000       55.000
+  C_Source_WSe2            667     1000.000     1000.000
+  C_Source_hBN              91     1000.000     1000.000
+  C_TG_hBN                 212     1100.256     1100.256
+  I_AirTop_hBN             143      500.256      500.256
+  I_SiO2_AirBot            133      500.000      500.000
+  I_SiO2_WSe2              673     1000.000     1000.000
+  I_WSe2_AirBot            357      505.016      505.016
+  I_WSe2_AirTop            358      505.016      505.016
+  I_WSe2_hBN               677     1000.000     1000.000
+
+[참고] edge 길이: 최소 0.042 nm, 최대 49.59 nm;  전체 최소각 5.97 deg, 전체 최대각 131.96 deg
+[참고] 'Delaunay위반edge'와 '경계둔각edge'는 FAIL이 아니라 진단 값입니다 (허용 범위는 STEP 3에서 Poisson 결과의 mesh 의존성을 보며 정합니다).
+
+판정: (1)(2) 모두 통과
+[exit 0, 2.7 s]
+
+===== STEP 3 FEM bridge N=6 =====
+$ venv\Scripts\python.exe rfet_fem_reference.py bridge perp
+  [bridge/perp] unit case Source: psi 범위 [+0.0000, +1.0000] V
+  [bridge/perp] unit case Drain : psi 범위 [+0.0000, +1.0000] V
+  [bridge/perp] unit case TG    : psi 범위 [+0.0000, +1.0000] V
+  [bridge/perp] unit case BG    : psi 범위 [+0.0000, +1.0000] V
+  저장: rfet_fem_bridge_n6_perp.npz
+[exit 0, 1.2 s]
+
+===== STEP 4 FEM semi bridge lit N=6  (1~3분) =====
+$ venv\Scripts\python.exe rfet_fem_semi.py bridge perp lit
+  V_TG =  -5.0, V_BG =  +0.0: 10 단계, Newton 총 53회
+  V_TG =  -2.5, V_BG =  +0.0: 5 단계, Newton 총 28회
+  V_TG =  +2.5, V_BG =  +0.0: 5 단계, Newton 총 32회
+  V_TG =  +5.0, V_BG =  +0.0: 10 단계, Newton 총 55회
+  V_TG =  +0.0, V_BG = -60.0: 12 단계, Newton 총 72회
+  V_TG =  +0.0, V_BG = -30.0: 6 단계, Newton 총 42회
+  V_TG =  +0.0, V_BG = +30.0: 6 단계, Newton 총 36회
+  V_TG =  +0.0, V_BG = +60.0: 12 단계, Newton 총 60회
+  V_TG =  +0.0, V_BG =  +0.0: 1 단계, Newton 총 0회
+  저장: rfet_semi_bridge_n6_perp_lit.npz
+[exit 0, 53.5 s]
+
+===== mesh bridge N_LAYERS_FILM=8 =====
+$ venv\Scripts\python.exe rfet_mesh_gmsh.py bridge
+mesh 크기 규칙 [nm]: {'s_film': 1.1375, 's_edge': 0.2844, 'wedge_angle_bot_deg': 8.082, 'wedge_angle_top_deg': 6.2491, 'n_sampling': 1759}
+Info    : Meshing 1D...
+Info    : [  0%] Meshing curve 1 (Line)
+Info    : [ 10%] Meshing curve 2 (Line)
+Info    : [ 10%] Meshing curve 3 (Line)
+Info    : [ 20%] Meshing curve 4 (Line)
+Info    : [ 20%] Meshing curve 5 (Line)
+Info    : [ 30%] Meshing curve 6 (Line)
+Info    : [ 30%] Meshing curve 7 (Line)
+Info    : [ 30%] Meshing curve 8 (Line)
+Info    : [ 40%] Meshing curve 9 (Line)
+Info    : [ 40%] Meshing curve 10 (Line)
+Info    : [ 50%] Meshing curve 11 (Line)
+Info    : [ 50%] Meshing curve 12 (Line)
+Info    : [ 60%] Meshing curve 13 (Line)
+Info    : [ 60%] Meshing curve 14 (Line)
+Info    : [ 60%] Meshing curve 15 (Line)
+Info    : [ 70%] Meshing curve 16 (Line)
+Info    : [ 70%] Meshing curve 17 (Line)
+Info    : [ 80%] Meshing curve 18 (Line)
+Info    : [ 80%] Meshing curve 19 (Line)
+Info    : [ 80%] Meshing curve 20 (Line)
+Info    : [ 90%] Meshing curve 21 (Line)
+Info    : [ 90%] Meshing curve 22 (Line)
+Info    : [100%] Meshing curve 23 (Line)
+Info    : [100%] Meshing curve 24 (Line)
+Info    : Done meshing 1D (Wall 0.197906s, CPU 0.171875s)
+Info    : Meshing 2D...
+Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
+Info    : [ 30%] Meshing surface 2 (Plane, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 3 (Plane, Frontal-Delaunay)
+Info    : [ 70%] Meshing surface 4 (Plane, Frontal-Delaunay)
+Info    : [ 90%] Meshing surface 5 (Plane, Frontal-Delaunay)
+Info    : Done meshing 2D (Wall 1.92736s, CPU 1.89062s)
+Info    : 59893 nodes 122836 elements
+Info    : Writing 'rfet_bridge_n8_nm.msh'...
+Info    : Done writing 'rfet_bridge_n8_nm.msh'
+저장: rfet_bridge_n8_nm.msh (nm),  rfet_bridge_n8_cm.msh (cm)
+
+=== mesh 리포트: rfet_bridge_n8_nm.msh ===
+노드 59893개, 삼각형 117222개, 선 요소 5423개
+
+[영역별]  삼각형수  면적[nm^2]   해석면적     상대오차  | 최소각  최대각  둔각수  Delaunay위반edge  경계둔각edge
+  SiO2       32009    750000.00    750000.00   0.00e+00 |  31.42  111.12     278               2             0
+  WSe2       44985     22750.00     22750.00   3.20e-16 |  34.51  104.62      35               0             0
+  AirBot      9480     17750.00     17750.00   0.00e+00 |   7.58  131.33     128               0            13
+  AirTop      8172     13750.00     13750.00   0.00e+00 |   6.01  132.28     107               0            15
+  hBN        22576     75000.00     75000.00   0.00e+00 |  29.92  113.31     303               3             1
+
+[contact / interface 선]  요소수   총길이[nm]   기대길이[nm]
+  C_BG_SiO2                119     2500.000     2500.000
+  C_Drain_AirBot            51       71.000       71.000
+  C_Drain_SiO2              95     1000.000     1000.000
+  C_Drain_WSe2             889     1000.000     1000.000
+  C_Source_AirTop           39       55.000       55.000
+  C_Source_WSe2            885     1000.000     1000.000
+  C_Source_hBN              94     1000.000     1000.000
+  C_TG_hBN                 219     1100.256     1100.256
+  I_AirTop_hBN             162      500.256      500.256
+  I_SiO2_AirBot            147      500.000      500.000
+  I_SiO2_WSe2              893     1000.000     1000.000
+  I_WSe2_AirBot            466      505.016      505.016
+  I_WSe2_AirTop            467      505.016      505.016
+  I_WSe2_hBN               897     1000.000     1000.000
+
+[참고] edge 길이: 최소 0.031 nm, 최대 54.30 nm;  전체 최소각 6.01 deg, 전체 최대각 132.28 deg
+[참고] 'Delaunay위반edge'와 '경계둔각edge'는 FAIL이 아니라 진단 값입니다 (허용 범위는 STEP 3에서 Poisson 결과의 mesh 의존성을 보며 정합니다).
+
+판정: (1)(2) 모두 통과
+[exit 0, 3.6 s]
+
+===== STEP 3 FEM bridge N=8 =====
+$ venv\Scripts\python.exe rfet_fem_reference.py bridge perp
+  [bridge/perp] unit case Source: psi 범위 [+0.0000, +1.0000] V
+  [bridge/perp] unit case Drain : psi 범위 [+0.0000, +1.0000] V
+  [bridge/perp] unit case TG    : psi 범위 [+0.0000, +1.0000] V
+  [bridge/perp] unit case BG    : psi 범위 [+0.0000, +1.0000] V
+  저장: rfet_fem_bridge_n8_perp.npz
+[exit 0, 1.6 s]
+
+===== STEP 4 FEM semi bridge lit N=8  (1~3분) =====
+$ venv\Scripts\python.exe rfet_fem_semi.py bridge perp lit
+  V_TG =  -5.0, V_BG =  +0.0: 10 단계, Newton 총 53회
+  V_TG =  -2.5, V_BG =  +0.0: 5 단계, Newton 총 28회
+  V_TG =  +2.5, V_BG =  +0.0: 5 단계, Newton 총 32회
+  V_TG =  +5.0, V_BG =  +0.0: 10 단계, Newton 총 55회
+  V_TG =  +0.0, V_BG = -60.0: 12 단계, Newton 총 72회
+  V_TG =  +0.0, V_BG = -30.0: 6 단계, Newton 총 42회
+  V_TG =  +0.0, V_BG = +30.0: 6 단계, Newton 총 36회
+  V_TG =  +0.0, V_BG = +60.0: 12 단계, Newton 총 60회
+  V_TG =  +0.0, V_BG =  +0.0: 1 단계, Newton 총 0회
+  저장: rfet_semi_bridge_n8_perp_lit.npz
+[exit 0, 81.3 s]
+
+===== 수렴 리포트 =====
+$ venv\Scripts\python.exe rfet_converge_report.py bridge
+[mesh 크기] N=4: 노드 25658, 삼각형 49700, N=6: 노드 40915, 삼각형 79734, N=8: 노드 59893, 삼각형 117222
+
+[STEP 3 선형] 연속 mesh 간 최대 차이 (V/V), junction ±10 nm 제외
+  psi_TG: N4 vs N6: 0.0010  -> OK
+  psi_TG: N6 vs N8: 0.0004  -> OK
+  psi_BG: N4 vs N6: 0.0003  -> OK
+  psi_BG: N6 vs N8: 0.0001  -> OK
+
+[STEP 4 비선형] 연속 mesh 간 E_c 최대 차이 (eV), junction ±10 nm 제외
+  E_c TG_TG+5.0_BG+0.0    : N4 vs N6: 0.0026  -> OK
+  E_c TG_TG+5.0_BG+0.0    : N6 vs N8: 0.0016  -> OK
+  E_c BG_TG+0.0_BG+60.0   : N4 vs N6: 0.0009  -> OK
+  E_c BG_TG+0.0_BG+60.0   : N6 vs N8: 0.0004  -> OK
+  E_c BG_TG+0.0_BG-60.0   : N4 vs N6: 0.0049  -> OK
+  E_c BG_TG+0.0_BG-60.0   : N6 vs N8: 0.0037  -> OK
+  E_c flat_TG+0.0_BG+0.0  : N4 vs N6: 0.0002  -> OK
+  E_c flat_TG+0.0_BG+0.0  : N6 vs N8: 0.0001  -> OK
+
+판정: 수렴 (N_LAYERS_FILM=4 로 충분)   그림: rfet_converge_bridge.png
+[exit 0, 5.1 s]
+
+=== DONE Sun Nov  8 22:04:22 2026 ===
