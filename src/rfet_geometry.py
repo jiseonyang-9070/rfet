@@ -198,6 +198,11 @@ CONFIGS = {
     "ramp140": replace(_base, l_slope=140.0, l_hbn_step=min(sag_step_elastic(_base), _base.l_ch)),
     # ramp70: 팀원 모델과 같은 45° 경사 (가로 70 nm) — 비교용. h-BN 은 위와 같이 449.
     "ramp70": replace(_base, l_slope=70.0, l_hbn_step=min(sag_step_elastic(_base), _base.l_ch)),
+    # ---- "밀착형": h-BN 이 Source 모서리에서 45° 로 짧게 내려와 박막에 붙고(55 nm), 평평한 채널 위에 밀착한 뒤 Drain 앞 경사를 따라 올라감.
+    #      논문 Fig. 1 개략도의 모습과 가장 비슷하다. 단, 30 nm 박편이 45° 로 꺾이는 것은 탄성적으로 무리(변형률 ~36%)라는
+    #      점은 sag45 와 같다 — "그림이 그럴듯한 쪽" 과 "역학적으로 그럴듯한 쪽(elastic, 449 nm)" 을 둘 다 돌려 비교한다.
+    "conf70":  replace(_base, l_slope=70.0,  l_hbn_step=sag_step_for_angle(replace(_base, l_slope=70.0), 45.0)),
+    "conf140": replace(_base, l_slope=140.0, l_hbn_step=sag_step_for_angle(replace(_base, l_slope=140.0), 45.0)),
 }
 
 

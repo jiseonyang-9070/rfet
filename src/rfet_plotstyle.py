@@ -22,9 +22,10 @@ from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 BLUE, ORANGE, AQUA, YELLOW, MAGENTA, VIOLET, RED = "#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#6250d6", "#e34948"
 INK, INK2, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 
-CONFIG_COLOR = {"bridge": BLUE, "sag45": ORANGE, "elastic": AQUA, "ramp140": VIOLET, "ramp70": RED}
+CONFIG_COLOR = {"bridge": BLUE, "sag45": ORANGE, "elastic": AQUA, "ramp140": VIOLET, "ramp70": RED, "conf70": MAGENTA, "conf140": YELLOW}
 CONFIG_LABEL = {"bridge": "bridge (h-BN taut, l = L)", "sag45": "sag45 (h-BN 45° descent)",
-                "elastic": "elastic (ramp 0→L, h-BN touch 449)", "ramp140": "ramp140 (flat + 140 nm ramp, 27°)", "ramp70": "ramp70 (flat + 70 nm ramp, 45°)"}
+                "elastic": "elastic (ramp 0→L, h-BN touch 449)", "ramp140": "ramp140 (flat + 140 nm ramp, 27°)", "ramp70": "ramp70 (flat + 70 nm ramp, 45°)",
+                "conf70": "conf70 (h-BN conformal, 70 nm ramp)", "conf140": "conf140 (h-BN conformal, 140 nm ramp)"}
 VARIANT_LS = {"perp": "-", "para": ":", "tensor": "--"}
 VARIANT_LABEL = {"perp": r"$\varepsilon_\perp$ scalar", "para": r"$\varepsilon_\parallel$ scalar", "tensor": r"$\varepsilon$ tensor"}
 
