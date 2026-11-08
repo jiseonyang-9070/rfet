@@ -29,6 +29,21 @@ const TBL = (fs) => ({ fontSize: fs, color: INK, border: { type: "solid", pt: 0.
 const hdr = (t) => ({ text: t, options: { bold: true, color: "FFFFFF", fill: { color: NAVY }, align: "center" } });
 const B = (t) => ({ text: t, options: { bold: true } });
 
+
+// 코드 설명 슬라이드: 왼쪽 코드(고정폭), 오른쪽 설명 카드
+function codeSlide(title, file, code, notes, codeW = 7.6, fs = 10.5) {
+  const s = pres.addSlide(); header(s, title);
+  s.addShape(pres.ShapeType.rect, { x: 0.5, y: 1.25, w: codeW, h: 5.6, fill: { color: "1E1E2E" }, line: { color: "1E1E2E" } });
+  s.addText(file, { x: 0.6, y: 1.3, w: codeW - 0.2, h: 0.3, fontSize: 10, color: "9DA5B4", fontFace: "Consolas", margin: 0 });
+  s.addText(code, { x: 0.6, y: 1.65, w: codeW - 0.2, h: 5.1, fontSize: fs, color: "E6E6E6", fontFace: "Consolas", margin: 0, valign: "top", lineSpacingMultiple: 1.05 });
+  const nx = 0.5 + codeW + 0.3, nw = 12.83 - nx;
+  notes.forEach((n, i) => { const y = 1.25 + i * (5.6 / notes.length);
+    card(s, nx, y, nw, 5.6 / notes.length - 0.12);
+    s.addText([B(n[0]), { text: "\n" + n[1], options: {} }], { x: nx + 0.15, y: y + 0.08, w: nw - 0.3, h: 5.6 / notes.length - 0.28, fontSize: 12.5, color: INK, margin: 0, valign: "top" });
+  });
+  return s;
+}
+
 // ---------- 1. 표지 ----------
 {
   const s = pres.addSlide(); s.background = { color: "FFFFFF" };
@@ -86,6 +101,33 @@ const B = (t) => ({ text: t, options: { bold: true } });
     s.addText(it[1], { x: x + 0.25, y: 2.4, w: 3.4, h: 3.5, fontSize: 16, color: INK, margin: 0, valign: "top", paraSpaceAfter: 10 });
   });
   s.addText("raw 전위·밴드부터 본다 — 지표는 물리 근거가 생긴 뒤에", { x: 0.6, y: 6.3, w: 12.2, h: 0.45, fontSize: 15, color: GRAY, margin: 0, align: "center" });
+}
+
+
+// ---------- 4b. 코드 구성 ----------
+{
+  const s = pres.addSlide(); header(s, "코드 구성 : 한 줄기 파이프라인 (GitHub jiseonyang-9070/rfet)");
+  const steps = [["rfet_geometry.py", "점·다각형으로 단면 정의\n[논문값]/[모델 가정] 태그\n기하 검사 10가지", NAVY],
+                 ["rfet_mesh_gmsh.py", "gmsh 삼각형 격자\n크기 규칙 4개\n→ .msh (nm / cm)", BLUE],
+                 ["rfet_poisson_devsim.py\nrfet_fem_reference.py", "STEP 3 선형 푸아송\nDEVSIM ↔ 직접 짠 FEM\n단위 응답 4개", GREEN],
+                 ["rfet_semiconductor.py\nrfet_poisson_semi_devsim.py", "STEP 4 밴드 (2D-DOS FD)\nNewton · 램프\n장벽 Dirichlet", ORANGE],
+                 ["rfet_transport_devsim.py", "STEP 5 드리프트–확산\n연속식 + SG 전류\n팀원 레시피 합침", RED]];
+  const w = 2.3, gap = 0.17, x0 = 0.55;
+  steps.forEach((st_, i) => { const x = x0 + i * (w + gap);
+    s.addShape(pres.ShapeType.rect, { x, y: 1.5, w, h: 0.9, fill: { color: st_[2] }, line: { color: st_[2] } });
+    s.addText(st_[0], { x, y: 1.5, w, h: 0.9, fontSize: 11, bold: true, color: "FFFFFF", fontFace: "Consolas", align: "center", valign: "middle", margin: 0.05 });
+    card(s, x, 2.5, w, 2.0);
+    s.addText(st_[1], { x: x + 0.1, y: 2.6, w: w - 0.2, h: 1.8, fontSize: 12, color: INK, margin: 0, valign: "top" });
+    if (i < steps.length - 1) s.addText("→", { x: x + w - 0.05, y: 1.75, w: gap + 0.1, h: 0.4, fontSize: 16, color: NAVY, align: "center", margin: 0 });
+  });
+  const rows = [
+    [hdr("규칙"), hdr("코드에서 어떻게")],
+    ["모든 숫자에 출처", "주요 변수 바로 위 주석: [논문값] Jiao 2026 p.2 \"a 9.1 nm-thick WSe₂\" / [문헌값] DOI·표 / [모델 가정] 이유·영향"],
+    ["물리와 수치 분리", "rfet_materials · rfet_semiconductor 에 물리 상수, 격자·허용오차는 [수치해석 설정] 으로 별도"],
+    ["교차 검증", "같은 격자(.msh)를 DEVSIM 과 FEM 이 함께 읽음 → 숫자 비교 · 후처리(rfet_post*)는 공통"],
+    ["재현", "run_all.py 한 번 (venv 생성 → 설치 → STEP 2→4) · 모든 로그 results/ 에 보관"],
+  ];
+  s.addTable(rows, { x: 0.55, y: 4.75, w: 12.2, colW: [2.2, 10.0], rowH: 0.42, ...TBL(12) });
 }
 
 // ---------- 5. 파라미터 ----------
@@ -167,6 +209,39 @@ const B = (t) => ({ text: t, options: { bold: true } });
     { x: 6.7, y: 5.55, w: 6.1, h: 1.3, fontSize: 14, color: NAVY, margin: 0, valign: "top" });
 }
 
+
+// ---------- 9b. 코드: DEVSIM 푸아송 ----------
+codeSlide("STEP 3 코드 : DEVSIM 에 푸아송 방정식을 '문자열'로 적는다", "src/rfet_poisson_devsim.py  (발췌 · 단순화)",
+`# 미지수: 노드마다 전위 ψ [V]
+devsim.node_solution(device, region, name="Potential")
+devsim.edge_from_node_model(device, region, node_model="Potential")
+
+# edge 전기장  E = (ψ_n0 − ψ_n1) / L_edge
+devsim.edge_model(device, region, name="ElectricField",
+    equation="(Potential@n0 - Potential@n1)*EdgeInverseLength")
+
+# edge 전속밀도  D = ε E   ← 유한체적의 'flux'
+devsim.edge_model(device, region, name="PotentialEdgeFlux",
+    equation="Permittivity*ElectricField")
+
+# 방정식: Σ_edge D·(면적) = 전하 (STEP 3 은 ρ = 0)
+devsim.equation(device, region, name="PotentialEquation",
+    variable_name="Potential", edge_model="PotentialEdgeFlux")
+
+# 접점(금속): Dirichlet  ψ = V
+devsim.contact_node_model(device, contact, name=bc,
+    equation=f"Potential - {bias}")
+devsim.contact_equation(device, contact, name="PotentialEquation",
+    node_model=bc, edge_charge_model="PotentialEdgeFlux")
+
+# 재료 경계: 두 영역의 같은 방정식을 이어 붙임 (ψ 연속, εE 연속)
+devsim.interface_equation(device, interface,
+    name="PotentialEquation", type="continuous")`,
+  [["유한체적법 = 가우스 법칙", "노드 주위 작은 상자에서 '들어온 전속 − 나간 전속 = 안의 전하'. edge 마다 D = εE 를 정의하고 합산."],
+   ["도함수도 직접 적는다", "Newton 반복에 쓰는 ∂(식)/∂ψ (…:Potential@n0) 를 같이 등록. 기호 미분이 막히는 곳은 손으로 적음(STEP 5)."],
+   ["경계조건 두 종류", "금속 = Dirichlet(값 고정), 영역 가장자리 = Neumann(자동, 전속 0). 재료 경계는 continuous 로 ψ·εE 연속."],
+   ["ε 는 영역당 숫자 하나", "Permittivity 가 스칼라 → 이방성은 FEM 텐서로 따로 확인(10–15 %)."]]);
+
 // ---------- 10. STEP 3 지도 ----------
 {
   const s = pres.addSlide(); header(s, "STEP 3 · 전위 응답 지도 — 금속이 전기장을 가린다");
@@ -188,6 +263,35 @@ const B = (t) => ({ text: t, options: { bold: true } });
   s.addText([B("TG → Drain 쪽만 p 형"), { text: "\n", options: {} }, B("BG → Source 쪽만 재구성"), { text: "\n\n기준 curve_el (5개 구조 모두 같은 패턴)\n장벽 0.22/0.53 (다른 시료) → 대조군 0.6/0.6 도 같은 패턴", options: { color: GRAY, fontSize: 12 } }],
     { x: 9.35, y: 4.1, w: 3.4, h: 2.2, fontSize: 15, color: NAVY, margin: 0, valign: "top" });
 }
+
+
+// ---------- 11b. 코드: 캐리어 밀도 ----------
+codeSlide("STEP 4 코드 : 2D-DOS 페르미–디랙을 닫힌 꼴로 — 발산 없음", "src/rfet_semiconductor.py  (발췌 · 단순화)",
+`# [문헌값] Wickramaratne 2014 (bulk):  m_e = √(0.489·0.643) m0,  m_h = 0.997 m0
+# 한 층당 2D 유효 상태밀도  N_c,2D = g_v m_d kT / (π ħ²)   → × 14층 / 9.1 nm
+NC_EQ = layers_2d_dos(ME_SIGMA_L, ME_SIGMA_T, g_v=6) * N_LAYERS / T_WSE2_NM
+
+def softplus(x):              # ln(1 + e^x), overflow 없이
+    return np.where(x > 0, x, 0.0) + np.log1p(np.exp(-np.abs(x)))
+
+def carriers(psi, chi=CHI_EV, eg=EG_EV, nc=NC_EQ, nv=NV_EQ, ef=0.0):
+    """ψ [V] -> (n, p).  E_c = -ψ - χ,  E_v = E_c - E_g"""
+    eta_n = (ef + psi + chi) / KT_EV          # (E_F - E_c)/kT
+    eta_p = (-psi - chi - eg - ef) / KT_EV    # (E_v - E_F)/kT
+    return nc * softplus(eta_n), nv * softplus(eta_p)
+
+def rho_and_derivative(psi):
+    n, p = carriers(psi)
+    rho  = p - n                              # 도핑·고정전하 0 [모델 가정]
+    drho = -(nc*sigmoid(eta_n) + nv*sigmoid(eta_p)) / KT_EV
+    return rho, drho                          # Newton 의 Jacobian 에 사용
+
+# 접점 Schottky: ψ = V − (φ_Bn + χ)      [문헌값] Pd 0.22 / Au 0.53 eV
+# 게이트:       ψ = V_g − Φ_m, Φ_m = χ + E_g/2 (flat band) [모델 가정]`,
+  [["n = N_c ln(1 + e^η)", "2차원 상태밀도가 상수라 페르미–디랙 적분이 정확히 풀림. η≪0 이면 Boltzmann, η≫0 이면 선형 → ±60 V 까지 수렴."],
+   ["같은 함수를 두 코드가 공유", "FEM Newton 과 DEVSIM 수식이 같은 carriers() 정의를 씀 → 두 결과가 일치하면 구현 오류 가능성 낮음."],
+   ["밴드 ↔ 전압 한 줄", "E_c = −ψ − χ. 접점에서는 E_c 가 금속 페르미 준위보다 φ_Bn 위 → ψ 값이 정해짐(Dirichlet)."],
+   ["가정이 코드에 보인다", "도핑 0, Φ_m flat-band 가 주석과 함께 명시 → 바꾸면 무엇이 변하는지 추적 가능."]]);
 
 // ---------- 12. STEP 5 전류 ----------
 {
