@@ -209,7 +209,7 @@ const B = (t) => ({ text: t, options: { bold: true } });
 // ---------- 13. 검증 ----------
 {
   const s = pres.addSlide(); header(s, "검증 : 왜 이 숫자를 믿나");
-  fit(s, FIG("fig_mesh_convergence_bridge.png"), { x: 0.4, y: 1.2, w: 6.6, h: 5.6 }, 1.4);
+  fit(s, FIG("fig_mesh_convergence_simple.png"), { x: 0.4, y: 1.3, w: 6.6, h: 5.4 }, 1.71);
   const rows = [
     [hdr("검증"), hdr("결과")],
     ["해석해 (2층 평행판)", "FEM 일치"],
