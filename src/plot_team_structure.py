@@ -36,7 +36,11 @@ def draw(ax, lw):
     # 금속 블록 (팀원 모델은 금속 내부를 풀지 않고 경계선에 전압만 건다 — 블록은 위치 표시)
     ax.add_patch(Rectangle((-S, ts), S, T_SRC, fc="#f1cf6a", ec="none", alpha=0.55, zorder=2))
     ax.add_patch(Rectangle((xd, 0), Ld_, Hd, fc="#f1cf6a", ec="none", alpha=0.55, zorder=2))
-    ax.add_patch(Rectangle((-S, -tox - 20), S + xd, 20, fc="#bdbdbd", ec="none", alpha=0.55, zorder=2))
+    # Drain 아래 SiO2: 실제 소자에는 있지만 팀원 코드는 격자를 만들지 않음 (Drain 금속이 등전위라 BG 를 완전히 가리므로 계산에 불필요).
+    # 구조 그림에는 격자 없는 SiO2 로 채워 넣고, BG 도 끝까지 그린다.
+    ax.add_patch(Rectangle((xd, -tox), Ld_, tox, fc=FACE["oxide"], ec="none", zorder=0.5))
+    ax.add_patch(Rectangle((-S, -tox - 20), S + xd + Ld_, 20, fc="#bdbdbd", ec="none", alpha=0.55, zorder=2))
+    ax.plot([xd, xd + Ld_], [-tox, -tox], color=CCOL["bg"], lw=2.6, solid_capstyle="butt", zorder=4)
     for gname, a, b in edges:
         if gname in CCOL:
             ax.plot(*P[[a, b]].T, color=CCOL[gname], lw=2.6, solid_capstyle="butt", zorder=4)
@@ -53,7 +57,7 @@ ax0 = fig.add_subplot(gs[0, :]); draw(ax0, 0.15)
 ax0.set_xlim(-S, xd + Ld_); ax0.set_ylim(-tox - 25, Hd + ts + th + 40)
 kw = dict(fontsize=8.5, ha="center", va="center", color=st.INK, zorder=6, bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.85))
 ax0.text(-S / 2, ts + T_SRC / 2, "Source (선 접점, 두께 없음)", **kw); ax0.text(xd + Ld_ / 2, Hd / 2, "Drain", **kw)
-ax0.text(L / 2, ts + th + 32, "Top gate (x = 0 ~ 570)", **kw); ax0.text(L / 2, -tox / 2, "SiO$_2$ 300 nm (x < 570 까지만)", **kw)
+ax0.text(L / 2, ts + th + 32, "Top gate (x = 0 ~ 570)", **kw); ax0.text(L / 2, -tox / 2, "SiO$_2$ 300 nm", **kw); ax0.text(xd + Ld_ / 2, -tox / 2, "SiO$_2$ (Drain 아래:\n격자 없음, 금속이 가림)", **kw)
 ax0.text(L / 2, -tox - 14, "Back gate", **kw); ax0.text(xd + Ld_ / 2, Hd + ts + th / 2, "h-BN (x ≥ 0 에만)", **kw)
 ax0.text(L / 2, ts + th / 2, "h-BN 30 nm", fontsize=8, ha="center", va="center", color=st.INK, zorder=6)
 ax0.set_xlabel("x (nm)"); ax0.set_ylabel("y (nm)")
