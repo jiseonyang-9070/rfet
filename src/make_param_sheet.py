@@ -38,6 +38,8 @@ SMY = ("Smyth et al., 2D Mater. 4, 025084 (2017)", "10.1088/2053-1583/aa6bea")
 JANG = ("Jang et al., Adv. Mater. 34, 2109899 (2022)", "10.1002/adma.202109899")
 FAL = ("Falin et al., Nat. Commun. 8, 15815 (2017)", "10.1038/ncomms15815")
 KOE = ("Koenig, Boddeti, Dunn, Bunch, Nat. Nanotechnol. 6, 543 (2011)", "10.1038/nnano.2011.123")
+ZHA = ("R. Zhang, V. Koutsos, R. Cheung, Appl. Phys. Lett. 108, 042104 (2016)", "10.1063/1.4940982")
+TOR = ("Torres, Zhu, Liu, Lim, Yun, Phys. Status Solidi A 215, 1700512 (2018)", "10.1002/pssa.201700512")
 SZE = ("Sze & Ng, Physics of Semiconductor Devices, 3rd ed., Wiley (2007)", "")
 COD = ("CODATA 2018 (NIST)", "")
 NONE = ("— (문헌 없음, 모델이 정함)", "")
@@ -54,12 +56,15 @@ rows = [
  ("구조", "Drain 전극 두께 (Ti/Au 1/70)", 71, "nm", "[A] 논문값", *JIAO, "p.2", '"drain electrode (Ti/Au, 1/70 nm)"', "합산은 모델이 함. 박막 아래 vdW 전사, WSe₂와 닿는 금속 = Au", "WSe₂ 경사 높이", OK, "사용자 제공 PDF 본문", D, "Params.t_drain", "rfet_geometry.py"),
  ("구조", "채널 길이 L", 500, "nm", "[A] 논문값(근사)", *JIAO, "Abstract, p.2, p.4", '"approximately 500 nm"', "측정 기준점은 Fig. S2(미확보). Source 모서리(x=0) ↔ Drain 벽(x=L) 수평거리로 해석 [C]", "정의가 다르면 L ±수십 nm", OK, "사용자 제공 PDF 본문", D, "Params.l_ch", "rfet_geometry.py"),
  ("구조", "x = 0 위치", "Source 금속 오른쪽 벽", "", "[A] 논문값", *JIAO, "p.2", '"source electrode … edge was positioned at the base of the transition region"', "논문 서술 그대로", "—", OK, "사용자 제공 PDF 본문", D, "build_points()", "rfet_geometry.py"),
- ("구조", "WSe₂ 경사 형상", "직선, 0→L, ≈8°", "", "[C] 모델 가정", *NONE, "", "Fig. S2 미확보", "가장 단순한 가정", "탄성 추정 ℓ≈140 nm → Drain 쪽에서 더 급할 수 있음 (민감도 미실시)", "—", "해당 없음", "", "Params.film_top()", "rfet_geometry.py"),
+ ("구조", "WSe₂ 경사 가로 길이 ℓ (시작점)", "≈217 (x 283→500)", "nm", "[C] 모델 가정 + 탄성 추정", *NONE, "", "Fig. S2 미확보", "굽힘 에너지 6Dh²/ℓ³ + 접착 손실 Γℓ 최소화 → ℓ* = (18Dh²/Γ)^¼ (E 167 GPa, t 9.1, h 71, Γ 0.45). 팀원 70 nm 는 Γ≈41 J/m² 필요 → 비현실적", "짧을수록 Source 쪽이 SiO₂ 에 붙어 BG 결합 ↑. 늘어남 금지 가정이면 ×2.2 (≈L). run_slope.py 민감도 (217/70, 결과 대기)", "—", "해당 없음", "", "Params.l_slope, ramp_length_elastic()", "rfet_geometry.py"),
+ ("구조", "WSe₂ 경사 모양", "클램프 큐빅 S자 y = 71·(3u²−2u³)", "", "[C] 모델 가정(역학 해)", *NONE, "", "", "오일러-베르누이 판 D·y''''=0 + 양 끝 높이·기울기 연속(조건 4개) → 유일한 3차식. 2차식은 조건 4개를 못 만족. 자기검사: 최대 기울기 26°, 최소 R 110 nm, 표면 변형률 4.1 % < 파단 7.3 %", "직선(꺾임점) 대조군 line_el 과 비교 (결과 대기)", "—", "해당 없음", "", "Params.ramp_shape, film_bottom(), ramp_mechanics()", "rfet_geometry.py"),
+ ("구조", "WSe₂(다층) 영률 E", 167.3, "GPa", "[B] 문헌값", *ZHA, "초록 + Table (AFM 압입)", "167.3 ± 6.7 GPa; 5/6/12/14층 170/166/168/165, 두께 무관; 파단 12.4 GPa, 7.3 %", "다층 측정값 → 14층 박막에 그대로 적용 (단층 차용 아님)", "ℓ ∝ E^¼ → 둔감", OK, "OSTI 초록 + Edinburgh 리뷰 Table 1", D, "ramp_length_elastic(E_pa)", "rfet_geometry.py"),
  ("구조", "Source/Drain 패드 길이", 1000, "nm", "[C] 모델 가정", *NONE, "", "", "계산 영역 끝(Neumann)이 BG fringe 퍼짐(≈SiO₂ 300 nm)의 3배 이상 떨어지게", "이론상 영향 없음 (2000 nm 비교 미실시)", "—", "해당 없음", "", "Params.l_src_pad / l_drn_pad", "rfet_geometry.py"),
  ("구조", "TG overhang", "300 / 300", "nm", "[C] 모델 가정", *NONE, "", "논문에 TG 수치 없음 (Fig. 1 개략도만)", "대칭으로 두어 한쪽 junction 을 미리 유리하게 하지 않음", "비대칭이면 한쪽 차폐 과대/과소", "—", "해당 없음", "", "Params.tg_overhang_src / _drn", "rfet_geometry.py"),
- ("구조", "h-BN 단차 통과 형상", "bridge (ℓ = L)", "", "[C] 모델 가정 + 탄성 추정", *NONE, "", "", "ℓ = (3Dh²/Γ)^¼ ≈ 450 nm ≈ L → 박편이 채널 위에 걸침", "sag45(48 nm)에서 TG→source 결합 2배 (비물리적 극단)", "—", "해당 없음", "", "CONFIGS, sag_step_elastic()", "rfet_geometry.py"),
+ ("구조", "h-BN 단차 통과 형상", "곧은 판 (bridge, ℓ = L)", "", "[C] 모델 가정 + 탄성 추정", *NONE, "", "", "ℓ* = (18Dh²/Γ)^¼ ≈ 700 nm > L → 채널 안에서 다시 밀착 불가 → 곧은 판. [정정 5] 이전 계수 3(≈450)은 거친 스케일링", "sag45(48 nm)에서 TG→source 결합 2배 (비물리적 극단)", "—", "해당 없음", "", "CONFIGS, sag_step_elastic()", "rfet_geometry.py"),
  ("구조", "h-BN 영률 E", 0.86, "TPa", "[B] 문헌값", *FAL, "본문 (AFM 압입)", "1L 0.865 ± 0.073, 9L 0.856 ± 0.003 TPa", "층수에 거의 무관 → 30 nm 박편에 적용", "ℓ ∝ E^¼ → 둔감", OK, "PMC 공개본", D, "sag_step_elastic(E_pa)", "rfet_geometry.py"),
- ("구조", "접착에너지 Γ (차용)", 0.45, "J/m²", "[B] 문헌값(차용)", *KOE, "본문", "단층 그래핀/SiO₂ 0.45, 2–5층 0.31 J/m²", "h-BN/WSe₂ 값 미확보 → 차용. ℓ ∝ Γ^(−1/4) 라 0.1–1 J/m² 에서 ℓ = 650–370 nm", "결론(ℓ ≈ L) 불변", WARN, "같은 호 News & Views (R. Huang) 경유", D, "sag_step_elastic(gamma_j_m2)", "rfet_geometry.py"),
+ ("구조", "접착에너지 Γ (차용)", 0.45, "J/m²", "[B] 문헌값(차용)", *KOE, "본문", "단층 그래핀/SiO₂ 0.45, 2–5층 0.31 J/m²", "h-BN/WSe₂·WSe₂/SiO₂ 값 미확보 → 차용. ℓ ∝ Γ^(−1/4) 라 0.1–1 J/m² 에서 h-BN 1020–570 (모두 > L), WSe₂ 316–178 nm", "결론 불변", WARN, "같은 호 News & Views (R. Huang) 경유", D, "sag_step_elastic / ramp_length_elastic (gamma_j_m2)", "rfet_geometry.py"),
+ ("구조", "접착에너지 범위 확인 (MoS₂/SiO₂)", "0.34–0.48", "J/m²", "[B] 문헌값(범위 확인용)", *TOR, "Fig. 5a, Table 1", "MoS₂/SiO₂ 344 (본문) / 482 (표) mJ/m² — 두 값 불일치", "같은 TMD 의 SiO₂ 접착이 차용값 0.45 와 같은 범위임을 확인", "—", OK, "NSF PAR 공개본", D, "(주석)", "rfet_geometry.py"),
  ("구조", "포아송비 ν", 0.2, "", "[C] 모델 가정", *NONE, "", "", "얇은 판 근사 관례값", "ℓ 에 수 % 영향", "—", "해당 없음", "", "sag_step_elastic(nu)", "rfet_geometry.py"),
  ("구조", "빈 공간(쐐기) 매질", "공기 ε = 1", "", "[C] 모델 가정", *NONE, "", "충전물 언급 없음", "ε = 1 은 하한 → 결합을 과소평가하는 보수적 선택", "잔류물(PMMA ε≈3)이면 TG 결합 증가 (민감도 미실시)", "—", "해당 없음", "", "AIR_EPS", "rfet_materials.py"),
  ("유전율", "ε(WSe₂) 정적, 면외 ⊥", 7.9, "", "[B] 문헌값", *LAT, "Table 2, Bulk 행", "1L 7.5, 2L 7.7, Bulk 7.9 (ε₀, ⊥)", "1L→bulk 변화 5%로 포화. 14층은 bulk. DC 게이트 → 정적값", "DEVSIM baseline 스칼라", OK, "par.nsf.gov 공개본", D, "WSE2_EPS['perp']", "rfet_materials.py"),
@@ -112,6 +117,7 @@ fixes = [
  (1, "Smyth 2017 Au 장벽 0.53 eV 의 출처 위치", '"Fig. 1, 4" 에 있다고 기술', '값은 본문 문장 "The 0.53 eV electron Schottky barrier measured in this work" 에만 있고 표/그림에 정리돼 있지 않음', "없음 (0.53 그대로)", "docs/01, docs/references.md, rfet_semiconductor.py 주석", "없음"),
  (2, "χ = 4.03 eV 의 성격", "McDonnell 2014 의 측정값처럼 기술", "Table 3 SKexp 행: Schlaf 의 실험 IE 5.19 − Kautek 의 실험 E_g 1.16 = 4.03 ± 0.1 (유도값). 같은 표 LDA 계산도 4.03. Smyth 의 5.33 − 1.3 과 일치", "없음 (4.03 그대로)", "docs/01, docs/references.md, rfet_semiconductor.py 주석", "없음"),
  (3, "Pd 장벽 0.22 eV 의 성격", "Jang 2022 Fig. 3f 의 Pd 값처럼 기술", 'Fig. 3f 는 증착 Ti/Au/Pd 를 묶어 "≈190 to 250 meV" 범위만 줌 (S = 0.03, 금속 종류에 거의 무관). 0.22 eV 는 범위 중앙값', "없음 (0.22 그대로)", "docs/01, docs/references.md, rfet_semiconductor.py 주석", "없음"),
+ (5, "탄성 전이 길이 ℓ 의 계수", "ℓ = (3Dh²/Γ)^¼ (굽힘 에너지 ~Dh²/ℓ³ 거친 스케일링)", "클램프 큐빅 빔 y = h(3u²−2u³) 의 굽힘 에너지는 정확히 6Dh²/ℓ³ → 최소화하면 ℓ* = (18Dh²/Γ)^¼. h-BN 449 → 703 nm (> L, 판 결론 강화), WSe₂ 140 → 217 nm", "있음 (coeff 18; 구 config elastic 은 coeff=3 으로 재현)", "rfet_geometry.py, docs/01·02·06, 스프레드시트", "config elastic(449) 은 정정 전 값으로 계산된 민감도 점으로 재해석; 새 config curve_el/line_el 추가"),
  (4, "E_g 1.2 eV 의 근거", "실험 범위(1.16–1.3)의 중앙값이라고만 기술", "Wickramaratne 2014 Table I 에 실험 인용값 1.20 eV 가 직접 있음 → 근거 추가", "없음 (1.2 그대로)", "docs/01, docs/references.md, rfet_semiconductor.py 주석", "없음"),
 ]
 for f in fixes: ws2.append(list(f))
@@ -121,7 +127,7 @@ for row in ws2.iter_rows(min_row=2, max_row=ws2.max_row):
 
 # ------------------------------------------------------------------ 시트 3: 코드 일치 확인
 ws3 = wb.create_sheet("코드 일치 확인")
-hdr3 = ["변수", "파일", "결과 계산 당시 값 (첫 push bc82a6f)", "현재 코드 값 (838eef1)", "동일 여부", "비고"]
+hdr3 = ["변수", "파일", "결과 계산 당시 값 (첫 push bc82a6f)", "현재 코드 값 (2026-11-09)", "동일 여부", "비고"]
 ws3.append(hdr3)
 for c, w in enumerate([24, 24, 22, 22, 12, 40], 1):
     ws3.column_dimensions[get_column_letter(c)].width = w
@@ -146,6 +152,9 @@ consts = [
  ("t_source", "rfet_geometry.py", 55, 55, ""),
  ("t_drain", "rfet_geometry.py", 71, 71, ""),
  ("l_ch", "rfet_geometry.py", 500, 500, ""),
+ ("탄성 계수 coeff (sag_step_elastic)", "rfet_geometry.py", 3, 18, "정정 5. 구 config elastic 은 coeff=3 으로 재현"),
+ ("E(WSe₂) ramp_length_elastic", "rfet_geometry.py", "(없음)", 167.3e9, "신규 [B] Zhang 2016"),
+ ("l_slope 기준 config", "rfet_geometry.py", "None (0→L)", "217 (curve_el)", "신규 기준 구조 (STEP 3·4 결과는 아직 bridge 기준)"),
 ]
 for i, (v, f, a, b, note) in enumerate(consts, start=2):
     ws3.append([v, f, a, b, None, note])

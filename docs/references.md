@@ -19,6 +19,8 @@
 
 ## h-BN 역학 (단차 형상 추정)
 - **[Falin 2017]** A. Falin et al., "Mechanical properties of atomically thin boron nitride and the role of interlayer interactions", *Nat. Commun.* **8**, 15815 (2017). DOI 10.1038/ncomms15815. E = 0.865 ± 0.073 (1L), 0.856 ± 0.003 TPa (9L), AFM 압입. → `sag_step_elastic`. **원문 확인 2026-11-09** (PMC 공개본).
+- **[Zhang 2016]** R. Zhang, V. Koutsos, R. Cheung, "Elastic properties of suspended multilayer WSe₂", *Appl. Phys. Lett.* **108**, 042104 (2016). DOI 10.1063/1.4940982. AFM 압입, 기계적 박리 5·6·12·14층; E = 167.3 ± 6.7 GPa (두께 무관; 14층 165 ± 6), 파단 ≈ 12.4 GPa / 7.3 %. → `ramp_length_elastic`, `ramp_mechanics`. **원문 초록 확인 2026-11-09** (OSTI 기록 22489358), 층별 값은 Edinburgh 리뷰(core.ac.uk 43719339) Table 1 재인용.
+- **[Torres 2018]** J. Torres, Y. Zhu, P. Liu, S. C. Lim, M. Yun, "Adhesion Energies of 2D Graphene and MoS₂ to Silicon and Metal Substrates", *Phys. Status Solidi A* **215**, 1700512 (2018). DOI 10.1002/pssa.201700512. 나노입자 블리스터법; MoS₂/SiO₂ Γ = 0.34–0.48 J/m² (본문 Fig. 5a 와 Table 1 이 다름 — 범위로 인용). → Γ 차용값의 범위 확인용. **원문 확인 2026-11-09** (NSF PAR 공개본).
 - **[Koenig 2011]** S. P. Koenig, N. G. Boddeti, M. L. Dunn, J. S. Bunch, "Ultrastrong adhesion of graphene membranes", *Nat. Nanotechnol.* **6**, 543 (2011). DOI 10.1038/nnano.2011.123. Γ = 0.45 J/m² (단층 그래핀/SiO₂), 0.31 J/m² (2–5층). → **차용값**; h-BN/WSe₂ 값은 미확보. 같은 호 News & Views(R. Huang)로 수치 확인.
 
 ## 소프트웨어

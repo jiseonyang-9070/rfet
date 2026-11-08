@@ -110,17 +110,21 @@ class Params:
     #   영향: 작을수록 TG -> source junction 결합이 강해져 "TG 차폐"가 약해 보인다 (차폐에 불리한 쪽).
     l_hbn_step: float = None
 
-    # [모델 가정] WSe2 가 SiO2 에서 떠서 Drain 윗면(71 nm)까지 올라가는 경사의 가로 길이 [nm]. 경사는 x = L 에서 끝난다
-    #   (Drain 벽 = 경사 꼭대기). None 이면 L (= 경사가 Source 모서리에서 시작 — 논문 본문 "source edge was
-    #   positioned at the base of the transition region" 의 문자적 해석). 0 < l_slope <= L.
-    #   팀원 모델은 l_slope = 70 (45°) 을 썼고, 탄성 추정(9.1 nm 박막, 71 nm 단차, Γ 차용)은 ≈140 nm 를 준다.
-    #   Fig. S2(단면 사진) 가 없어 어느 쪽이 맞는지 확정할 수 없으므로 세 값을 모두 돌려 민감도로 본다 (CONFIGS).
+    # [모델 가정 + 탄성 추정] WSe2 가 SiO2 에서 떠서 Drain 윗면(71 nm)까지 올라가는 경사의 가로 길이 ℓ [nm]. 경사는 x = L 에서
+    #   끝난다 (Drain 벽 = 경사 꼭대기). 경사 시작점 x_lift = L − ℓ.  None 이면 ℓ = L (경사가 Source 모서리에서 시작).
+    #   어디서 시작하나(= ℓ 값)의 근거: 논문에 단면 사진(Fig. S2)이 없으므로 "굽힘 에너지 vs 접착 에너지" 최소화로 정한다
+    #   (ramp_length_elastic, 유도는 그 위 주석): E(WSe2) 167 GPa [문헌값], t 9.1, h 71, Γ 0.45 차용 → ℓ* ≈ 217 nm.
+    #   → 채널 0 ~ 283 nm 는 SiO2 위에 평평, 283 ~ 500 nm 만 올라간다. 비교용으로 팀원 값 70 nm(45°) 도 돌린다.
     #   영향: 짧을수록 drain junction 앞 경사가 급하고, Source 쪽 채널이 SiO2 에 붙어 BG 결합이 커진다.
     l_slope: float = None
 
-    # [모델 가정] 경사의 모양. "linear" = 꺾인 직선(평평 → 일정 기울기 → 평평, 꺾임점 2개),
-    #   "smooth" = 양 끝에서 기울기 0 인 S자 곡선 y = t_drain·(3u² − 2u³), u = (x − x_lift)/l_ramp
-    #   (판이 휠 때의 최소 곡률 형태에 가까움). 곡선은 ramp_segments 개의 직선 조각으로 근사한다.
+    # [모델 가정] 경사의 모양.
+    #   "smooth" = 클램프 큐빅(clamped–clamped cubic) S자 곡선 y = t_drain·(3u² − 2u³), u = (x − x_lift)/l_ramp.
+    #      이것은 오일러-베르누이 판의 평형식 D·y''''=0 에 "양 끝에서 높이·기울기 연속(밀착)" 조건을 넣은 유일한 해이며
+    #      굽힘 에너지가 최소인 모양이다 (유도: 아래 '탄성 추정' 블록). 2차식은 양 끝 기울기 0 을 동시에 만족 못 한다.
+    #      곡선은 ramp_segments 개의 직선 조각으로 근사한다 (면적 오차 < 0.1 %, analytic_areas 에서 검사).
+    #   "linear" = 꺾인 직선(평평 → 일정 기울기 → 평평, 꺾임점 2개). 꺾임점은 곡률 무한대라 역학적 근거는 없고
+    #      (i) 팀원 모델(45° 직선)과의 비교, (ii) "모양이 결과에 영향을 주나" 를 보는 기하학적 대조군으로만 쓴다.
     ramp_shape: str = "linear"
     ramp_segments: int = 16
 
@@ -189,19 +193,74 @@ def sag_step_for_angle(p: Params, angle_deg):
     return (p.t_source + k * p.x_lift) / (tan + k)
 
 
-def sag_step_elastic(p: Params, E_pa=0.86e12, nu=0.2, gamma_j_m2=0.45):
-    """h-BN 박편이 높이 h 의 단차를 넘어 다시 기판(WSe2)에 밀착하기까지의 전이 길이 l 의 탄성 추정 [nm].
-    판의 굽힘 에너지 ~ D h^2 / l^3 (D = E t^3 / 12(1-ν^2)) 와 밀착으로 얻는 접착 에너지 ~ Γ l 의 합을 l 로
-    최소화하면  l = (3 D h^2 / Γ)^(1/4).
+# ------------------------------------------------------------------------------
+# 탄성(굽힘 vs 접착) 추정 — "박막이 단차 h 를 어느 가로 길이 ℓ 에 걸쳐 넘는가"
+# ------------------------------------------------------------------------------
+#  모델: 두께 t, 영률 E 의 얇은 판(박막)이 기판에 Γ [J/m²] 로 붙어 있다가 높이 h 의 단차를 넘어 다시 밀착한다.
+#  단차 구간(가로 길이 ℓ)에서 판은 기판에서 떠 있고 양 끝에서는 기판에 밀착(기울기 0)한다.
+#
+#  (1) 모양: 오일러-베르누이 판(Euler–Bernoulli beam) 의 평형식 D·y'''' = 0 (분포 하중 없음) 의 해는 3차 다항식.
+#      경계조건 y(0)=0, y'(0)=0, y(ℓ)=h, y'(ℓ)=0 (양 끝 밀착 → 높이와 기울기 연속) 을 넣으면
+#          y(u) = h·(3u² − 2u³),  u = x/ℓ            ← "clamped–clamped" 큐빅, ramp_shape="smooth" 가 바로 이 식.
+#      2차식 y = a u² 은 조건 4개 중 3개만 만족시킬 수 있어(끝에서 기울기 0 불가) 밀착 조건을 깨뜨린다.
+#  (2) 굽힘 에너지 (단위 폭당):  U_b = (D/2)∫₀^ℓ y''² dx = (D/2)(h²/ℓ⁴)·ℓ·∫₀¹(6−12u)² du = (D/2)(h²/ℓ³)·12 = 6 D h² / ℓ³
+#      D = E t³ / 12(1−ν²)  (판의 굽힘 강성).
+#  (3) 접착 에너지: 떠 있는 길이 ℓ 만큼 기판과의 접착을 잃는다 → U_a = Γ ℓ.
+#  (4) 총 에너지 U = 6Dh²/ℓ³ + Γℓ 를 ℓ 로 최소화: dU/dℓ = −18Dh²/ℓ⁴ + Γ = 0
+#          →  ℓ* = (18 D h² / Γ)^(1/4)
+#      [정정] 이전 버전은 계수 3 (U_b ~ Dh²/ℓ³ 의 거친 스케일링) 을 썼다. 정확한 적분값은 6 이고 미분하면 18 이다.
+#             ℓ 은 계수의 1/4 제곱에 비례하므로 (18/3)^¼ = 1.565 배 길어진다. 기존 결과(h-BN 449 nm)는 coeff=3 으로 재현된다.
+#  [모델 가정] (a) 박막이 늘어나지 않는다(inextensible; 전사(transfer) 과정에서 박막이 미끄러져 길이를 보충).
+#               늘어남까지 금지하면 막 에너지 ~0.18 E t h⁴/ℓ³ 가 더해져 ℓ 이 (1 + 0.36(1−ν²)(h/t)²)^¼ 배 길어진다
+#               (WSe2: h/t = 7.8 → ×2.2, ≈ L). 즉 ℓ* 는 하한, L 은 상한이다.
+#            (b) 기판 쪽 단차 모서리에서 박막이 들리는 것(lift-off)은 무시. (c) 폭 방향 균일(2D).
+def bending_rigidity(E_pa, t_m, nu=0.2):
+    """판의 굽힘 강성 D = E t³ / 12(1−ν²) [J]."""
+    return E_pa * t_m ** 3 / (12.0 * (1.0 - nu ** 2))
+
+
+def transition_length_elastic(E_pa, t_nm, h_nm, gamma_j_m2, nu=0.2, coeff=18.0):
+    """ℓ* = (coeff · D h² / Γ)^(1/4) [nm].  coeff = 18 (정확한 클램프 큐빅 빔), 3 = 구(舊) 거친 추정 (재현용)."""
+    D = bending_rigidity(E_pa, t_nm * 1e-9, nu)
+    return (coeff * D * (h_nm * 1e-9) ** 2 / gamma_j_m2) ** 0.25 * 1e9
+
+
+def sag_step_elastic(p: Params, E_pa=0.86e12, nu=0.2, gamma_j_m2=0.45, coeff=18.0):
+    """h-BN 박편(두께 t_hbn)이 Source 단차(높이 t_source)를 내려와 WSe2 위에 다시 밀착하기까지의 전이 길이 [nm].
       [문헌값] E(h-BN) = 0.86 TPa: Falin et al., Nat. Commun. 8, 15815 (2017), 1L 0.865±0.073, 9L 0.856±0.003 TPa (AFM 압입)
-      [모델 가정] ν = 0.2 (얇은 판 근사에서 결과에 수 % 영향), Γ = 0.45 J/m^2 는 그래핀/SiO2 의 고전적 측정값
-                 (Koenig et al., Nat. Nanotechnol. 6, 543 (2011)) 을 차용한 것. h-BN/WSe2 의 Γ 는 확보하지 못함.
-                 Γ 를 0.1~1 J/m^2 로 바꿔도 l 은 1/4 제곱으로만 변한다 (0.1 -> 650 nm, 1 -> 370 nm).
-    h = Source 단차 높이 = t_source (h-BN 아랫면이 Source 윗면에서 경사 WSe2 윗면으로 내려오는 높이, 경사 보정은 무시)."""
-    t = p.t_hbn * 1e-9
-    D = E_pa * t ** 3 / (12.0 * (1.0 - nu ** 2))
-    h = p.t_source * 1e-9
-    return (3.0 * D * h ** 2 / gamma_j_m2) ** 0.25 * 1e9
+      [모델 가정] ν = 0.2 (얇은 판 관례값; 결과에 수 %), Γ = 0.45 J/m² 차용 (아래 ramp_length_elastic 의 Γ 설명 참조).
+    결과 ≈ 703 nm > L = 500 nm  → h-BN 은 채널 안에서 내려와 다시 밀착할 수 없다 = 채널 전체를 곧은 판으로 건넌다.
+    (coeff=3 이면 449 nm — 정정 전 추정값, config 'elastic' 재현용.)"""
+    return transition_length_elastic(E_pa, p.t_hbn, p.t_source, gamma_j_m2, nu, coeff)
+
+
+def ramp_length_elastic(p: Params, E_pa=167.3e9, nu=0.2, gamma_j_m2=0.45, coeff=18.0):
+    """WSe2 박막(두께 t_wse2)이 SiO2 에서 떠서 Drain 윗면(높이 t_drain)으로 올라가는 경사의 가로 길이 ℓ* [nm].
+      [문헌값] E(WSe2 다층) = 167.3 ± 6.7 GPa: R. Zhang, V. Koutsos, R. Cheung, "Elastic properties of suspended multilayer WSe2",
+               Appl. Phys. Lett. 108, 042104 (2016), DOI 10.1063/1.4940982. AFM 압입, 기계적 박리 5·6·12·14층 (14층: 165 ± 6 GPa),
+               두께에 통계적으로 무관 → 우리 14층(9.1 nm) 박막에 그대로 적용 가능 (단층값 차용이 아님). 파단 변형률 ≈ 7.3 %.
+               (원문 초록 OSTI 기록 + Table 1 (리뷰 재인용) 로 확인 2026-11-09)
+      [문헌값(차용)] Γ = 0.45 J/m²: 그래핀/SiO2 (Koenig et al., Nat. Nanotechnol. 6, 543 (2011), 1L 0.45, 2–5L 0.31).
+               WSe2/SiO2 직접 측정값은 확보 못함. 같은 TMD 인 MoS2/SiO2 는 0.34–0.48 J/m² (Torres et al.,
+               Phys. Status Solidi A 215, 1700512 (2018), 블리스터법) 로 같은 범위. ℓ ∝ Γ^(−1/4) 라 Γ 0.1–1 J/m² 에서
+               ℓ = 317–178 nm 로 둔감하다.
+      [모델 가정] ν = 0.2.
+    결과 ≈ 217 nm (< L = 500) → 채널은 Source 쪽 약 283 nm 가 SiO2 위에 평평, Drain 앞 217 nm 만 S자로 올라간다.
+    팀원 모델의 70 nm(45°) 가 나오려면 Γ ≈ 41 J/m² 가 필요해(217/70 = 3.1, 3.1⁴ ≈ 92 배) 반데르발스 접착(0.1–1)으로는 설명 안 됨."""
+    return transition_length_elastic(E_pa, p.t_wse2, p.t_drain, gamma_j_m2, nu, coeff)
+
+
+def ramp_mechanics(p: Params, eps_break=0.073):
+    """경사 곡선의 역학적 자기검사: 최대 기울기각, 최소 곡률반경, 표면 변형률 t/2R 과 파단 변형률(7.3 %, Zhang 2016) 비교.
+    smooth: y'' 최대 = 6h/ℓ² (양 끝), 기울기 최대 = 1.5 h/ℓ (가운데).  linear: 꺾임점은 곡률 무한대 → 검사 불가(기하 근사)."""
+    h, l, t = p.t_drain, p.l_ramp, p.t_wse2
+    if p.ramp_shape != "smooth":
+        return dict(shape="linear", slope_max_deg=p.slope_deg, radius_min_nm=float("inf"), strain_surface=float("nan"), ok=None)
+    kappa = 6.0 * h / l ** 2
+    R = 1.0 / kappa
+    strain = t / (2.0 * R)
+    return dict(shape="smooth", slope_max_deg=math.degrees(math.atan(1.5 * h / l)), radius_min_nm=R,
+                strain_surface=strain, ok=strain < eps_break)
 
 
 def hbn_tangent_touch(p: Params):
@@ -223,41 +282,39 @@ _base = Params()
 CONFIGS = {
     # bridge: 처짐 0. l = L.  탄성 추정 l(≈450 nm) 이 L(500 nm) 에 가까우므로 물리적으로도 baseline 에 가장 가깝다.
     "bridge": _base,
-    # elastic: 탄성 추정 전이 길이 (sag_step_elastic). bridge 와 차이가 작아 "bridge 가 과장이 아님" 을 보이는 용도.
-    "elastic": replace(_base, l_hbn_step=min(sag_step_elastic(_base), _base.l_ch)),
+    # elastic: [정정 전 추정값 재현용] h-BN 전이 길이를 구(舊) 계수 3 으로 계산한 449 nm. 정확한 계수 18 로는 703 nm > L 이 되어
+    #          bridge 와 같아지므로(min(ℓ, L) = L) 지금은 "bridge 가 과장이 아님" 을 보이는 민감도 점으로만 남긴다 (STEP 3 결과 있음).
+    "elastic": replace(_base, l_hbn_step=min(sag_step_elastic(_base, coeff=3.0), _base.l_ch)),
     # sag45: 하강 각도 45도. 30 nm 두께 박편이 곡률반경 ~40 nm 로 꺾이려면 표면 변형률 t/2R ≈ 35% 가 필요해
     #        물리적으로 불가능하다. "TG 가 채널에 최대한 가까운 가상의 하한" 으로서 민감도 비교에만 쓴다.
     "sag45": replace(_base, l_hbn_step=sag_step_for_angle(_base, 45.0)),
-    # ---- WSe2 경사 길이 변형 (h-BN 은 bridge) ----
-    # ramp140: 탄성 추정. 판 굽힘 vs 접착 균형 ℓ = (3Dh²/Γ)^¼, t = 9.1 nm, h = 71 nm, E(WSe2) ≈ 0.17 TPa
-    #          ([문헌값 후보] R. Zhang, V. Koutsos, R. Cheung, Appl. Phys. Lett. 108, 042104 (2016): 단층~다층 WSe2 E ≈ 167 GPa —
-    #          원문 미확인), Γ = 0.45 J/m² 차용 → ℓ ≈ 140 nm. 값보다 "L 보다 훨씬 짧다" 가 요지.
-    #   h-BN 은 bridge 가 아니라 탄성 추정 전이 길이(≈449 nm)로 둔다: 박막이 평평하면 h-BN 은 그 위로 내려와 x≈449 에서 닿는다
-    #   (bridge 로 두면 채널 전체 위에 55 nm 공기층이 생겨 TG 결합까지 함께 바뀌어 경사 효과만 따로 볼 수 없다).
-    #   따라서 비교 상대는 "elastic" (경사 전체, h-BN 449) 이다.
-    "ramp140": replace(_base, l_slope=140.0, l_hbn_step=min(sag_step_elastic(_base), _base.l_ch)),
-    # ramp70: 팀원 모델과 같은 45° 경사 (가로 70 nm) — 비교용. h-BN 은 위와 같이 449.
-    "ramp70": replace(_base, l_slope=70.0, l_hbn_step=min(sag_step_elastic(_base), _base.l_ch)),
-    # ---- "밀착형": h-BN 이 Source 모서리에서 45° 로 짧게 내려와 박막에 붙고(55 nm), 평평한 채널 위에 밀착한 뒤 Drain 앞 경사를 따라 올라감.
-    #      논문 Fig. 1 개략도의 모습과 가장 비슷하다. 단, 30 nm 박편이 45° 로 꺾이는 것은 탄성적으로 무리(변형률 ~36%)라는
-    #      점은 sag45 와 같다 — "그림이 그럴듯한 쪽" 과 "역학적으로 그럴듯한 쪽(elastic, 449 nm)" 을 둘 다 돌려 비교한다.
-    "conf70":  replace(_base, l_slope=70.0,  l_hbn_step=sag_step_for_angle(replace(_base, l_slope=70.0), 45.0)),
-    "conf140": replace(_base, l_slope=140.0, l_hbn_step=sag_step_for_angle(replace(_base, l_slope=140.0), 45.0)),
 }
-# ---- "판 h-BN" 설정: h-BN·TG 는 두께 일정한 곧은 판(직사각형), WSe2 만 휜다 ----
-#   판은 Source 윗면(y 64.1)에 얹혀 Drain 쪽 WSe2 윗면(y 80.1)에 닿을 때까지 곧게 간다 → 두 높이 차 16 nm 때문에
-#   채널 위에서 1.8° 기운다(꺾임 없음, 두께 일정). 가운데 채널 위에는 최대 55 nm 공기층.
-#   WSe2 는 가운데 평평(SiO2 위), Drain 앞 l_ramp 구간에서만 올라간다: line = 꺾인 직선, curve = S자 곡선.
-#   곡선에서는 판이 꼭대기보다 앞에서 곡선에 접하고(hbn_tangent_touch) 그 뒤로는 박막 위에 얹힌다.
-for _l in (140.0, 70.0):
-    _pl = replace(_base, l_slope=_l, ramp_shape="linear")
-    _pc = replace(_base, l_slope=_l, ramp_shape="smooth")
-    CONFIGS[f"line{int(_l)}"] = replace(_pl, l_hbn_step=None if hbn_tangent_touch(_pl) >= _pl.l_ch - 1e-9 else hbn_tangent_touch(_pl))
-    CONFIGS[f"curve{int(_l)}"] = replace(_pc, l_hbn_step=hbn_tangent_touch(_pc))
-# line140_eq: [민감도] Source 두께를 Drain 과 같은 71 nm 로 두면 Source 윗면(80.1) = Drain 쪽 WSe2 윗면(80.1) 이라 h-BN 판이 정확히 수평.
-#   논문값(55)을 바꾼 것이므로 기준이 아니라 "16 nm 두께 차이와 1.8° 기울기가 결과에 영향을 주는가" 를 보는 용도.
-_pe = replace(_base, l_slope=140.0, ramp_shape="linear", t_source=71.0)
-CONFIGS["line140_eq"] = replace(_pe, l_hbn_step=None if hbn_tangent_touch(_pe) >= _pe.l_ch - 1e-9 else hbn_tangent_touch(_pe))
+# ---- "판 h-BN" 설정 (현재 기준): h-BN·TG 는 두께 일정한 곧은 판(직사각형), WSe2 만 휜다 ----
+#   왜 판인가: h-BN 의 탄성 전이 길이 ℓ*(h-BN) ≈ 703 nm > L = 500 nm (sag_step_elastic). 채널 안에서 내려와 다시 밀착할
+#   길이가 없으므로 Source 윗면(y 64.1)에 얹혀 Drain 쪽 WSe2 윗면(y 80.1)에 닿을 때까지 곧게 간다. 두 높이 차 16 nm 때문에
+#   1.8° 기울고(꺾임 없음, 두께 일정), 가운데 채널 위에는 최대 55 nm 공기층이 생긴다.
+#   WSe2 경사: 가로 길이 ℓ 는 ramp_length_elastic ≈ 217 nm (에너지 최소화) → x_lift ≈ 283 nm 부터 올라간다.
+#     curve_el : S자 곡선(클램프 큐빅, 역학적 근거 있음) — **기준(baseline)**
+#     line_el  : 같은 ℓ 의 꺾인 직선 — "모양만 바꾸면 결과가 얼마나 변하나" 대조군
+#     curve70 / line70 : ℓ = 70 nm (팀원 모델 45°) — 팀원 모델과의 비교. 역학적으로는 Γ ≈ 41 J/m² 가 필요해 비현실적.
+#     curve_el_eq : [민감도] t_source 를 Drain 과 같은 71 로 → Source 윗면(80.1) = Drain 쪽 WSe2 윗면(80.1) 이라 판이 정확히 수평.
+#                   논문값(55)을 바꾼 것이므로 기준이 아니라 "16 nm 두께 차 → 1.8° 기울기" 의 영향만 보는 용도.
+#   곡선에서는 판이 꼭대기보다 앞에서 곡선에 접하고(hbn_tangent_touch) 그 뒤로는 박막 위에 얹힌다. 직선에서는 꼭대기(L)에서 만난다.
+L_RAMP_ELASTIC = ramp_length_elastic(_base)          # ≈ 216.7 nm (값은 실행 시 계산; 하드코딩하지 않음)
+
+
+def _plate_config(base: Params, l_ramp, shape, **kw):
+    """판 h-BN 설정 생성: h-BN 아랫면이 WSe2 윗면에 처음 접하는 x 를 l_hbn_step 으로 (꼭대기면 None = bridge 형)."""
+    q = replace(base, l_slope=float(l_ramp), ramp_shape=shape, **kw)
+    touch = hbn_tangent_touch(q)
+    return replace(q, l_hbn_step=None if touch >= q.l_ch - 1e-9 else touch)
+
+
+CONFIGS["curve_el"] = _plate_config(_base, L_RAMP_ELASTIC, "smooth")
+CONFIGS["line_el"] = _plate_config(_base, L_RAMP_ELASTIC, "linear")
+CONFIGS["curve70"] = _plate_config(_base, 70.0, "smooth")
+CONFIGS["line70"] = _plate_config(_base, 70.0, "linear")
+CONFIGS["curve_el_eq"] = _plate_config(_base, L_RAMP_ELASTIC, "smooth", t_source=71.0)
 
 
 # ==============================================================================
@@ -741,7 +798,14 @@ def print_summary(points, polygons, p: Params):
     desc = math.degrees(math.atan2(y_src_top - p.film_top(l), l))     # h-BN 하강선 각도 (아래쪽 +)
     print("\n[기하 요약]")
     print(f"  l_hbn_step = {l:.2f} nm  ({'bridge: 처짐 없음' if l >= p.l_ch else 'sag: 경사 WSe2에 닿음'})")
-    print(f"  WSe2 경사: x = {p.x_lift:.1f} → {p.l_ch:.1f} (가로 {p.l_ramp:.1f} nm), 경사각 atan(t_drain/l_ramp) = {theta:.3f} deg,  경사 길이 {math.hypot(p.l_ramp, p.t_drain):.2f} nm")
+    print(f"  WSe2 경사: x = {p.x_lift:.1f} → {p.l_ch:.1f} (가로 {p.l_ramp:.1f} nm), 모양 {p.ramp_shape}, 평균 경사각 atan(t_drain/l_ramp) = {theta:.3f} deg,  경사 길이 {math.hypot(p.l_ramp, p.t_drain):.2f} nm")
+    mech = ramp_mechanics(p)
+    if mech["shape"] == "smooth":
+        print(f"  경사 역학 검사(클램프 큐빅): 최대 기울기 {mech['slope_max_deg']:.1f} deg (가운데), 최소 곡률반경 {mech['radius_min_nm']:.0f} nm (양 끝), "
+              f"표면 변형률 t/2R = {100 * mech['strain_surface']:.1f} %  {'< 파단 7.3 % OK' if mech['ok'] else '>= 파단 7.3 % — 비현실적'}")
+    else:
+        print("  경사 역학 검사: 꺾인 직선은 꺾임점 곡률이 무한대 → 기하 근사(역학적 근거 없음, 대조군)")
+    print(f"  탄성 추정 참고: ℓ*(WSe2) = {ramp_length_elastic(p):.1f} nm,  ℓ*(h-BN) = {sag_step_elastic(p):.1f} nm {'> L → 판' if sag_step_elastic(p) > p.l_ch else '< L'}")
     print(f"  h-BN 하강선 각도 = {desc:.2f} deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = "
           f"{p.t_hbn * math.cos(math.radians(desc)):.1f} nm  (수직 두께 {p.t_hbn} nm; 차이는 '수직 두께 일정' 근사의 오차)")
     slope_at_touch = theta if l > p.x_lift + 1e-9 else 0.0

@@ -22,7 +22,7 @@ Back Gate → Source / Top Gate → Drain 의 선택적 제어가 어디서부�
 | BG 1 V 는? | Source 쪽 **0.08 V**, Drain 쪽 **0.008 V** | 〃 |
 | 밴드 수준에서 상보적 차폐가 보이는가 | TG 는 Drain 위 박막만, BG 는 Source 아래 박막만 움직임 | `figures/fig_step4_bands_bridge_equalmid.png` |
 | 수치가 믿을 만한가 | DEVSIM(유한체적) = 독립 FEM = 1D 해석해; mesh 4→6→8 에서 ψ ≤ 0.001 V/V, E_c ≤ 5 meV 변화 | [docs/05_verification.md](docs/05_verification.md) |
-| 가장 큰 불확실성 | h-BN 이 단차를 넘는 형상, 접점 Schottky 장벽 높이 | [docs/06_assumptions_and_limits.md](docs/06_assumptions_and_limits.md) |
+| 가장 큰 불확실성 | WSe₂ 경사 시작점·모양(탄성 추정으로 결정, 계산 대기), 접점 Schottky 장벽 높이 | [docs/06_assumptions_and_limits.md](docs/06_assumptions_and_limits.md), [docs/02 §2-3b](docs/02_geometry_and_mesh.md) |
 
 ---
 
@@ -48,6 +48,7 @@ src/
   rfet_devsim_load.py     DEVSIM 에 mesh 읽기 + 구조 일치 확인
   rfet_size_map.py        mesh 크기 규칙 시각화 (gmsh 불필요)
   rfet_plot_mesh.py       실제 .msh 를 읽어 구조+격자 그림 (fig_mesh_*.png)
+  rfet_plot_ramp.py       WSe₂ 경사 시작점·모양의 역학적 근거 그림 (fig_ramp_shapes.png)
   rfet_materials.py       유전율 [문헌값], 스칼라/텐서 선택, ρ=0 가정
   rfet_fem_reference.py   독립 P1 FEM (선형, 스칼라/텐서 ε) + 해석해 selftest
   rfet_poisson_devsim.py  DEVSIM 선형 Poisson (단위 응답 4개)
@@ -61,7 +62,7 @@ src/
   rfet_transport_devsim.py STEP 5-DD: 드리프트-확산 전류 (우리 모델 + 팀원 DD 레시피 + 2D-DOS 정확 FD)
   rfet_plotstyle.py       그림 공통 스타일 (색 = 의미)
   rfet_schematic.py       발표용 개략도 (비례도 아님)
-  run_all.py / run_resume.py / run_converge.py / run_figs.py / run_check.py / run_transport.py   실행 스크립트
+  run_all.py / run_resume.py / run_converge.py / run_figs.py / run_check.py / run_transport.py / run_slope.py   실행 스크립트
 figures/                 실제 mesh 결과 그림 (아래 "그림 목록")
 results/                 수치 표(txt)와 사용자 PC 실행 로그 3개
 ```
@@ -86,6 +87,8 @@ py run_figs.py       # 계산된 .npz 로 모든 그림 재생성 + 해석해 �
 | `fig_schematic_bridge.png`, `fig_schematic_sag45.png` | 발표용 개략도 (두께 과장) |
 | `fig_mesh_bridge.png`, `fig_mesh_sag45.png` | **실제 gmsh mesh** 위에 영역·전극을 그린 구조도 (전체 + source/채널/drain 확대) |
 | `fig_geometry_bridge.png`, `fig_geometry_elastic.png`, `fig_geometry_sag45.png` | 정확한 치수의 단면도 (시뮬레이션에 들어간 geometry 그대로) |
+| `rfet_geometry_curve_el.png` (기준), `_line_el`, `_curve70`, `_line70`, `_curve_el_eq` | **판 h-BN + WSe₂ 만 휨** 구조의 단면도 (2026-11-09 기준 구조; docs/02 §2-3b) |
+| `fig_ramp_shapes.png` | WSe₂ 경사 시작점(에너지 최소화 ℓ* ≈ 217 nm)과 모양(클램프 큐빅 3차식)의 근거 |
 | `fig_mesh_size_rules_bridge.png` | mesh 크기 규칙 지도 (어디를 왜 촘촘히 하는가) |
 | `fig_step3_profiles.png` | 게이트 1 V 당 채널 전위 응답, DEVSIM(점) vs FEM(선), 구조 변형 비교 |
 | `fig_step3_maps_bridge.png` | 전위 응답 2D 지도 + 등전위선 |

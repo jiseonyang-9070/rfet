@@ -1,0 +1,267 @@
+
+######## CONFIG 'curve_el' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 2.91e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 1005250.000, 도메인 1005250.000 nm^2)
+  [OK  ] 표본점 549827개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 0.00e+00 nm)
+
+[기하 요약]
+  l_hbn_step = 500.00 nm  (bridge: 처짐 없음)
+  WSe2 경사: x = 283.3 → 500.0 (가로 216.7 nm), 모양 smooth, 평균 경사각 atan(t_drain/l_ramp) = 18.138 deg,  경사 길이 228.07 nm
+  경사 역학 검사(클램프 큐빅): 최대 기울기 26.2 deg (가운데), 최소 곡률반경 110 nm (양 끝), 표면 변형률 t/2R = 4.1 %  < 파단 7.3 % OK
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 702.7 nm > L → 판
+  h-BN 하강선 각도 = -1.83 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 30.0 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 16.31 deg,  최대 높이(x=0) = 55.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 85.0, x=25: 85.8, x=500: 30.0, x=250: 93.0, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 39
+  AirBot   x: [   283.3,    500.0]   y: [    0.0,    71.0]   꼭짓점 18
+  AirTop   x: [     0.0,    500.0]   y: [    9.1,    80.1]   꼭짓점 19
+  hBN      x: [ -1000.0,   1500.0]   y: [   64.1,   110.1]   꼭짓점 10
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    64.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [   94.1,   130.1]   꼭짓점 6
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     55.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         3개  길이   1100.3 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이    500.3 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이    216.7 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1283.3 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    16개  길이    230.1 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    17개  길이    513.3 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       1개  길이   1000.0 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+findfont: Failed to find font weight medium for DejaVu Sans, now using 400.
+findfont: Failed to find font weight medium for DejaVu Sans, now using 400.
+그림 저장: rfet_geometry_curve_el.png
+판정: 모두 통과
+
+######## CONFIG 'line_el' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 2.91e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 1005250.000, 도메인 1005250.000 nm^2)
+  [OK  ] 표본점 549827개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 0.00e+00 nm)
+
+[기하 요약]
+  l_hbn_step = 500.00 nm  (bridge: 처짐 없음)
+  WSe2 경사: x = 283.3 → 500.0 (가로 216.7 nm), 모양 linear, 평균 경사각 atan(t_drain/l_ramp) = 18.138 deg,  경사 길이 228.07 nm
+  경사 역학 검사: 꺾인 직선은 꺾임점 곡률이 무한대 → 기하 근사(역학적 근거 없음, 대조군)
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 702.7 nm > L → 판
+  h-BN 하강선 각도 = -1.83 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 30.0 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 16.31 deg,  최대 높이(x=0) = 55.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 85.0, x=25: 85.8, x=500: 30.0, x=250: 93.0, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 9
+  AirBot   x: [   283.3,    500.0]   y: [    0.0,    71.0]   꼭짓점 3
+  AirTop   x: [     0.0,    500.0]   y: [    9.1,    80.1]   꼭짓점 4
+  hBN      x: [ -1000.0,   1500.0]   y: [   64.1,   110.1]   꼭짓점 10
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    64.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [   94.1,   130.1]   꼭짓점 6
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     55.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         3개  길이   1100.3 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이    500.3 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이    216.7 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1283.3 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    1개  길이    228.1 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    2개  길이    511.3 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       1개  길이   1000.0 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+그림 저장: rfet_geometry_line_el.png
+판정: 모두 통과
+
+######## CONFIG 'curve70' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 2.91e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 1005250.000, 도메인 1005250.000 nm^2)
+  [OK  ] 표본점 549827개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 0.00e+00 nm)
+
+[기하 요약]
+  l_hbn_step = 500.00 nm  (bridge: 처짐 없음)
+  WSe2 경사: x = 430.0 → 500.0 (가로 70.0 nm), 모양 smooth, 평균 경사각 atan(t_drain/l_ramp) = 45.406 deg,  경사 길이 99.70 nm
+  경사 역학 검사(클램프 큐빅): 최대 기울기 56.7 deg (가운데), 최소 곡률반경 12 nm (양 끝), 표면 변형률 t/2R = 39.6 %  >= 파단 7.3 % — 비현실적
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 702.7 nm > L → 판
+  h-BN 하강선 각도 = -1.83 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 30.0 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 43.57 deg,  최대 높이(x=0) = 55.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 85.0, x=25: 85.8, x=500: 30.0, x=250: 93.0, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 39
+  AirBot   x: [   430.0,    500.0]   y: [    0.0,    71.0]   꼭짓점 18
+  AirTop   x: [     0.0,    500.0]   y: [    9.1,    80.1]   꼭짓점 19
+  hBN      x: [ -1000.0,   1500.0]   y: [   64.1,   110.1]   꼭짓점 10
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    64.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [   94.1,   130.1]   꼭짓점 6
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     55.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         3개  길이   1100.3 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이    500.3 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이     70.0 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1430.0 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    16개  길이    102.7 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    17개  길이    532.7 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       1개  길이   1000.0 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+그림 저장: rfet_geometry_curve70.png
+판정: 모두 통과
+
+######## CONFIG 'line70' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 2.91e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 1005250.000, 도메인 1005250.000 nm^2)
+  [OK  ] 표본점 549827개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 0.00e+00 nm)
+
+[기하 요약]
+  l_hbn_step = 500.00 nm  (bridge: 처짐 없음)
+  WSe2 경사: x = 430.0 → 500.0 (가로 70.0 nm), 모양 linear, 평균 경사각 atan(t_drain/l_ramp) = 45.406 deg,  경사 길이 99.70 nm
+  경사 역학 검사: 꺾인 직선은 꺾임점 곡률이 무한대 → 기하 근사(역학적 근거 없음, 대조군)
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 702.7 nm > L → 판
+  h-BN 하강선 각도 = -1.83 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 30.0 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 43.57 deg,  최대 높이(x=0) = 55.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 85.0, x=25: 85.8, x=500: 30.0, x=250: 93.0, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 9
+  AirBot   x: [   430.0,    500.0]   y: [    0.0,    71.0]   꼭짓점 3
+  AirTop   x: [     0.0,    500.0]   y: [    9.1,    80.1]   꼭짓점 4
+  hBN      x: [ -1000.0,   1500.0]   y: [   64.1,   110.1]   꼭짓점 10
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    64.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [   94.1,   130.1]   꼭짓점 6
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     55.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         3개  길이   1100.3 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이    500.3 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이     70.0 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1430.0 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    1개  길이     99.7 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    2개  길이    529.7 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       1개  길이   1000.0 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+그림 저장: rfet_geometry_line70.png
+판정: 모두 통과
+
+######## CONFIG 'curve_el_eq' ########
+=== geometry 검사 ===
+  [OK  ] 모든 다각형이 반시계(CCW)  (면적<=0: [])
+  [OK  ] 같은 위치의 점 없음  
+  [OK  ] T-junction 없음  
+  [OK  ] 공유 선은 2개 다각형이 반대 방향  
+  [OK  ] 영역 면적 = 해석식  (최대 오차 1.82e-11 nm^2)
+  [OK  ] 7개 영역 면적 합 = 도메인 면적  (합 1025250.000, 도메인 1025250.000 nm^2)
+  [OK  ] 표본점 561000개: 빈틈 0, 겹침 0  (빈틈 0, 겹침 0)
+  [OK  ] contact 목록 = 의도  (차이: set())
+  [OK  ] interface 목록 = 의도  (차이: set())
+  [OK  ] h-BN 수직 두께 = 논문값 (모든 x)  (최대 편차 0.00e+00 nm)
+
+[기하 요약]
+  l_hbn_step = 500.00 nm  (bridge: 처짐 없음)
+  WSe2 경사: x = 283.3 → 500.0 (가로 216.7 nm), 모양 smooth, 평균 경사각 atan(t_drain/l_ramp) = 18.138 deg,  경사 길이 228.07 nm
+  경사 역학 검사(클램프 큐빅): 최대 기울기 26.2 deg (가운데), 최소 곡률반경 110 nm (양 끝), 표면 변형률 t/2R = 4.1 %  < 파단 7.3 % OK
+  탄성 추정 참고: ℓ*(WSe2) = 216.7 nm,  ℓ*(h-BN) = 798.4 nm > L → 판
+  h-BN 하강선 각도 = 0.00 deg (수평 아래로),  하강 구간의 h-BN 법선 두께 = 30.0 nm  (수직 두께 30.0 nm; 차이는 '수직 두께 일정' 근사의 오차)
+  위 공기 쐐기(AirTop) 꼭지각 = 18.14 deg,  최대 높이(x=0) = 71.0 nm
+  TG - 경사 WSe2 윗면 수직 거리 [nm]: x=0: 101.0, x=25: 101.0, x=500: 30.0, x=250: 101.0, x=500: 30.0
+
+[영역별 좌표 범위 (nm)]
+  SiO2     x: [ -1000.0,   1500.0]   y: [ -300.0,     0.0]   꼭짓점 6
+  WSe2     x: [ -1000.0,   1500.0]   y: [    0.0,    80.1]   꼭짓점 39
+  AirBot   x: [   283.3,    500.0]   y: [    0.0,    71.0]   꼭짓점 18
+  AirTop   x: [     0.0,    500.0]   y: [    9.1,    80.1]   꼭짓점 19
+  hBN      x: [ -1000.0,   1500.0]   y: [   80.1,   110.1]   꼭짓점 10
+  Source   x: [ -1000.0,      0.0]   y: [    9.1,    80.1]   꼭짓점 4
+  Drain    x: [   500.0,   1500.0]   y: [    0.0,    71.0]   꼭짓점 4
+  TG       x: [  -300.0,    800.0]   y: [  110.1,   130.1]   꼭짓점 6
+  BG       x: [ -1000.0,   1500.0]   y: [ -320.0,  -300.0]   꼭짓점 4
+
+[contact]
+  BG_SiO2        1개  길이   2500.0 nm   - Back Gate는 SiO2 아랫면에만 닿는다
+  Drain_AirBot   1개  길이     71.0 nm   - Drain 금속의 왼쪽 벽은 아래 공기 쐐기와 닿는다
+  Drain_SiO2     1개  길이   1000.0 nm   - Drain 금속이 SiO2 위에 놓인다 (BG 전기장을 막는 면)
+  Drain_WSe2     1개  길이   1000.0 nm   - Drain 금속이 WSe2 아랫면에 직접 닿는다 (bottom contact)
+  Source_AirTop  1개  길이     71.0 nm   - Source 금속의 오른쪽 벽은 위 공기 쐐기와 닿는다
+  Source_WSe2    1개  길이   1000.0 nm   - Source 금속이 WSe2 윗면에 직접 닿는다 (top contact)
+  Source_hBN     1개  길이   1000.0 nm   - Source 금속의 윗면이 h-BN과 닿는다 (TG 전기장을 막는 면)
+  TG_hBN         3개  길이   1100.0 nm   - Top Gate는 h-BN 윗면에만 닿는다 (꺾은선)
+[interface]
+  AirTop_hBN     1개  길이    500.0 nm   - h-BN 아랫면의 하강선
+  SiO2_AirBot    1개  길이    216.7 nm   - 아래 공기 쐐기의 바닥
+  SiO2_WSe2      1개  길이   1283.3 nm   - Source 아래에서 WSe2가 SiO2 위에 놓인다
+  WSe2_AirBot    16개  길이    230.1 nm   - 경사진 WSe2의 아랫면
+  WSe2_AirTop    17개  길이    513.3 nm   - 경사진 WSe2 윗면 중 h-BN이 닿지 않는 구간 (0 ~ l_hbn_step)
+  WSe2_hBN       1개  길이   1000.0 nm   - WSe2 윗면 중 h-BN이 닿는 구간 (l_hbn_step ~ L) + Drain 쪽 평평한 윗면
+[Neumann 경계 선 개수]  SiO2: 2, WSe2: 2, AirBot: 0, AirTop: 0, hBN: 4
+그림 저장: rfet_geometry_curve_el_eq.png
+판정: 모두 통과
