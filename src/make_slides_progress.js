@@ -249,6 +249,63 @@ def rho(psi):
   s.addTable(T(rows), { x: 0.5, y: 1.25, w: 12.33, colW: [3.0, 2.8, 0.8, 5.73], rowH: 0.46, ...TBL(13.5) });
 }
 
+
+// ---------- 6b. 출처 근거 ① 논문 원문 캡쳐 ----------
+{
+  const s = pres.addSlide(); header(s, "출처 근거 ① — Jiao 2026 원문 (APL 128, 263504, p.2)");
+  const R = "/home/claude/rfet_ppt/refs/";
+  fit(s, R + "jiao_left_hl.png", { x: 0.4, y: 1.15, w: 7.4, h: 3.05 }, 771 / 318);
+  fit(s, R + "jiao_right_hl.png", { x: 8.0, y: 1.15, w: 4.9, h: 3.05 }, 771 / 527);
+  const rows = [
+    [hdr("값"), hdr("원문 문구"), hdr("어떻게 썼나")],
+    ["Drain Ti/Au 1/70 · SiO₂ 300", "\"drain electrode (Ti/Au, 1/70 nm) onto a SiO₂ (300 nm)/Si substrate\"", "Drain 두께 71, BG 절연체 300"],
+    ["WSe₂ 9.1 nm", "\"transferred a 9.1 nm-thick WSe₂ (see Fig. S1)\"", "박막 두께 → 14층"],
+    ["Source Pd/Au 5/50", "\"deposited the source electrode (Pd/Au, 5/50 nm) on top of the WSe₂ film\"", "Source 두께 55, 접촉 금속 Pd"],
+    ["x = 0 정의", "\"its edge was positioned at the base of the transition region\"", "Source 모서리 = 경사 시작 기준"],
+    ["L ≈ 500 nm", "\"a channel length of approximately 500 nm (see Fig. S2)\"", "Fig. S2 미확보 → 측정 기준 [C]"],
+    ["h-BN 30 nm", "\"a 30 nm-thick h-BN layer as the top-gate dielectric\"", "TG 절연체 30"],
+  ];
+  s.addTable(T(rows), { x: 0.4, y: 4.3, w: 12.5, colW: [2.6, 6.6, 3.3], rowH: 0.3, ...TBL(11) });
+  txt(s, "확인 방법: 소유한 PDF 본문 p.2 두 단락 직접 캡쳐 (노란 상자 = 값이 있는 문장)", 0.4, 6.7, 12.5, 0.3, 11, GRAY);
+}
+
+// ---------- 6c. 출처 근거 ② 유전율 표 캡쳐 ----------
+{
+  const s = pres.addSlide(); header(s, "출처 근거 ② — Laturia 2018 Table 2 (유전율)");
+  const R = "/home/claude/rfet_ppt/refs/";
+  fit(s, R + "laturia_table2.png", { x: 0.4, y: 1.2, w: 12.5, h: 4.0 }, 800 / 355);
+  const rows = [
+    [hdr("우리가 쓴 값"), hdr("표에서 읽은 자리"), hdr("왜 그 자리인가")],
+    ["ε(WSe₂) ⊥ = 7.9, ∥ = 16.0", "WSe₂(H) 행, Bulk (ε₀) 열의 ⊥ / ∥", "정적(ε₀) · 14층 = bulk"],
+    ["ε(h-BN) ⊥ = 3.76, ∥ = 6.93", "같은 논문 Table 1, Bulk 행 ε⊥,₀ / ε∥,₀", "정적 · 30 nm ≈ 90층 = bulk"],
+    ["1층 → bulk 변화 5 %", "WSe₂(H) 1L (ε₀) ⊥ 7.4 → Bulk 7.8", "14층에 bulk 값 쓰는 근거"],
+  ];
+  s.addTable(T(rows), { x: 0.4, y: 5.3, w: 12.5, colW: [3.2, 4.6, 4.7], rowH: 0.36, ...TBL(12.5) });
+  txt(s, "확인 방법: nature.com 공개본(open access) 표 페이지를 브라우저에서 직접 캡쳐 · DOI 10.1038/s41699-018-0050-x", 0.4, 6.75, 12.5, 0.3, 11, GRAY);
+}
+
+// ---------- 6d. 출처 근거 ③ 나머지 — 원문 문구 인용 ----------
+{
+  const s = pres.addSlide(); header(s, "출처 근거 ③ — 원문에서 읽은 문장·표 (인용)");
+  const DOI = { mcd: "https://doi.org/10.1021/nn501728w", smy: "https://doi.org/10.1088/2053-1583/aa6bea", wic: "https://doi.org/10.1063/1.4869142",
+    jang: "https://doi.org/10.1002/adma.202109899", zha: "https://doi.org/10.1063/1.4940982", koe: "https://doi.org/10.1038/nnano.2011.123", fal: "https://doi.org/10.1038/ncomms15815" };
+  const L = (t, k) => ({ text: t, options: { hyperlink: { url: DOI[k] }, color: BLUE } });
+  const rows = [
+    [hdr("값"), hdr("원문 위치 · 문구/표 행"), hdr("확인 경로"), hdr("링크")],
+    ["m* 0.489 / 0.643 / 0.997", "Table II: bulk WSe₂ CB Σ점 m_l 0.489, m_t 0.643 · VB Γ점 0.997 (1L 은 K점 0.345/0.341)", "arXiv 1401.0502 공개본", L("Wickramaratne 2014", "wic")],
+    ["E_g 1.2 eV", "Table I 실험 인용값 1.20 eV · Table III PBE+SOC 1.188 eV", "arXiv 1401.0502", L("Wickramaratne 2014", "wic")],
+    ["E_g 1.16 · χ 4.03", "Table 3 (SKexp 행): IE 5.19 − E_g 1.16 = 4.03 ± 0.1 eV", "ACS Nano 원문", L("McDonnell 2014", "mcd")],
+    ["φ_Bn(Au) 0.53 · E_g 1.3", "본문: \"The 0.53 eV electron Schottky barrier measured in this work\" (XPS, UHV 증착 Au)", "IOP 원문", L("Smyth 2017", "smy")],
+    ["φ_Bn(Pd) 0.22", "Fig. 3f: 증착 Ti/Au/Pd ≈ 190–250 meV, S = 0.03, 8–12 nm 다층 → 범위 중앙값", "Adv. Mater. 원문", L("Jang 2022", "jang")],
+    ["E(WSe₂) 167.3 GPa", "초록: \"Young's modulus of multilayer WSe₂ (167.3 ± 6.7 GPa)\" · 14층 165 ± 6", "OSTI 22489358 초록 + 리뷰 Table 1", L("Zhang 2016", "zha")],
+    ["E(h-BN) 0.86 TPa", "본문: 1L 0.865 ± 0.073, 9L 0.856 ± 0.003 TPa (AFM 압입)", "PMC 공개본", L("Falin 2017", "fal")],
+    ["Γ 0.45 J/m² (차용)", "초록: 단층 그래핀/SiO₂ 0.45 ± 0.02, 2–5층 0.31 ± 0.03 J/m²", "같은 호 News & Views 경유 (간접)", L("Koenig 2011", "koe")],
+  ];
+  s.addTable(T(rows), { x: 0.4, y: 1.25, w: 12.5, colW: [2.2, 6.3, 2.3, 1.7], rowH: 0.5, ...TBL(12) });
+  txt(s, "PDF 원문 캡쳐는 구독 접근이 필요한 논문이 있어 문구 인용으로 대신함 — 학교 계정으로 열면 같은 자리를 캡쳐해 교체 가능", 0.4, 6.6, 12.5, 0.35, 11.5, GRAY);
+}
+
+
 // ---------- 이론 ① 정전기 ----------
 {
   const s = pres.addSlide();
